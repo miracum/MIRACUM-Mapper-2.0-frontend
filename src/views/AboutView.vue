@@ -2,7 +2,10 @@
   <div class="about-page">
     <section class="content">
       <h2>About Miracum Mapper</h2>
-      <p>Sample text about the project. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id ipsum velit. Suspendisse in libero non mauris fermentum tempor. Nam in sapien fringilla, aliquet arcu nec, tempus ipsum. Nulla facilisi. Phasellus scelerisque eget ligula non lobortis. Aenean pharetra diam lacus, at euismod nibh viverra ac.</p>
+      <p>Sample text about the project. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id ipsum velit.
+        Suspendisse in libero non mauris fermentum tempor. Nam in sapien fringilla, aliquet arcu nec, tempus ipsum.
+        Nulla facilisi. Phasellus scelerisque eget ligula non lobortis. Aenean pharetra diam lacus, at euismod nibh
+        viverra ac.</p>
       <div class="features">
         <div class="feature">
           <h3>Element 1</h3>
@@ -20,18 +23,13 @@
     </section>
     <section class="team">
       <h2>Subheadline</h2>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id ipsum velit. Suspendisse in libero non mauris fermentum tempor.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id ipsum velit. Suspendisse in libero non mauris
+        fermentum tempor.</p>
       <!-- Team members could be dynamically loaded here -->
     </section>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'AboutView',
-  // Component logic here
-}
-</script>
 
 <style scoped>
 .about-page {
@@ -44,7 +42,8 @@ export default {
   padding: 4rem 2rem;
 }
 
-.content, .team {
+.content,
+.team {
   padding: 2rem;
 }
 

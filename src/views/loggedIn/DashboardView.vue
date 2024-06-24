@@ -3,18 +3,10 @@
     <Header :buttons="headerButtons" />
     <div class="container-fluid">
       <main role="main" class="pb-3">
-        <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center card mb-5">
-
+        <div class="container-fluid h-100 d-flex flex-column justify-content-center align-items-center mb-5">
           <div class="container-fluid dashboard">
             <div class="row justify-content-center align-items-center">
-              <!-- Loading Spinner -->
-              <div id="loadingOverlay" v-if="isLoading">
-                <div>
-                  <p>Data is being loaded...</p>
-                  <div class="spinner"></div>
-                </div>
-              </div>
-              <!-- Main Content -->
+              <LoadingSpinner v-if="isLoading" />
               <ProjectTable :elements="projectElements" v-else />
             </div>
           </div>
@@ -27,12 +19,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import DataTable from '@/components/DataTable.vue';
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
+import Header from '@/components/shared/Header.vue';
+import Footer from '@/components/shared/Footer.vue';
 import ProjectTable from '@/components/ProjectTable.vue';
+import LoadingSpinner from '@/components/shared/LoadingSpinner.vue';
 
+const router = useRouter();
 const authStore = useAuthStore();
 const projectElements = ref([]);
 const isLoading = ref(true);
@@ -57,8 +51,8 @@ function exportProject() {
 }
 
 function logoutAndNavigate() {
-  authStore.setAuthStatus(false); // Assuming this method logs the user out
-  this.$router.push('/'); // Navigate to the landing page
+  authStore.setAuthStatus(false);
+  router.push('/');
 }
 
 function fetchProjects() {
@@ -94,17 +88,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import '@/assets/miracum-mapper-old.css';
-
-#loadingOverlay {
-  display: flex;
-  justify-content: center;
-  /* Center horizontally */
-  align-items: center;
-  /* Center vertically */
-  height: 100%;
-  /* Take full height of the parent */
-  width: 100%;
-  /* Take full width of the parent */
-}
+/* .card {
+  border: none;
+} */
 </style>

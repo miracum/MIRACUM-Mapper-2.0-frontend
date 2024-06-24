@@ -10,16 +10,16 @@
     </div>
 </template>
 
-<script>
+<script setup>
 // import EditProjectModal from './EditProjectModal.vue'; //only show modal buttons when hovering over the row
 // import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; //only show modal buttons when hovering over the row
 // import CreateMappingModal from './CreateMappingModal.vue'; //only show modal buttons when hovering over the row
+import { defineProps } from 'vue'
 import { RouterLink } from 'vue-router'
-export default {
-    props: {
-        buttons: Array
-    }
-}
+
+const props = defineProps({
+    buttons: Array
+})
 </script>
 
 <style scoped></style>

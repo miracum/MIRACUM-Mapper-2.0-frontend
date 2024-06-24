@@ -5,7 +5,7 @@
                 <input type="text" id="customSearchInput" class="form-control flex-grow-1"
                     placeholder="Search for a project...">
                 <span class="search-icon">
-                    <i class="fas fa-search icon"></i>
+                    <FontAwesomeIcon :icon="faSearch" class="icon" />
                 </span>
             </div>
         </div>
@@ -35,12 +35,14 @@
                             </div>
                             <div>
                                 <button class="btn edit-button" @click="openEditModal(element.id)">
-                                    <i class="fa-solid fa-pen-to-square icon"></i>
+                                    <!-- <i class="fa-solid fa-pen-to-square icon"></i> -->
+                                    <FontAwesomeIcon :icon="faPenToSquare" class="icon" />
                                 </button>
                                 <!-- Replace with Vue component for editing -->
                                 <!-- <EditProjectModal :element="element" v-if="isEditModalOpen(element.Id)" /> -->
                                 <button class="btn delete-button" @click="openDeleteModal(element.id)">
-                                    <i class="fas fa-trash icon"></i>
+                                    <!-- <i class="fa-solid fa-trash-can icon"></i> -->
+                                    <FontAwesomeIcon :icon="faTrashCan" class="icon" />
                                 </button>
                                 <!-- Replace with Vue component for confirmation -->
                                 <!-- <ConfirmDeleteModal :element="element" v-if="isDeleteModalOpen(element.Id)" /> -->
@@ -53,48 +55,132 @@
     </div>
 </template>
 
-<script>
+<script setup>
 // import EditProjectModal from './EditProjectModal.vue'; //only show modal buttons when hovering over the row
 // import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; //only show modal buttons when hovering over the row
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { ref } from 'vue';
 
-export default {
-    props: {
-        elements: Array
-    },
-    // components: {
-    //     EditProjectModal,
-    //     ConfirmDeleteModal
-    // },
-    data() {
-        return {
-            openModals: {
-                edit: null,
-                delete: null
-            }
-        };
-    },
-    methods: {
-        openEditModal(id) {
-            this.openModals.edit = id;
-        },
-        openDeleteModal(id) {
-            this.openModals.delete = id;
-        },
-        isEditModalOpen(id) {
-            return this.openModals.edit === id;
-        },
-        isDeleteModalOpen(id) {
-            return this.openModals.delete === id;
-        }
-    }
+const props = defineProps({
+    elements: Array
+});
+
+const openModals = ref({
+    edit: null,
+    delete: null
+});
+
+function openEditModal(id) {
+    openModals.value.edit = id;
+}
+
+function openDeleteModal(id) {
+    openModals.value.delete = id;
+}
+
+function isEditModalOpen(id) {
+    return openModals.value.edit === id;
+}
+
+function isDeleteModalOpen(id) {
+    return openModals.value.delete === id;
 }
 </script>
 
 
 <style scoped>
-/* @import url('https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css'); */
-/* @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css'); */
-/* @import url('https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css'); */
-/* @import url('./MIRACUM_Mapper.styles.css'); */
-@import url('@/assets/miracum-mapper-old.css');
+table.custom-table {
+    width: 100%;
+    /* border-collapse: separate; */
+    /* This allows border-spacing to take effect */
+    /* border-spacing: 10px; */
+    /* Adjust horizontal spacing here */
+}
+
+table.custom-table tbody td {
+    background-color: #D9D9D9;
+    padding: 10px;
+    /* Adjust vertical spacing by changing the top and bottom padding */
+}
+
+/* Additional styles for visual improvement */
+table.custom-table thead th {
+    padding: 10px;
+    /* Optional: Adjust header cell padding to match tbody if desired */
+}
+
+.col {
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.icon {
+    color: #636E72;
+}
+
+.dataTables_paginate .paginate_button .fas {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* table.custom-table {
+    width: 100%;
+    table-layout: auto;
+} */
+
+table.custom-table thead th {
+    background-color: #D9D9D9;
+    border-bottom: 5px solid white;
+}
+
+table.custom-table tbody td {
+    background-color: #D9D9D9;
+}
+
+.custom-div {
+    border-radius: 17px;
+    padding: 17px;
+    transition: box-shadow 0.3s;
+    height: 84px;
+    background-color: white;
+}
+
+.custom-div:hover {
+    border: 1px solid #D9D9D9;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
+.version {
+    font-size: 12px;
+}
+
+.title {
+    font-size: 18px;
+    color: #636E72;
+    line-height: 1px;
+}
+
+.description {
+    color: #b7b3b3;
+    font-size: small;
+}
+
+/* #projectTable {
+    background-color: #f2f2f2;
+}
+
+#projectTable_wrapper.dataTables_wrapper {
+    background-color: #D9D9D9;
+}
+
+#projectTable {
+    width: 100%;
+} */
 </style>

@@ -15,33 +15,27 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 
-export default {
-    data() {
-        return {
-            username: '',
-            password: ''
-        };
-    },
-    methods: {
-        loginUser() {
-            // Your login logic here
-            const loginSuccessful = true; // Placeholder for actual login logic
-            const authStore = useAuthStore();
-            if (loginSuccessful) {
-                authStore.setAuthStatus(true);
-                this.$router.push('/dashboard');
-            } else {
-                // Handle login failure (e.g., display an error message)
-                authStore.setAuthStatus(false);
-            }
-        }
+const username = ref('');
+const password = ref('');
+const router = useRouter();
+
+const loginUser = async () => {
+    // Your login logic here
+    const loginSuccessful = true; // Placeholder for actual login logic
+    const authStore = useAuthStore();
+    if (loginSuccessful) {
+        authStore.setAuthStatus(true);
+        router.push('/dashboard');
+    } else {
+        // Handle login failure (e.g., display an error message)
+        authStore.setAuthStatus(false);
     }
 };
-
-
 </script>
 
 <style scoped>
