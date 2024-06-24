@@ -25,85 +25,72 @@
   </div>
 </template>
 
-<script>
-// import { RouterLink } from 'vue-router'
+<script setup>
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import DataTable from '@/components/DataTable.vue';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import ProjectTable from '@/components/ProjectTable.vue';
 
-// async function fetchData() {
-//     const response = await fetch('http://localhost:8083/projects');
-//     return await response.json();
-// }
+const authStore = useAuthStore();
+const projectElements = ref([]);
+const isLoading = ref(true);
 
-export default {
-  components: {
-    DataTable,
-    Header,
-    Footer,
-    ProjectTable
-  },
-  methods: {
-    createNewProject() {
-      // Implementation
-    },
-    importProject() {
-      // Implementation
-    },
-    exportProject() {
-      // Implementation
-    },
-    logoutAndNavigate() {
-      const authStore = useAuthStore();
-      authStore.setAuthStatus(false); // Assuming this method logs the user out
-      this.$router.push('/'); // Navigate to the landing page
-    },
-    fetchProjects() {
-      fetch('http://localhost:8080/projects', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsibm9ybWFsIl19.CDrSU69Aeffi6nm3u5RXIIDlSjr5__Gt3wtHvNw6LLF1qN8ewugfL3h44aBiN4UnwFOGcFf3DItHlZVW0XJQzg'
-        }
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      }).then(data => {
-        console.log(data);
-        this.projectElements = data;
-        // sleep 3 seconds to simulate loading
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 500);
-        // this.isLoading = false; // Set loading to false once data is loaded
-      }).catch(error => {
-        console.error('There was a problem with your fetch operation:', error);
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 500);
-      });
-    }
-  },
-  mounted() {
-    this.fetchProjects(); // Call fetchProjects when the component mounts
-  },
-  data() {
-    return {
-      headerButtons: [
-        { label: 'New Project', action: this.createNewProject, disabled: false },
-        { label: 'Import Project', action: this.importProject, disabled: false },
-        { label: 'Export Project', action: this.exportProject, disabled: true },
-        { label: 'Logout', action: this.logoutAndNavigate, disabled: false }
-      ],
-      projectElements: [],
-      isLoading: true
-    };
-  },
-  // Component logic here
+const headerButtons = ref([
+  { label: 'New Project', action: createNewProject, disabled: false },
+  { label: 'Import Project', action: importProject, disabled: false },
+  { label: 'Export Project', action: exportProject, disabled: true },
+  { label: 'Logout', action: logoutAndNavigate, disabled: false }
+]);
+
+function createNewProject() {
+  // Implementation
 }
+
+function importProject() {
+  // Implementation
+}
+
+function exportProject() {
+  // Implementation
+}
+
+function logoutAndNavigate() {
+  authStore.setAuthStatus(false); // Assuming this method logs the user out
+  this.$router.push('/'); // Navigate to the landing page
+}
+
+function fetchProjects() {
+  fetch('http://localhost:8080/projects', {
+    method: 'GET',
+    headers: {
+      'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsibm9ybWFsIl19.rIcV697FIuYDvAm_tWgSEvBUWerzLbmheTsUHgE3zBPsobDE1EpO1ZJkg9_xvjMzayQXL-Sl7-5mGrh7tridNg'
+    }
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  }).then(data => {
+    console.log(data);
+    projectElements.value = data;
+    // sleep 3 seconds to simulate loading
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 500);
+    // isLoading.value = false; // Set loading to false once data is loaded
+  }).catch(error => {
+    console.error('There was a problem with your fetch operation:', error);
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 500);
+  });
+}
+
+onMounted(() => {
+  fetchProjects(); // Call fetchProjects when the component mounts
+});
 </script>
 
 <style scoped>
