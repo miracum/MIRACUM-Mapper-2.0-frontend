@@ -51,7 +51,7 @@ function exportProject() {
 }
 
 function logoutAndNavigate() {
-  authStore.setAuthStatus(false);
+  authStore.logout();
   router.push('/');
 }
 
@@ -70,15 +70,17 @@ function fetchProjects() {
     console.log(data);
     projectElements.value = data;
     // sleep 3 seconds to simulate loading
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 500);
+    // setTimeout(() => {
+
+    // }, 500);
+    isLoading.value = false;
     // isLoading.value = false; // Set loading to false once data is loaded
   }).catch(error => {
     console.error('There was a problem with your fetch operation:', error);
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 500);
+    // setTimeout(() => {
+
+    // }, 500);
+    isLoading.value = false;
   });
 }
 

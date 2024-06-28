@@ -10,6 +10,13 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" v-model="password" />
             </div>
+            <!-- Divider -->
+            <hr />
+            <!-- Additional field for Auth Token -->
+            <div class="form-group">
+                <label for="authToken">Auth Token (Debug)</label>
+                <input type="text" id="authToken" v-model="authToken" />
+            </div>
             <button type="submit" @click.prevent="loginUser">Login</button>
         </form>
     </div>
@@ -22,6 +29,7 @@ import { useAuthStore } from '../stores/auth';
 
 const username = ref('');
 const password = ref('');
+const authToken = ref(''); // Add this line
 const router = useRouter();
 
 const loginUser = async () => {
@@ -29,11 +37,11 @@ const loginUser = async () => {
     const loginSuccessful = true; // Placeholder for actual login logic
     const authStore = useAuthStore();
     if (loginSuccessful) {
-        authStore.setAuthStatus(true);
+        authStore.authenticate(authToken.value);
         router.push('/dashboard');
     } else {
         // Handle login failure (e.g., display an error message)
-        authStore.setAuthStatus(false);
+        authStore.logout();
     }
 };
 </script>

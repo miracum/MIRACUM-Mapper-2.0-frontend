@@ -26,26 +26,19 @@
                         <div class="d-flex justify-content-between align-items-center custom-div">
                             <div class="title">
                                 <h5 class="name-field">{{ element.name }}</h5>
-                                <!-- <router-link :to="{ name: 'About' }" class="text-decoration-none title">
-                                    <h5 class="name-field">{{ element.name }}</h5>
-                                </router-link><br> -->
                                 <p class="version">Version : <span class="version-field">{{ element.version
                                         }}</span></p>
                                 <h6 class="description">{{ element.description }}</h6>
                             </div>
                             <div>
                                 <button class="btn edit-button" @click="openEditModal(element.id)">
-                                    <!-- <i class="fa-solid fa-pen-to-square icon"></i> -->
                                     <FontAwesomeIcon :icon="faPenToSquare" class="icon" />
                                 </button>
-                                <!-- Replace with Vue component for editing -->
-                                <!-- <EditProjectModal :element="element" v-if="isEditModalOpen(element.Id)" /> -->
+                                <EditProjectModal :element="elementToEdit" v-if="openModals.edit"
+                                    @close="openModals.edit = null" />
                                 <button class="btn delete-button" @click="openDeleteModal(element.id)">
-                                    <!-- <i class="fa-solid fa-trash-can icon"></i> -->
                                     <FontAwesomeIcon :icon="faTrashCan" class="icon" />
                                 </button>
-                                <!-- Replace with Vue component for confirmation -->
-                                <!-- <ConfirmDeleteModal :element="element" v-if="isDeleteModalOpen(element.Id)" /> -->
                             </div>
                         </div>
                     </td>
@@ -56,11 +49,10 @@
 </template>
 
 <script setup>
-// import EditProjectModal from './EditProjectModal.vue'; //only show modal buttons when hovering over the row
-// import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; //only show modal buttons when hovering over the row
+import EditProjectModal from '../views/loggedIn/Project/EditProject.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     elements: Array
@@ -71,20 +63,17 @@ const openModals = ref({
     delete: null
 });
 
+const elementToEdit = computed(() => {
+    return props.elements.find(element => element.id === openModals.value.edit);
+});
+
 function openEditModal(id) {
+    console.log('Opening edit modal for project:', id);
     openModals.value.edit = id;
 }
 
 function openDeleteModal(id) {
     openModals.value.delete = id;
-}
-
-function isEditModalOpen(id) {
-    return openModals.value.edit === id;
-}
-
-function isDeleteModalOpen(id) {
-    return openModals.value.delete === id;
 }
 </script>
 
