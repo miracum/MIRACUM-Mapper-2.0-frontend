@@ -7,6 +7,7 @@ import DashboardView from '../views/loggedIn/DashboardView.vue';
 
 // import keycloak from '../keycloak'; // Adjust the path as necessary
 import { useAuthStore } from '../stores/auth';
+import MappingView from '@/views/loggedIn/MappingView.vue';
 
 const routes = [
   {
@@ -27,13 +28,14 @@ const routes = [
   },
   {
     path: '/dashboard',
-    component: DashboardView, // This serves as a wrapper for your nested routes
+    component: DashboardView,
     meta: { requiresAuth: true },
-    // children: [
-    //   { path: 'projects', component: ProjectsPage, children: [] },
-    //   { path: 'settings', component: SettingsPage },
-    //   // Add more nested routes as needed
-    // ]
+    children: [
+      { path: 'projects/:projectId/mappings',
+        component: MappingView,
+        meta: { requiresAuth: true },
+      }
+    ]
   }
 ];
 
