@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 20px;"> <!-- Add space above the table -->
-        <DataTable :value="data" stripedRows removableSort showGridlines paginator :rows="5"
+        <DataTable :value="dataTableEntries" stripedRows removableSort showGridlines paginator :rows="5"
             :rowsPerPageOptions="[5, 10, 20, 50]" editMode="row" tableStyle="min-width: 50rem">
             <ColumnGroup type="header">
                 <Row>
@@ -44,10 +44,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 
-const data = ref([
+const dataTableEntries = ref([
     {
         status: 'Active',
         equivalence: 'Exact Match',

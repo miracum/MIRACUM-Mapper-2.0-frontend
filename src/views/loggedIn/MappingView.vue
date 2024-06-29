@@ -14,7 +14,6 @@
 // import EditProjectModal from './EditProjectModal.vue'; //only show modal buttons when hovering over the row
 // import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; //only show modal buttons when hovering over the row
 // import CreateMappingModal from './CreateMappingModal.vue'; //only show modal buttons when hovering over the row
-import { defineProps } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const props = defineProps({

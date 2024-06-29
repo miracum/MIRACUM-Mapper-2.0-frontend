@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import HelloWorld from '../components/HelloWorld.vue'
 import { RouterLink } from 'vue-router'
@@ -10,7 +9,7 @@ import { onMounted, onBeforeUnmount } from 'vue'
 onMounted(() => {
   document.body.style.display = 'flex';
   document.body.style.placeItems = 'center';
-  
+
   const app = document.getElementById('app');
   if (app) {
     app.style.maxWidth = '1280px';
@@ -26,7 +25,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.body.style.display = '';
   document.body.style.placeItems = '';
-  
+
   const app = document.getElementById('app');
   if (app) {
     app.style.maxWidth = '';
@@ -41,19 +40,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <header>
-      <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
-      <div class="wrapper">
-        <HelloWorld msg="Miracum Mapper" />
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-          <RouterLink to="/login">Get Started</RouterLink>
-        </nav>
-      </div>
-    </header>
-    <RouterView />
- 
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
+    <div class="wrapper">
+      <HelloWorld msg="Miracum Mapper" />
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Get Started</RouterLink>
+      </nav>
+    </div>
+  </header>
+  <RouterView />
+
 </template>
 
 <style scoped>
