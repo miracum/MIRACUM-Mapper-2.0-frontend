@@ -7,8 +7,6 @@ const authStore = useAuthStore();
 
 <template>
   <LandingPageView v-if="!authStore.isAuthenticated" />
-  <!-- <DashboardView v-else /> -->
-  <!-- <LandingPageView /> -->
   <RouterView v-else />
 </template>
 

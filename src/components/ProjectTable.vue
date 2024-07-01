@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div v-if="elements.length === 0" class="text-center">
+        <div v-if="element.length === 0" class="text-center">
             <h3>No data to show yet.</h3>
         </div>
 
@@ -43,17 +43,23 @@
                         </div>
                     </td>
                 </tr>
+                <EditProject v-if="openModals.edit" @close="openModals.edit = false" />
+                <!-- <EditProject :isVisible="openModals.edit" @update:isVisible="showModal = $event"></EditProject> -->
+                <!-- <EditProject :isVisible="openModals.edit" @update:isVisible="isEditModalVisible = $event" /> -->
+                <!-- <EditProjectModal :element="elementToEdit" v-if="openModals.edit" @close="openModals.edit = false" /> -->
             </tbody>
         </table>
     </div>
 </template>
 
 <script setup>
-import EditProjectModal from '../views/loggedIn/Project/EditProject.vue';
+import EditProject from '../views/loggedIn/Project/EditProject.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useProjectStore } from '@/stores/project';
+import { onMounted, watch } from 'vue';
 
 const props = defineProps({
     elements: Array
@@ -61,27 +67,38 @@ const props = defineProps({
 
 const router = useRouter();
 
+const store = useProjectStore();
+store.setProjects(props.elements);
+
+// Change openModals to track by id
 const openModals = ref({
-    edit: null,
-    delete: null
+    edit: false,
+    delete: false
 });
 
-const elementToEdit = computed(() => {
-    return props.elements.find(element => element.id === openModals.value.edit);
-});
+const elementToEdit = computed(() => store.currentProject);
 
 function openEditModal(id) {
     console.log('Opening edit modal for project:', id);
-    openModals.value.edit = id;
+    store.setCurrentProject(id);
+    openModals.value.edit = true;
 }
 
 function openDeleteModal(id) {
-    openModals.value.delete = id;
+    openModals.value.delete = true;
 }
 
 function openProject(id) {
     router.push(`/projects/${id}/mappings`);
 }
+
+onMounted(() => {
+    console.log('EditProjectModal mounted');
+});
+
+watch(() => openModals.edit, (newVal) => {
+    console.log('Modal visibility changed:', newVal);
+}, { deep: true });
 </script>
 
 

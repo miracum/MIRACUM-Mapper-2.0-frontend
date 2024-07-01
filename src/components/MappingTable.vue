@@ -98,5 +98,5 @@ onMounted(() => {
 /* @import url('https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css'); */
 /* @import url('./MIRACUM_Mapper.styles.css'); */
 
-@import url('../assets/miracum-mapper-old.css')
+/* @import url('../assets/miracum-mapper-old.css') */
 </style>
