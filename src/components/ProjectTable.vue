@@ -23,7 +23,7 @@
             <tbody>
                 <tr v-for="element in elements" :key="element.Id">
                     <td>
-                        <div class="d-flex justify-content-between align-items-center custom-div">
+                        <div class="d-flex justify-content-between align-items-center custom-div"  @click="openProject(element.id)">
                             <div class="title">
                                 <h5 class="name-field">{{ element.name }}</h5>
                                 <p class="version">Version : <span class="version-field">{{ element.version
@@ -31,12 +31,12 @@
                                 <h6 class="description">{{ element.description }}</h6>
                             </div>
                             <div>
-                                <button class="btn edit-button" @click="openEditModal(element.id)">
+                                <button class="btn edit-button" @click.stop="openEditModal(element.id)">
                                     <FontAwesomeIcon :icon="faPenToSquare" class="icon" />
                                 </button>
                                 <EditProjectModal :element="elementToEdit" v-if="openModals.edit"
                                     @close="openModals.edit = null" />
-                                <button class="btn delete-button" @click="openDeleteModal(element.id)">
+                                <button class="btn delete-button" @click.stop="openDeleteModal(element.id)">
                                     <FontAwesomeIcon :icon="faTrashCan" class="icon" />
                                 </button>
                             </div>
@@ -53,10 +53,13 @@ import EditProjectModal from '../views/loggedIn/Project/EditProject.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     elements: Array
 });
+
+const router = useRouter();
 
 const openModals = ref({
     edit: null,
@@ -74,6 +77,10 @@ function openEditModal(id) {
 
 function openDeleteModal(id) {
     openModals.value.delete = id;
+}
+
+function openProject(id) {
+    router.push(`/projects/${id}/mappings`);
 }
 </script>
 

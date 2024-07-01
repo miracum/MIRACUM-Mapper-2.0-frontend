@@ -4,10 +4,11 @@ import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/loggedIn/DashboardView.vue'
+import MappingView from '../views/loggedIn/MappingView.vue';
+
 
 // import keycloak from '../keycloak'; // Adjust the path as necessary
 import { useAuthStore } from '../stores/auth'
-import MappingView from '@/views/loggedIn/MappingView.vue'
 
 const routes = [
   {
@@ -33,7 +34,14 @@ const routes = [
     children: [
       { path: 'projects/:projectId/mappings', component: MappingView, meta: { requiresAuth: true } }
     ]
-  }
+  },
+  { path: '/projects/:projectId/mappings',
+    name: 'MappingView',
+    component: MappingView,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  
 ]
 
 const router = createRouter({
