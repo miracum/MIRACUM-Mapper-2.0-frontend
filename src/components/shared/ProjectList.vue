@@ -1,6 +1,27 @@
 <template>
     <Toast />
     <ConfirmDialog></ConfirmDialog>
+    <Dialog v-model:visible="visible" modal header="Edit Profile" :style="{ width: '30rem' }">
+        <span class="p-text-secondary block mb-5">Update your information.</span>
+        <div class="flex-row">
+            <FloatLabel class="flex-item">
+                <InputText id="title" v-model="value" />
+                <label for="title">Username</label>
+            </FloatLabel>
+            <FloatLabel class="flex-item">
+                <InputText id="version" v-model="value" />
+                <label for="version">Version</label>
+            </FloatLabel>
+        </div>
+        <FloatLabel>
+            <Textarea v-model="description" rows="5" cols="30" />
+            <label for="description">Description</label>
+        </FloatLabel>
+        <div class="flex-container">
+            <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
+            <Button type="button" label="Save" @click="visible = false"></Button>
+        </div>
+    </Dialog>
     <!-- Loading State TODO Better align skeletons -->
     <div v-if="props.loading" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
         <Card>
@@ -34,8 +55,7 @@
                             <p class="m-0">{{ project.description }}</p>
                             <div class="card-actions">
                                 <!-- PrimeVue Edit button -->
-                                <Button label="Edit" icon="pi pi-pencil" @click="onDelete(project.id, project.name)"
-                                    outlined></Button>
+                                <Button label="Edit" icon="pi pi-pencil" @click="onEdit(project.id)" outlined></Button>
                                 <!-- PrimeVue Delete button -->
                                 <Button label="Delete" icon="pi pi-trash" @click="onDelete(project.id, project.name)"
                                     severity="danger" outlined></Button>
@@ -61,6 +81,9 @@ import { computed } from 'vue';
 import { useProjectStore } from '@/stores/project';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
+import { ref } from "vue";
+
+const visible = ref(false);
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -114,6 +137,29 @@ const onDelete = (id, name) => {
     });
 };
 
+const onEdit = (id) => {
+    store.setCurrentProject(id);
+    visible.value = true;
+    console.log('Opening edit modal for project:', id);
+    // confirm.require({
+    //     group: 'templating',
+    //     header: 'Confirmation',
+    //     message: 'Please confirm to proceed moving forward.',
+    //     icon: 'pi pi-exclamation-circle',
+    //     acceptIcon: 'pi pi-check',
+    //     rejectIcon: 'pi pi-times',
+    //     rejectClass: 'p-button-outlined p-button-sm',
+    //     acceptClass: 'p-button-sm',
+    //     rejectLabel: 'Cancel',
+    //     acceptLabel: 'Save',
+    //     accept: () => {
+    //         toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
+    //     },
+    //     reject: () => {
+    //         toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+    //     }
+    // });
+};
 // const onEdit = (id, name) => {
 //     confirm.require({
 //         message: 'Are you sure you want to Edit the Project ' + name + '?',
@@ -161,5 +207,36 @@ const onDelete = (id, name) => {
 .card-spacing:hover .card-actions {
     opacity: 1;
     /* Show the buttons when the card is hovered */
+}
+
+.flex-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    /* Adjust gap as needed */
+    margin-top: 16px;
+    /* Adjust margin as needed */
+    width: 100%;
+    /* Ensure the container takes full width */
+}
+
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    /* Adjusts the space between the items */
+    margin-bottom: 1rem;
+    /* Adds spacing below the row for separation */
+}
+
+.flex-item {
+    flex: 1;
+    /* Allows each item to grow equally */
+    margin-right: 1rem;
+    /* Adds spacing between the flex items */
+}
+
+.flex-item:last-child {
+    margin-right: 0;
+    /* Removes margin from the last item to avoid extra spacing */
 }
 </style>

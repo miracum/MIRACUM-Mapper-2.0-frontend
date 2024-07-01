@@ -18,7 +18,9 @@ declare module 'vue' {
     DataTableMapping: typeof import('./src/components/DataTableMapping.vue')['default']
     DataView: typeof import('primevue/dataview')['default']
     DataViewLayoutOptions: typeof import('primevue/dataviewlayoutoptions')['default']
+    Dialog: typeof import('primevue/dialog')['default']
     Fieldset: typeof import('primevue/fieldset')['default']
+    FloatLabel: typeof import('primevue/floatlabel')['default']
     Footer: typeof import('./src/components/shared/Footer.vue')['default']
     Header: typeof import('./src/components/shared/Header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
@@ -45,6 +47,7 @@ declare module 'vue' {
     Row: typeof import('primevue/row')['default']
     Skeleton: typeof import('primevue/skeleton')['default']
     Tag: typeof import('primevue/tag')['default']
+    Textarea: typeof import('primevue/textarea')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
