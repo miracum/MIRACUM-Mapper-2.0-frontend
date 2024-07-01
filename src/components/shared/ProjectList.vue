@@ -5,21 +5,21 @@
         <span class="p-text-secondary block mb-5">Update your information.</span>
         <div class="flex-row">
             <FloatLabel class="flex-item">
-                <InputText id="title" v-model="value" />
-                <label for="title">Username</label>
+                <InputText id="name" v-model="project.name" />
+                <label for="name">Name</label>
             </FloatLabel>
             <FloatLabel class="flex-item">
-                <InputText id="version" v-model="value" />
+                <InputText id="version" v-model="project.version" />
                 <label for="version">Version</label>
             </FloatLabel>
         </div>
         <FloatLabel>
-            <Textarea v-model="description" rows="5" cols="30" />
+            <Textarea v-model="project.description" rows="5" cols="30" />
             <label for="description">Description</label>
         </FloatLabel>
-        <div class="flex-container">
-            <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-            <Button type="button" label="Save" @click="visible = false"></Button>
+        <div class="confirm-button-group">
+            <Button type="button" label="Cancel" severity="secondary" @click="closeModal"></Button>
+            <Button type="button" label="Save" @click="updateProject"></Button>
         </div>
     </Dialog>
     <!-- Loading State TODO Better align skeletons -->
@@ -42,8 +42,13 @@
             </template>
         </Card>
     </div>
+
+    <!-- Error State -->
+    <Message v-if="props.error" severity="danger" :closable="false">{{ props.error.message }}</Message>
+
     <!-- Data View -->
-    <DataView v-else-if="props.elements.length > 0" :value="props.elements" paginator :rows="5">
+    <DataView v-else-if="props.elements != undefined && props.elements!.length > 0" :value="props.elements" paginator
+        :rows="5">
         <template #list="slotProps">
             <div v-for="(project, index) in slotProps.items" :key="index" class="card-spacing"
                 style="margin-bottom: 1rem;">
@@ -74,14 +79,18 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
 import { computed } from 'vue';
 import { useProjectStore } from '@/stores/project';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import type { ProjectResponse, AppError } from '@/composables/queries/project-query';
+import EditProjectDialog from '../../views/loggedIn/Project/EditProjectDialog.vue';
+import { usePutProjectQuery } from '@/composables/queries/project-query';
+import type { Project } from '@/stores/project';
 
 const visible = ref(false);
 
@@ -89,15 +98,22 @@ const confirm = useConfirm();
 const toast = useToast();
 
 const props = defineProps({
-    elements: Array,
+    elements: {
+        type: Object as () => ProjectResponse,
+    },
+    error: {
+        type: Object as () => AppError,
+    },
     loading: Boolean // Add this line
 });
 
 const store = useProjectStore();
 // store.setProjects(props.elements);
 
+let project = ref({ ...store.currentProject as Project });
+// let project: any;
 
-const elementToEdit = computed(() => store.currentProject);
+// const elementToEdit = computed(() => store.currentProject);
 
 // function openEditModal(id) {
 //     console.log('Opening edit modal for project:', id);
@@ -105,7 +121,7 @@ const elementToEdit = computed(() => store.currentProject);
 //     // openModals.value.edit = true;
 // }
 
-const onDelete = (id, name) => {
+const onDelete = (id: number, name: string) => {
     confirm.require({
         message: 'Are you sure you want to Delete the Project ' + name + '?',
         header: 'Delete Project',
@@ -137,46 +153,42 @@ const onDelete = (id, name) => {
     });
 };
 
-const onEdit = (id) => {
+const onEdit = (id: number) => {
     store.setCurrentProject(id);
+    project = ref({ ...store.currentProject as Project });
     visible.value = true;
-    console.log('Opening edit modal for project:', id);
-    // confirm.require({
-    //     group: 'templating',
-    //     header: 'Confirmation',
-    //     message: 'Please confirm to proceed moving forward.',
-    //     icon: 'pi pi-exclamation-circle',
-    //     acceptIcon: 'pi pi-check',
-    //     rejectIcon: 'pi pi-times',
-    //     rejectClass: 'p-button-outlined p-button-sm',
-    //     acceptClass: 'p-button-sm',
-    //     rejectLabel: 'Cancel',
-    //     acceptLabel: 'Save',
-    //     accept: () => {
-    //         toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-    //     },
-    //     reject: () => {
-    //         toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-    //     }
-    // });
 };
-// const onEdit = (id, name) => {
-//     confirm.require({
-//         message: 'Are you sure you want to Edit the Project ' + name + '?',
-//         header: 'Edit Project',
-//         icon: 'pi pi-info-circle',
-//         rejectLabel: 'Cancel',
-//         acceptLabel: 'Edit',
-//         rejectClass: 'p-button-secondary p-button-outlined',
-//         acceptClass: 'p-button-danger',
-//         accept: () => {
-//             toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record Edited', life: 3000 });
-//         },
-//         reject: () => {
-//             toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-//         }
-//     });
-// };
+
+function updateProject() {
+    console.log("executed")
+    const { error, isFetching, isReady, state, execute } = usePutProjectQuery({
+        body: {
+            name: project.value.name,
+            version: project.value.version,
+            description: project.value.description,
+            equivalence_required: project.value.equivalence_required!,
+            status_required: project.value.status_required!,
+            id: project.value.id!
+        }
+    });
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully', life: 8000 });
+                store.updateProject(project.value);
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message.toString()}`, life: 8000 });
+                console.log(error.value?.message.toString());
+            }
+        }
+        closeModal();
+    });
+    execute();
+};
+
+function closeModal() {
+    visible.value = false;
+}
 
 </script>
 
@@ -209,34 +221,9 @@ const onEdit = (id) => {
     /* Show the buttons when the card is hovered */
 }
 
-.flex-container {
+.confirm-button-group {
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
-    gap: 8px;
-    /* Adjust gap as needed */
-    margin-top: 16px;
-    /* Adjust margin as needed */
-    width: 100%;
-    /* Ensure the container takes full width */
-}
-
-.flex-row {
-    display: flex;
-    justify-content: space-between;
-    /* Adjusts the space between the items */
-    margin-bottom: 1rem;
-    /* Adds spacing below the row for separation */
-}
-
-.flex-item {
-    flex: 1;
-    /* Allows each item to grow equally */
-    margin-right: 1rem;
-    /* Adds spacing between the flex items */
-}
-
-.flex-item:last-child {
-    margin-right: 0;
-    /* Removes margin from the last item to avoid extra spacing */
 }
 </style>

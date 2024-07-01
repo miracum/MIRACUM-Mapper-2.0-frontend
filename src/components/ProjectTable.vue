@@ -23,7 +23,8 @@
             <tbody>
                 <tr v-for="element in elements" :key="element.Id">
                     <td>
-                        <div class="d-flex justify-content-between align-items-center custom-div"  @click="openProject(element.id)">
+                        <div class="d-flex justify-content-between align-items-center custom-div"
+                            @click="openProject(element.id)">
                             <div class="title">
                                 <h5 class="name-field">{{ element.name }}</h5>
                                 <p class="version">Version : <span class="version-field">{{ element.version
@@ -53,7 +54,7 @@
 </template>
 
 <script setup>
-import EditProject from '../views/loggedIn/Project/EditProject.vue';
+import EditProject from '../views/loggedIn/Project/EditProjectOld.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref, computed } from 'vue';

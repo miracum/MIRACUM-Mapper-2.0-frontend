@@ -5,7 +5,7 @@
     <!-- <Header :buttons="headerButtons" /> -->
 
 
-    <ProjectList :elements="store.projects" :loading="isLoading" />
+    <ProjectList :elements="state" :loading="isFetching" />
     <!-- <DataTableMapping /> -->
     <!-- <div class="container-fluid">
       <main role="main" class="pb-3">
@@ -25,18 +25,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { NavigationFailureType, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useProjectStore } from '@/stores/project';
 // import Header from '@/components/shared/Header.vue';
-import Footer from '@/components/shared/Footer.vue';
-import ProjectTable from '@/components/ProjectTable.vue';
-import LoadingSpinner from '@/components/shared/LoadingSpinner.vue';
+// import Footer from '@/components/shared/Footer.vue';
+// import ProjectTable from '@/components/ProjectTable.vue';
+// import LoadingSpinner from '@/components/shared/LoadingSpinner.vue';
 import MenuHeader from '@/components/shared/MenuHeader.vue';
 import Navigator from '@/components/shared/Navigator.vue';
 import ProjectList from '@/components/shared/ProjectList.vue';
-import DataTableMapping from '@/components/DataTableMapping.vue';
+// import DataTableMapping from '@/components/DataTableMapping.vue';
+import { useProjectQuery } from '@/composables/queries/project-query';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -118,38 +119,51 @@ function logoutAndNavigate() {
   router.push('/');
 }
 
-function fetchProjects() {
-  fetch('http://localhost:8080/projects', {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsibm9ybWFsIl19.rIcV697FIuYDvAm_tWgSEvBUWerzLbmheTsUHgE3zBPsobDE1EpO1ZJkg9_xvjMzayQXL-Sl7-5mGrh7tridNg'
-    }
-  }).then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  }).then(data => {
-    console.log(data);
+const { error, isFetching, isReady, state, execute } = useProjectQuery({
+  params: {
+    query: {
+    },
+  },
+});
 
-    // sleep 3 seconds to simulate loading
-    isLoading.value = false;
 
-    store.setProjects(data);
-    // projectElements.value = data;
+// function fetchProjects() {
+//   fetch('http://localhost:8080/projects', {
+//     method: 'GET',
+//     headers: {
+//       'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsibm9ybWFsIl19.rIcV697FIuYDvAm_tWgSEvBUWerzLbmheTsUHgE3zBPsobDE1EpO1ZJkg9_xvjMzayQXL-Sl7-5mGrh7tridNg'
+//     }
+//   }).then(response => {
+//     if (!response.ok) {
+//       throw new Error('Network response was not ok');
+//     }
+//     return response.json();
+//   }).then(data => {
+//     console.log(data);
 
-    // isLoading.value = false; // Set loading to false once data is loaded
-  }).catch(error => {
-    console.error('There was a problem with your fetch operation:', error);
-    // setTimeout(() => {
+//     // sleep 3 seconds to simulate loading
+//     isLoading.value = false;
 
-    // }, 500);
-    isLoading.value = false;
-  });
-}
+//     store.setProjects(data);
+//     // projectElements.value = data;
+
+//     // isLoading.value = false; // Set loading to false once data is loaded
+//   }).catch(error => {
+//     console.error('There was a problem with your fetch operation:', error);
+//     // setTimeout(() => {
+
+//     // }, 500);
+//     isLoading.value = false;
+//   });
+// }
 
 onMounted(() => {
-  fetchProjects(); // Call fetchProjects when the component mounts
+  execute();
+  watch(state, (newState) => {
+    if (newState && !error.value) {
+      store.setProjects(newState);
+    }
+  });
 });
 </script>
 

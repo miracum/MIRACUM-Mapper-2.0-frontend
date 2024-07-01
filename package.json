@@ -11,13 +11,16 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "openapi-ts": "openapi-ts"
+    "openapi-ts": "openapi-ts",
+    "test:ts": "tsc --noEmit",
+    "generate": "openapi-typescript ./api/openapi.yaml -o ./src/client/types.d.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "bootstrap": "^5.3.3",
+    "openapi-fetch": "^0.10.2",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.0",
@@ -25,7 +28,6 @@
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "^0.48.0",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.14.5",
@@ -36,6 +38,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "npm-run-all2": "^6.2.0",
+    "openapi-typescript": "^7.0.0",
     "prettier": "^3.2.5",
     "typescript": "~5.4.0",
     "unplugin-vue-components": "^0.27.2",
