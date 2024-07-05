@@ -19,6 +19,7 @@ declare module 'vue' {
     DataView: typeof import('primevue/dataview')['default']
     DataViewLayoutOptions: typeof import('primevue/dataviewlayoutoptions')['default']
     Dialog: typeof import('primevue/dialog')['default']
+    Dropdown: typeof import('primevue/dropdown')['default']
     Fieldset: typeof import('primevue/fieldset')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
     Footer: typeof import('./src/components/shared/Footer.vue')['default']

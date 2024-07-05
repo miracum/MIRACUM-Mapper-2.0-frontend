@@ -3,7 +3,7 @@ import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
-import ProjectList from '../views/loggedIn/Project/ProjectList.vue'
+import ProjectList from '../views/loggedIn/Project/ProjectView.vue'
 import MappingView from '../views/loggedIn/MappingView.vue'
 
 // import keycloak from '../keycloak'; // Adjust the path as necessary

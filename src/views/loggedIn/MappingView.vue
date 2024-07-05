@@ -1,27 +1,27 @@
 <template>
-    <div>
-        <Header :buttons="headerButtons" />
-        <div class="container-fluid">
-            <main role="main" class="pb-3">
-                <LoadingSpinner v-if="isLoading" />
-                <MappingTable :mappings="mappings" :project="project" v-else/>
-            </main>
-        </div>
-        <Footer />
+  <div>
+    <Header :buttons="headerButtons" />
+    <div class="container-fluid">
+      <main role="main" class="pb-3">
+        <LoadingSpinner v-if="isLoading" />
+        <MappingTable :mappings="mappings" :project="project" v-else />
+      </main>
     </div>
+    <Footer />
+  </div>
 </template>
 
 <script setup>
 // import EditProjectModal from './EditProjectModal.vue'; //only show modal buttons when hovering over the row
 // import ConfirmDeleteModal from './ConfirmDeleteModal.vue'; //only show modal buttons when hovering over the row
 // import CreateMappingModal from './CreateMappingModal.vue'; //only show modal buttons when hovering over the row
-import LoadingSpinner from '@/components/shared/LoadingSpinner.vue';
+import LoadingSpinner from '@/depricated/LoadingSpinner.vue';
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import MappingTable from '@/components/MappingTable.vue';
-import Header from '@/components/shared/Header.vue';
-import Footer from '@/components/shared/Footer.vue';
+import Header from '@/depricated/Header.vue';
+import Footer from '@/depricated/Footer.vue';
 
 
 const route = useRoute();
@@ -77,7 +77,7 @@ function fetchProjectDetails(projectId) {
     }
   }).then(response => {
     if (!response.ok) {
-        throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok');
     }
     return response.json();
   }).then(data => {
@@ -89,10 +89,10 @@ function fetchProjectDetails(projectId) {
 }
 
 onMounted(() => {
-    if (projectId.value) {
-        fetchProjectDetails(projectId.value);
-        fetchProjectMappings(projectId.value);
-    }
+  if (projectId.value) {
+    fetchProjectDetails(projectId.value);
+    fetchProjectMappings(projectId.value);
+  }
 });
 </script>
 

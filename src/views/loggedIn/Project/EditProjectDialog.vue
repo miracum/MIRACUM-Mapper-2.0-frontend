@@ -1,6 +1,6 @@
 <template>
-    <p>Dialog Visible: {{ props.visible }}</p>
-    <Dialog :visible="props.visible" modal header="Edit Profile" :style="{ width: '30rem' }">
+    <Dialog v-model:visible="localVisible" @update:visible="updateVisible" modal header="Edit Profile"
+        :style="{ width: '30rem' }">
         <span class="p-text-secondary block mb-5">Update your information.</span>
         <div class="flex-row">
             <FloatLabel class="flex-item">
@@ -25,41 +25,58 @@
 
 <script setup lang="ts">
 
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useProjectStore } from '@/stores/project';
 import { usePutProjectQuery } from '@/composables/queries/project-query';
 import { useToast } from "primevue/usetoast";
-// import { equivalence } from "@/client/client-old";
 import type { Project } from '@/stores/project';
-const emit = defineEmits(['close']);
+const emit = defineEmits(['update:visible']);
 
 const props = defineProps({
     visible: Boolean
 });
 
 
-const store = useProjectStore();
-const project = ref({ ...store.currentProject as Project });
-const toast = useToast();
+// Local state mirroring the prop
+const localVisible = ref(props.visible);
 
-const { error, isFetching, isReady, state, execute } = usePutProjectQuery({
-    body: {
-        name: project.value.name,
-        version: project.value.version,
-        description: project.value.description,
-        equivalence_required: project.value.equivalence_required!,
-        status_required: project.value.status_required!,
-        id: project.value.id!
+// Watch for prop changes to update the local state
+watch(() => props.visible, (newVal) => {
+    localVisible.value = newVal;
+});
+
+const store = useProjectStore();
+
+// A ref is used here to because the current project should be a copy of the store project. When editing the current project, the store should not change. But as soon as the user clicks save, the store should be updated with the new project.
+const project = ref({ ...store.currentProject as Project });
+
+watch(localVisible, (newVal) => {
+    if (newVal) {
+        project.value = { ...store.currentProject as Project };
     }
 });
 
+
+const toast = useToast();
+
 function updateProject() {
+    const { error, isFetching, isReady, state, execute } = usePutProjectQuery({
+        body: {
+            name: project.value.name,
+            version: project.value.version,
+            description: project.value.description,
+            equivalence_required: project.value.equivalence_required!,
+            status_required: project.value.status_required!,
+            id: project.value.id!
+        }
+    });
     watch(isFetching, (newVal) => {
         if (!newVal) {
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully' });
+                store.updateProject(project.value);
             } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message}` });
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}` });
             }
             closeModal();
         }
@@ -68,7 +85,11 @@ function updateProject() {
 };
 
 function closeModal() {
-    emit('close');
+    emit('update:visible', false);
+}
+
+function updateVisible(value: boolean) {
+    emit('update:visible', value);
 }
 
 </script>

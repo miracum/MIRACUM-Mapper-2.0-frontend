@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import EditProject from '../views/loggedIn/Project/EditProjectOld.vue';
+import EditProject from '../depricated/EditProjectOld.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faPenToSquare, faTrashCan, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref, computed } from 'vue';

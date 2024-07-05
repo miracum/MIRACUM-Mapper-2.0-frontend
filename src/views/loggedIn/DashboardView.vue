@@ -1,9 +1,10 @@
 <template>
   <MenuHeader :items="menuItems" />
-  <Navigator />
+  <Toast />
+  <ConfirmDialog></ConfirmDialog>
   <div class="padding-all">
     <!-- <Header :buttons="headerButtons" /> -->
-    <Toast />
+
     <RouterView />
     <!-- <ProjectList /> -->
     <!-- <DataTableMapping /> -->
@@ -31,9 +32,9 @@ import { useAuthStore } from '@/stores/auth';
 import { useProjectStore } from '@/stores/project';
 import Toast from 'primevue/toast';
 import MenuHeader from '@/components/shared/MenuHeader.vue';
-import Navigator from '@/components/shared/Navigator.vue';
-import ProjectList from '@/views/loggedIn/Project/ProjectList.vue';
-
+// import Navigator from '@/components/shared/Navigator.vue';
+// import ProjectList from '@/views/loggedIn/Project/ProjectView.vue';
+import ConfirmDialog from 'primevue/confirmdialog';
 const router = useRouter();
 const authStore = useAuthStore();
 const isLoading = ref(true);
