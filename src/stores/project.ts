@@ -6,15 +6,18 @@ import type { components } from '../client/types'
 interface ProjectState {
   projects: Project[]
   currentProject: Project | null
+  currentProjectDetails: ProjectDetails | null
 }
 
 export type Project = components['schemas']['Project']
 export type UpdateProject = components['schemas']['UpdateProject']
+export type ProjectDetails = components['schemas']['ProjectDetails']
 
 export const useProjectStore = defineStore('projects', {
   state: (): ProjectState => ({
     projects: [],
-    currentProject: null
+    currentProject: null,
+    currentProjectDetails: null
   }),
   actions: {
     setProjects(projects: Project[]) {
@@ -22,6 +25,9 @@ export const useProjectStore = defineStore('projects', {
     },
     setCurrentProject(projectId: number) {
       this.currentProject = this.projects.find((p) => p.id === projectId) || null
+    },
+    setCurrentProjectDetails(projectDetails: ProjectDetails) {
+      this.currentProjectDetails = projectDetails
     },
     updateProject(updatedProject: Project) {
       const index = this.projects.findIndex((p) => p.id === updatedProject.id)

@@ -34,6 +34,7 @@ declare module 'vue' {
     InputGroupAddon: typeof import('primevue/inputgroupaddon')['default']
     InputText: typeof import('primevue/inputtext')['default']
     LoadingSpinner: typeof import('./src/components/shared/LoadingSpinner.vue')['default']
+    MappingList: typeof import('./src/components/MappingList.vue')['default']
     MappingTable: typeof import('./src/components/MappingTable.vue')['default']
     Menu: typeof import('./src/components/shared/Menu.vue')['default']
     Menubar: typeof import('primevue/menubar')['default']

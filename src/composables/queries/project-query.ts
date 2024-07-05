@@ -123,3 +123,44 @@ export const useDeleteProjectQuery = (projectId: number) => {
     execute
   }
 }
+
+type ProjectDetailsResponse =
+  paths['/projects/{project_id}']['get']['responses']['200']['content']['application/json']
+
+export const useGetProjectDetailsQuery = (projectId: number) => {
+  const state = ref<ProjectDetailsResponse>()
+  const isReady = ref(false)
+  const isFetching = ref(false)
+  const error = ref<AppError | undefined>(undefined)
+
+  async function execute() {
+    error.value = undefined
+    isReady.value = false
+    isFetching.value = true
+
+    const fetchOptions: ProjectQueryOptions<paths['/projects/{project_id}']['get']> = {
+      params: {
+        path: { project_id: projectId }
+      }
+    }
+
+    const { data, error: fetchError } = await client.GET(`/projects/{project_id}`, fetchOptions)
+
+    if (fetchError) {
+      error.value = { message: fetchError }
+    } else {
+      state.value = data
+      isReady.value = true
+    }
+
+    isFetching.value = false
+  }
+
+  return {
+    state,
+    isReady,
+    isFetching,
+    error,
+    execute
+  }
+}

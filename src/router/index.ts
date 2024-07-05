@@ -29,13 +29,17 @@ const routes = [
   {
     path: '/dashboard',
     component: ProjectList,
-    meta: { requiresAuth: true },
-    children: [
-      { path: 'projects/:projectId/mappings', component: MappingView, meta: { requiresAuth: true } }
-    ]
+    meta: { requiresAuth: true }
+    // children: [
+    //   {
+    //     path: '/projects/:projectId/mappings',
+    //     component: MappingView,
+    //     meta: { requiresAuth: true }
+    //   }
+    // ]
   },
   {
-    path: '/projects/:projectId/mappings',
+    path: '/dashboard/projects/:projectId/mappings',
     name: 'MappingView',
     component: MappingView,
     meta: { requiresAuth: true },

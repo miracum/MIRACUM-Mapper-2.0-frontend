@@ -13,7 +13,7 @@
         <template #list="slotProps">
             <div v-for="(project, index) in slotProps.items" :key="project.id" class="card-spacing"
                 style="margin-bottom: 1rem;">
-                <Card>
+                <Card @click="navigateToProject(project.id)">
                     <template #title>{{ project.name }}</template>
                     <template #subtitle>{{ project.version }}</template>
                     <template #content>
@@ -21,9 +21,9 @@
                             <p class="m-0">{{ project.description }}</p>
                             <div class="card-actions">
                                 <Button label="Edit" icon="pi pi-pencil"
-                                    @click="props.onEdit && props.onEdit(project.id)" outlined></Button>
+                                    @click.stop="props.onEdit && props.onEdit(project.id)" outlined></Button>
                                 <Button label="Delete" icon="pi pi-trash"
-                                    @click="props.onDelete && props.onDelete(project.id, project.name)"
+                                    @click.stop="props.onDelete && props.onDelete(project.id, project.name)"
                                     severity="danger" outlined></Button>
                             </div>
                         </div>
@@ -62,6 +62,7 @@
 import type { ProjectResponse } from '@/composables/queries/project-query';
 import type { PropType } from 'vue';
 import { defineProps, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     data: {
@@ -70,6 +71,13 @@ const props = defineProps({
     onEdit: Function as PropType<(id: number) => void>,
     onDelete: Function as PropType<(id: number, name: string) => void>,
 });
+
+const router = useRouter();
+
+const navigateToProject = (projectId: number) => {
+    console.log('Navigating to project', projectId);
+    router.push(`/dashboard/projects/${projectId}/mappings`);
+};
 
 const sortKey = ref();
 const sortOrder = ref();
@@ -95,7 +103,7 @@ const onSortChange = (event: any) => {
     }
 };
 
-const layout = ref<'grid' | 'list'>('grid');
+const layout = ref<'grid' | 'list'>('list');
 
 </script>
 

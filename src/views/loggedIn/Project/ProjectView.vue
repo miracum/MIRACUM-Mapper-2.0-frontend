@@ -53,12 +53,12 @@ const toast = useToast();
 const visible = ref(false);
 
 onMounted(() => {
-    execute();
     watch(state, (newState) => {
         if (newState && !error.value) {
             store.setProjects(newState);
         }
     });
+    execute();
 });
 
 const { error, isFetching, isReady, state, execute } = useProjectQuery({
