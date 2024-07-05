@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useAuthStore } from './stores/auth';
 import LandingPageView from './views/LandingPageView.vue';
+import DashboardView from './views/loggedIn/DashboardView.vue';
 
 const authStore = useAuthStore();
 </script>
 
 <template>
   <LandingPageView v-if="!authStore.isAuthenticated" />
-  <RouterView v-else />
+  <DashboardView v-else />
 </template>
 
 

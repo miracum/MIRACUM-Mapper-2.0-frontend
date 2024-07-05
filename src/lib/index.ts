@@ -2,7 +2,7 @@ import type { paths } from '../client/types'
 import createClient, { type Middleware } from 'openapi-fetch'
 
 let accessToken: string | undefined =
-  'eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsibm9ybWFsIl19.rIcV697FIuYDvAm_tWgSEvBUWerzLbmheTsUHgE3zBPsobDE1EpO1ZJkg9_xvjMzayQXL-Sl7-5mGrh7tridNg'
+  'eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsiYWRtaW4iXX0.sCmBfqBgu1qDvqUSWvJejMFcgvjfdiy-wFiLDf66LbzBfr97YC88WKCip-ZG0rlD4xI4sIzqVwK-KiZl7dvQvQ'
 
 const authMiddleware: Middleware = {
   async onRequest({ request }) {

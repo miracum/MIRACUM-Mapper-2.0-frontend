@@ -36,7 +36,7 @@ export const useProjectQuery = (fetchOptions: ProjectQueryOptions<paths['/projec
     isFetching.value = false
   }
 
-  execute()
+  // execute()
 
   return {
     state,
@@ -86,7 +86,8 @@ export const usePutProjectQuery = (
   }
 }
 
-type DeleteProjectResponse = paths['/projects/{project_id}']['delete']['responses']['200']['content']['application/json']
+type DeleteProjectResponse =
+  paths['/projects/{project_id}']['delete']['responses']['200']['content']['application/json']
 
 export const useDeleteProjectQuery = (projectId: number) => {
   const isReady = ref(false)
@@ -99,10 +100,10 @@ export const useDeleteProjectQuery = (projectId: number) => {
     isReady.value = false
     isFetching.value = true
 
-    const { error: fetchError } = await client.DELETE("/projects/{project_id}", {
+    const { error: fetchError } = await client.DELETE('/projects/{project_id}', {
       params: {
-        path: { project_id: projectId },
-      },
+        path: { project_id: projectId }
+      }
     })
 
     if (fetchError) {

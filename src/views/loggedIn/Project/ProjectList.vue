@@ -1,5 +1,5 @@
 <template>
-    <Toast />
+    <!-- <Toast /> -->
     <ConfirmDialog></ConfirmDialog>
     <Dialog v-model:visible="visible" modal header="Edit Profile" :style="{ width: '30rem' }">
         <span class="p-text-secondary block mb-5">Update your information.</span>
@@ -23,7 +23,7 @@
         </div>
     </Dialog>
     <!-- Loading State TODO Better align skeletons -->
-    <div v-if="props.loading" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
+    <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
         <Card>
             <template #title>
                 <Skeleton class="w-10rem border-round h-2rem" />
@@ -44,11 +44,10 @@
     </div>
 
     <!-- Error State -->
-    <Message v-if="props.error" severity="danger" :closable="false">{{ props.error.message }}</Message>
+    <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
 
     <!-- Data View -->
-    <DataView v-else-if="props.elements != undefined && props.elements!.length > 0" :value="props.elements" paginator
-        :rows="5">
+    <DataView v-else-if="projects != undefined && projects!.length > 0" :value="projects" paginator :rows="5">
         <template #list="slotProps">
             <div v-for="(project, index) in slotProps.items" :key="index" class="card-spacing"
                 style="margin-bottom: 1rem;">
@@ -82,14 +81,13 @@
 <script setup lang="ts">
 import { useConfirm } from "primevue/useconfirm";
 import { useToast } from "primevue/usetoast";
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useProjectStore } from '@/stores/project';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import { ref, watch } from "vue";
-import type { ProjectResponse, AppError } from '@/composables/queries/project-query';
-import EditProjectDialog from '../../views/loggedIn/Project/EditProjectDialog.vue';
-import { useDeleteProjectQuery, usePutProjectQuery } from '@/composables/queries/project-query';
+import type { AppError } from '@/composables/queries/project-query';
+import { useProjectQuery, useDeleteProjectQuery, usePutProjectQuery } from '@/composables/queries/project-query';
 import type { Project } from '@/stores/project';
 
 const visible = ref(false);
@@ -97,29 +95,37 @@ const visible = ref(false);
 const confirm = useConfirm();
 const toast = useToast();
 
-const props = defineProps({
-    elements: {
-        type: Object as () => ProjectResponse,
+// const props = defineProps({
+//     error: {
+//         type: Object as () => AppError,
+//     },
+//     loading: Boolean // Add this line
+// });
+
+const { error, isFetching, isReady, state, execute } = useProjectQuery({
+    params: {
+        query: {
+        },
     },
-    error: {
-        type: Object as () => AppError,
-    },
-    loading: Boolean // Add this line
+});
+
+onMounted(() => {
+    execute();
+    watch(state, (newState) => {
+        if (newState && !error.value) {
+            store.setProjects(newState);
+        }
+    });
 });
 
 const store = useProjectStore();
-// store.setProjects(props.elements);
 
+// A ref is used here to because the current project should be a copy of the store project. When editing the current project, the store should not change. But as soon as the user clicks save, the store should be updated with the new project.
 let project = ref({ ...store.currentProject as Project });
-// let project: any;
 
-// const elementToEdit = computed(() => store.currentProject);
+// A computed property is used here to get the projects from the store. This is because the store is reactive and the computed property will update when the store updates.
+const projects = computed(() => store.projects);
 
-// function openEditModal(id) {
-//     console.log('Opening edit modal for project:', id);
-//     store.setCurrentProject(id);
-//     // openModals.value.edit = true;
-// }
 
 const onDelete = (id: number, name: string) => {
     confirm.require({
@@ -138,30 +144,14 @@ const onDelete = (id: number, name: string) => {
                         toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
                         store.deleteProject(id);
                     } else {
-                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not deleted Project due to an server error: ${error.value?.message.toString()}`, life: 5000 });
+                        // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
+                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
                         console.log(error.value?.message.toString());
                     }
                 }
                 closeModal();
             });
             execute();
-            // fetch(`http://localhost:8080/projects/${id}`, {
-            //     method: 'DELETE', // Use PUT method to update
-            //     headers: {
-            //         'Content-Type': 'application/json', // Specify JSON content type
-            //         'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsiYWRtaW4iXX0.aDtpbHAIH0jFCUygozLT_kXDFT76Sou3RNOFe3DUeGibUBOtoCXT0lwE0zcnQgN0yoHqsGKNWB9BdUsInT30ww'
-            //     },
-            // }).then(response => {
-            //     if (!response.ok) {
-            //         throw new Error('Network response was not ok');
-            //     }
-            //     return response.json(); // Parse JSON response
-            // }).then(data => {
-            //     store.deleteProject(id);
-            //     toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Project successfully deleted', life: 5000 });
-            // }).catch(error => {
-            //     toast.add({ severity: 'error', summary: 'Error', detail: 'The was a problem deleting the project', life: 5000 });
-            // });
         },
     });
 };
