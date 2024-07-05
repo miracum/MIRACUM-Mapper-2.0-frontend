@@ -1,22 +1,24 @@
 <template>
-    <Dialog v-model:visible="localVisible" @update:visible="updateVisible" modal header="Edit Profile"
-        :style="{ width: '30rem' }">
-        <span class="p-text-secondary block mb-5">Update your information.</span>
-        <div class="flex-row">
-            <FloatLabel class="flex-item">
-                <InputText id="name" v-model="project.name" />
-                <label for="name">Name</label>
-            </FloatLabel>
-            <FloatLabel class="flex-item">
-                <InputText id="version" v-model="project.version" />
-                <label for="version">Version</label>
+    <Dialog v-model:visible="localVisible" @update:visible="updateVisible" modal header="Update Project">
+        <div class="dialog-content">
+            <span class="p-text-secondary block mb-5">Update information about the project</span>
+            <div class="flex-row">
+                <FloatLabel class="flex-item flex-item-name">
+                    <InputText id="name" v-model="project.name" />
+                    <label for="name">Name</label>
+                </FloatLabel>
+                <FloatLabel class="flex-item flex-item-version">
+                    <InputText id="version" v-model="project.version" />
+                    <label for="version">Version</label>
+                </FloatLabel>
+            </div>
+            <FloatLabel class="full-width">
+                <Textarea v-model="project.description" rows="5" cols="30" />
+                <label for="description">Description</label>
             </FloatLabel>
         </div>
-        <FloatLabel>
-            <Textarea v-model="project.description" rows="5" cols="30" />
-            <label for="description">Description</label>
-        </FloatLabel>
-        <div class="flex-container">
+
+        <div class="buttons">
             <Button type="button" label="Cancel" severity="secondary" @click="closeModal"></Button>
             <Button type="button" label="Save" @click="updateProject"></Button>
         </div>
@@ -95,34 +97,51 @@ function updateVisible(value: boolean) {
 </script>
 
 <style scoped>
-.flex-container {
+.dialog-content>*+* {
+    margin-top: 1.5rem;
+    /* Adjust the value as needed */
+}
+
+.flex-item {
+    width: 100%;
+    /* Ensure flex items take up the full width of their container */
+}
+
+.flex-item input {
+    width: 100%;
+    /* Ensure input fields within flex items take up the full width */
+}
+
+.buttons {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    /* Adjust gap as needed */
     margin-top: 16px;
-    /* Adjust margin as needed */
-    width: 100%;
-    /* Ensure the container takes full width */
 }
 
 .flex-row {
     display: flex;
-    justify-content: space-between;
-    /* Adjusts the space between the items */
-    margin-bottom: 1rem;
-    /* Adds spacing below the row for separation */
+    gap: 1rem;
+    /* Adjust the gap between items as needed */
 }
 
-.flex-item {
+.full-width {
+    width: 100%;
+    /* Make the container take up the full width */
+}
+
+.full-width>Textarea {
+    width: 100%;
+    /* Ensure the Textarea expands to fill its container */
+}
+
+.flex-item-name {
+    flex: 3;
+    /* Takes up 2/3rds of the space */
+}
+
+.flex-item-version {
     flex: 1;
-    /* Allows each item to grow equally */
-    margin-right: 1rem;
-    /* Adds spacing between the flex items */
-}
-
-.flex-item:last-child {
-    margin-right: 0;
-    /* Removes margin from the last item to avoid extra spacing */
+    /* Takes up 1/3rd of the space */
 }
 </style>
