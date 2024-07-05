@@ -58,21 +58,16 @@ onMounted(() => {
     executeProjectDetailsQuery();
     executeMappingsQuery();
 
-    watch(projectDetailsIsFetching, () => {
-      if (!projectDetailsIsFetching.value) {
-        watch(mappingsIsFetching, () => {
-          if (!mappingsIsFetching.value) {
-            isLoading.value = false;
-            if (projectDetailsState.value && mappingsState.value) {
-              projectStore.setCurrentProjectDetails(projectDetailsState.value);
-              mappingStore.setMappings(mappingsState.value);
-            }
-          }
-        });
+    watch([projectDetailsIsFetching, mappingsIsFetching], ([newProjectFetching, newMappingsFetching]) => {
+      if (!newProjectFetching && !newMappingsFetching) {
+        isLoading.value = false;
+        if (projectDetailsState.value && mappingsState.value) {
+          projectStore.setCurrentProjectDetails(projectDetailsState.value);
+          mappingStore.setMappings(mappingsState.value);
+        }
       }
     }
     );
-
   } else {
     console.error('Project ID is not a number');
   }

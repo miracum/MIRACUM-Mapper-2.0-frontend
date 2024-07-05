@@ -45,14 +45,14 @@ const menuItems = ref([
   //   label: 'Home',
   //   icon: 'pi pi-home'
   // },
-  {
-    label: 'Add Project',
-    icon: 'pi pi-plus'
-  },
-  {
-    label: 'Import Project',
-    icon: 'pi pi-file-import'
-  },
+  // {
+  //   label: 'Add Project',
+  //   icon: 'pi pi-plus'
+  // },
+  // {
+  //   label: 'Import Project',
+  //   icon: 'pi pi-file-import'
+  // },
   {
     label: 'Settings',
     icon: 'pi pi-cog',

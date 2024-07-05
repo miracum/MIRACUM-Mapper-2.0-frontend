@@ -17,11 +17,14 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { useProjectStore } from "@/stores/project";
 
 const home = ref({
     icon: 'pi pi-home',
     route: '/'
 });
+
+const store = useProjectStore();
 
 const route = useRoute();
 
@@ -31,20 +34,28 @@ const computedNavItems = computed(() => {
     const routeToLabelMap = {
         // '/dashboard': 'Project',
         // '/projects/:projectId/mappings': 'Mappings',
-        '/projects/:projectId/mappings': 'Project'
+        'mappings': 'Project'
     };
 
     // Split the current path and build navigation items
     const pathSegments = route.path.split('/').filter(Boolean); // Remove empty segments
     let currentPath = '';
+    console.log(pathSegments);
     for (const segment of pathSegments) {
         currentPath += `/${segment}`;
-        // Check if the currentPath matches any predefined routes
-        if (routeToLabelMap[currentPath]) {
-            items.push({
-                label: routeToLabelMap[currentPath],
-                route: currentPath
-            });
+        // TODO very bad, just temporary
+        if (routeToLabelMap[segment]) {
+            if (segment === 'mappings') {
+                items.push({
+                    label: store.getProject(Number(pathSegments[2]))?.name,
+                    route: currentPath
+                });
+            } else {
+                items.push({
+                    label: routeToLabelMap[segment],
+                    route: currentPath
+                });
+            }
         }
     }
 

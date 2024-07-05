@@ -9,7 +9,7 @@
     }
     }" -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
-        filterDisplay="row" :globalFilterFields="['status', 'equivalence', 'comment']" responsiveLayout=" scroll"
+        removableSort filterDisplay="row" :globalFilterFields="globalFilterFields" responsiveLayout=" scroll"
         editMode="row" dataKey="id" @row-edit-save="onRowEditSave" v-model:editingRows="editingRows" :pt="{
             table: { style: 'min-width: 10' },
             column: {
@@ -17,13 +17,16 @@
                     style: state['d_editing'] && 'padding-top: 0.6rem; padding-bottom: 0.6rem'
                 })
             }
-        }" :paginator="true" :rows="10"
+        }" :paginator="transformedMappings && transformedMappings.length > 0" :rows="10"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
         <template #header>
-            <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
-            <div class="flex justify-content-end">
+            <div class="flex justify-content-between">
+                <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
+                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
+                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
+                </div>
                 <IconField iconPosition="left">
                     <InputIcon>
                         <i class="pi pi-search" />
@@ -36,7 +39,7 @@
             <Row>
                 <Column v-for="role in props.project.code_system_roles" :colspan="2">
                     <template #header>
-                        <div style="display: flex; gap: 5px;">
+                        <div style="display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
                             <Tag :value="role.type" :severity="getRole(role.type)" />
                             <span class="name">{{ role.system.name }}</span>
                             <span class="code p-text-secondary">{{ role.name }}</span>
@@ -202,6 +205,17 @@ function getOptions(obj: any) {
     return Object.keys(obj).map(key => ({ label: obj[key], value: key }));
 }
 
+
+// TODO when filtering for status or equivalence, filter for the label, not the value
+const globalFilterFields: string[] = [
+    'status',
+    'equivalence',
+    'comment',
+    ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
+];
+
+console.log(globalFilterFields);
+
 // TODO put this in a single map, e.g. active: { label: 'Active', severity: 'success' }
 const statuses = { 'active': "Active", 'inactive': "Inactive", 'pending': "Pending" };
 const statusOptions = ref(getOptions(statuses));
@@ -272,3 +286,22 @@ const projectStore = useProjectStore();
 const mappingStore = useMappingStore();
 
 </script>
+
+<style scoped>
+/* CSS to show the row editor column only on row hover */
+/* .data-table-row:hover .show-on-row-hover {
+    display: block;
+} */
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    /* Ensure flex items are in a row */
+    justify-content: space-between;
+    /* Space between items */
+    align-items: center;
+    /* Align items vertically */
+    width: 100%;
+    /* Ensure the container takes full width */
+}
+</style>

@@ -2,6 +2,7 @@
 // import type { Project } from '@/client/client-old/types.gen'
 import { defineStore } from 'pinia'
 import type { components } from '../client/types'
+import { getProject } from '@/client/client-old'
 
 interface ProjectState {
   projects: Project[]
@@ -37,6 +38,9 @@ export const useProjectStore = defineStore('projects', {
     },
     deleteProject(projectId: number) {
       this.projects = this.projects.filter((p) => p.id !== projectId)
+    },
+    getProject(projectId: number) {
+      return this.projects.find((p) => p.id === projectId)
     }
   }
 })
