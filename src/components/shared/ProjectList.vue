@@ -89,7 +89,7 @@ import Toast from 'primevue/toast';
 import { ref, watch } from "vue";
 import type { ProjectResponse, AppError } from '@/composables/queries/project-query';
 import EditProjectDialog from '../../views/loggedIn/Project/EditProjectDialog.vue';
-import { usePutProjectQuery } from '@/composables/queries/project-query';
+import { useDeleteProjectQuery, usePutProjectQuery } from '@/composables/queries/project-query';
 import type { Project } from '@/stores/project';
 
 const visible = ref(false);
@@ -131,24 +131,37 @@ const onDelete = (id: number, name: string) => {
         rejectClass: 'p-button-secondary p-button-outlined',
         acceptClass: 'p-button-danger',
         accept: () => {
-            fetch(`http://localhost:8080/projects/${id}`, {
-                method: 'DELETE', // Use PUT method to update
-                headers: {
-                    'Content-Type': 'application/json', // Specify JSON content type
-                    'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsiYWRtaW4iXX0.aDtpbHAIH0jFCUygozLT_kXDFT76Sou3RNOFe3DUeGibUBOtoCXT0lwE0zcnQgN0yoHqsGKNWB9BdUsInT30ww'
-                },
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            const { state, isReady, isFetching, error, execute } = useDeleteProjectQuery(id);
+            watch(isFetching, (newVal) => {
+                if (!newVal) {
+                    if (isReady.value) {
+                        toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
+                        store.deleteProject(id);
+                    } else {
+                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not deleted Project due to an server error: ${error.value?.message.toString()}`, life: 5000 });
+                        console.log(error.value?.message.toString());
+                    }
                 }
-                return response.json(); // Parse JSON response
-            }).then(data => {
-                store.deleteProject(id);
-                toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Project successfully deleted', life: 3000 });
-            }).catch(error => {
-                toast.add({ severity: 'error', summary: 'Error', detail: 'The was a problem deleting the project', life: 3000 });
+                closeModal();
             });
-
+            execute();
+            // fetch(`http://localhost:8080/projects/${id}`, {
+            //     method: 'DELETE', // Use PUT method to update
+            //     headers: {
+            //         'Content-Type': 'application/json', // Specify JSON content type
+            //         'Authorization': 'Bearer eyJhbGciOiJFUzI1NiIsImtpZCI6ImZha2Uta2V5LWlkIiwidHlwIjoiSldUIn0.eyJhdWQiOlsiZXhhbXBsZS11c2VycyJdLCJpc3MiOiJmYWtlLWlzc3VlciIsInBlcm0iOlsiYWRtaW4iXX0.aDtpbHAIH0jFCUygozLT_kXDFT76Sou3RNOFe3DUeGibUBOtoCXT0lwE0zcnQgN0yoHqsGKNWB9BdUsInT30ww'
+            //     },
+            // }).then(response => {
+            //     if (!response.ok) {
+            //         throw new Error('Network response was not ok');
+            //     }
+            //     return response.json(); // Parse JSON response
+            // }).then(data => {
+            //     store.deleteProject(id);
+            //     toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Project successfully deleted', life: 5000 });
+            // }).catch(error => {
+            //     toast.add({ severity: 'error', summary: 'Error', detail: 'The was a problem deleting the project', life: 5000 });
+            // });
         },
     });
 };

@@ -47,10 +47,13 @@ export const useProjectQuery = (fetchOptions: ProjectQueryOptions<paths['/projec
   }
 }
 
+type PutProjectResponse =
+  paths['/projects']['put']['responses']['200']['content']['application/json']
+
 export const usePutProjectQuery = (
   fetchOptions: ProjectQueryOptions<paths['/projects']['put']>
 ) => {
-  const state = ref<components['schemas']['Project']>()
+  const state = ref<PutProjectResponse>()
   const isReady = ref(false)
   const isFetching = ref(false)
   const error = ref<AppError | undefined>(undefined)
@@ -83,12 +86,39 @@ export const usePutProjectQuery = (
   }
 }
 
-export const deleteProjectQuery = async (projectId: number) => {
-  const { error: fetchError } = await client.DELETE(`/projects/${projectId}`)
+type DeleteProjectResponse = paths['/projects/{project_id}']['delete']['responses']['200']['content']['application/json']
 
-  if (fetchError) {
-    return { error: { message: fetchError } }
+export const useDeleteProjectQuery = (projectId: number) => {
+  const isReady = ref(false)
+  const isFetching = ref(false)
+  const error = ref<AppError | undefined>(undefined)
+  const state = ref<DeleteProjectResponse>()
+
+  async function execute() {
+    error.value = undefined
+    isReady.value = false
+    isFetching.value = true
+
+    const { error: fetchError } = await client.DELETE("/projects/{project_id}", {
+      params: {
+        path: { project_id: projectId },
+      },
+    })
+
+    if (fetchError) {
+      error.value = { message: fetchError }
+    } else {
+      isReady.value = true
+    }
+
+    isFetching.value = false
   }
 
-  return { error: undefined }
+  return {
+    state,
+    isReady,
+    isFetching,
+    error,
+    execute
+  }
 }

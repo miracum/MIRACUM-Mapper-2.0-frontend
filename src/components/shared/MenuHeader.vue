@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <!-- <div class="card"> -->
         <Menubar :model="items">
             <template #start>
                 <img src="@/assets/logo.png" alt="Logo" width="55" />
@@ -23,7 +23,7 @@
                 </div>
             </template>
         </Menubar>
-    </div>
+    <!-- </div> -->
 </template>
 
 <script setup>
