@@ -75,10 +75,10 @@ function updateProject() {
     watch(isFetching, (newVal) => {
         if (!newVal) {
             if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully' });
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Project updated successfully', life: 5000 });
                 store.updateProject(project.value);
             } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}` });
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
             }
             closeModal();
         }

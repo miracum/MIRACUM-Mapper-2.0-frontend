@@ -8,9 +8,12 @@
     })
     }
     }" -->
+    <!-- v-model:selection="selectedMappings" -->
+    <!-- stateStorage="session" :stateKey="`mapping-${props.project.id}`" -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
-        removableSort filterDisplay="row" :globalFilterFields="globalFilterFields" responsiveLayout=" scroll"
-        editMode="row" dataKey="id" @row-edit-save="onRowEditSave" v-model:editingRows="editingRows" :pt="{
+        removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
+        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave"
+        v-model:editingRows="editingRows" :pt="{
             table: { style: 'min-width: 10' },
             column: {
                 bodycell: ({ state }) => ({
@@ -24,15 +27,17 @@
         <template #header>
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
-                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
                 </div>
-                <IconField iconPosition="left">
-                    <InputIcon>
-                        <i class="pi pi-search" />
-                    </InputIcon>
-                    <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
-                </IconField>
+                <div style="display: flex; gap: 10px;">
+                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
+                    <IconField iconPosition="left">
+                        <InputIcon>
+                            <i class="pi pi-search" />
+                        </InputIcon>
+                        <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
+                    </IconField>
+                </div>
             </div>
         </template>
         <ColumnGroup type="header">
@@ -52,10 +57,17 @@
                     field="equivalence">
                 </Column>
                 <Column header="Comment" :rowspan="2" sortable field="comment" filterField="comment">
-                    <template #filter="{ filterModel, filterCallback }">
-                        <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                            class="p-column-filter" placeholder="Search by comment" />
+                    <template #body="{ data }">
+                        {{ data.comment }}
                     </template>
+                    <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                            placeholder="Search by comment" />
+                    </template>
+                </Column>
+                <Column header="Created" :rowspan="2" sortable field="created">
+                </Column>
+                <Column header="Modified" :rowspan="2" sortable field="modified">
                 </Column>
             </Row>
             <Row>
@@ -65,6 +77,7 @@
                 </template>
             </Row>
         </ColumnGroup>
+        <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
@@ -109,6 +122,16 @@
                 <InputText v-model="data[field]" />
             </template>
         </Column>
+        <Column field="created" dataType="date" sortable>
+            <template #body="{ data }">
+                {{ formatDate(data.created) }}
+            </template>
+        </Column>
+        <Column field="modified" dataType="date" sortable>
+            <template #body="{ data }">
+                {{ formatDate(data.modified) }}
+            </template>
+        </Column>
         <Column :rowEditor="true" style="width: 3%; min-width: 8rem" bodyStyle="text-align:center"></Column>
         <!-- <template v-if="props.mappings.length > 0" v-for="(col, index) in columns" :key="index">
                 <Column :field="col.field" sortable>
@@ -145,6 +168,8 @@ const props = defineProps({
     loading: Boolean
 });
 
+const selectedProducts = ref();
+
 const dt = ref();
 
 const exportCSV = () => {
@@ -157,13 +182,15 @@ const transformedMappings = ref(flattenMappings(props.mappings, props.project.co
 const columns = generateColumns(props.project.code_system_roles);
 
 function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
-    const transformedMappings = [];
+    const transformedMappings: any = [];
     mappings.forEach(mapping => {
-        const flattened = {
+        const flattened: any = {
             comment: mapping.comment,
             status: mapping.status,
             equivalence: mapping.equivalence,
-            id: mapping.id
+            id: mapping.id,
+            created: new Date(mapping.created),
+            modified: new Date(mapping.modified)
         };
 
         roles.forEach(role => {
@@ -201,6 +228,40 @@ function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
     return columns;
 }
 
+const formatDate = (value: Date) => {
+    return value.toLocaleDateString('en-US', {
+        minute: '2-digit',
+        hour: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+};
+
+const filters = ref();
+
+
+const initFilters = () => {
+    filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+        // 'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+        // representative: { value: null, matchMode: FilterMatchMode.IN },
+        // date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+        // balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        // status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+        // activity: { value: [0, 100], matchMode: FilterMatchMode.BETWEEN },
+        // verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+    };
+};
+
+initFilters();
+
+const clearFilter = () => {
+    initFilters();
+};
+
+
 function getOptions(obj: any) {
     return Object.keys(obj).map(key => ({ label: obj[key], value: key }));
 }
@@ -214,7 +275,7 @@ const globalFilterFields: string[] = [
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
 
-console.log(globalFilterFields);
+// console.log(globalFilterFields);
 
 // TODO put this in a single map, e.g. active: { label: 'Active', severity: 'success' }
 const statuses = { 'active': "Active", 'inactive': "Inactive", 'pending': "Pending" };
@@ -264,16 +325,6 @@ const getRole = (role: string) => {
             return 'info';
     }
 }
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    comment: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    // name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    // 'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    // representative: { value: null, matchMode: FilterMatchMode.IN },
-    // status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    // verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-});
 
 const editingRows = ref([]);
 

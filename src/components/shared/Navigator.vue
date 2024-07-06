@@ -40,7 +40,7 @@ const computedNavItems = computed(() => {
     // Split the current path and build navigation items
     const pathSegments = route.path.split('/').filter(Boolean); // Remove empty segments
     let currentPath = '';
-    console.log(pathSegments);
+    // console.log(pathSegments);
     for (const segment of pathSegments) {
         currentPath += `/${segment}`;
         // TODO very bad, just temporary
