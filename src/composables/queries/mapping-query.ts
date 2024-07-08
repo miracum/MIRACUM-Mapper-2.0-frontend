@@ -54,6 +54,46 @@ export const useMappingsQuery = (project_id: number) => {
   }
 }
 
+type DeleteMappingResponse =
+  paths['/projects/{project_id}/mappings/{mapping_id}']['delete']['responses']['200']['content']['application/json']
+
+export const useDeleteMappingQuery = (projectId: number, mappingId: number) => {
+  const isReady = ref(false)
+  const isFetching = ref(false)
+  const error = ref<AppError | undefined>(undefined)
+  const state = ref<DeleteMappingResponse>()
+
+  async function execute() {
+    error.value = undefined
+    isReady.value = false
+    isFetching.value = true
+
+    const { error: fetchError } = await client.DELETE('/projects/{project_id}/mappings/{mapping_id}', {
+      params: {
+        path: { project_id: projectId,
+          mapping_id: mappingId }
+      }
+    })
+
+    if (fetchError) {
+      error.value = { message: fetchError }
+    } else {
+      isReady.value = true
+    }
+
+    isFetching.value = false
+  }
+
+  return {
+    state,
+    isReady,
+    isFetching,
+    error,
+    execute
+  }
+}
+
+
 // type PutProjectResponse =
 //   paths['/projects']['put']['responses']['200']['content']['application/json']
 
@@ -83,44 +123,6 @@ export const useMappingsQuery = (project_id: number) => {
 //   }
 
 //   // execute()
-
-//   return {
-//     state,
-//     isReady,
-//     isFetching,
-//     error,
-//     execute
-//   }
-// }
-
-// type DeleteProjectResponse =
-//   paths['/projects/{project_id}']['delete']['responses']['200']['content']['application/json']
-
-// export const useDeleteProjectQuery = (projectId: number) => {
-//   const isReady = ref(false)
-//   const isFetching = ref(false)
-//   const error = ref<AppError | undefined>(undefined)
-//   const state = ref<DeleteProjectResponse>()
-
-//   async function execute() {
-//     error.value = undefined
-//     isReady.value = false
-//     isFetching.value = true
-
-//     const { error: fetchError } = await client.DELETE('/projects/{project_id}', {
-//       params: {
-//         path: { project_id: projectId }
-//       }
-//     })
-
-//     if (fetchError) {
-//       error.value = { message: fetchError }
-//     } else {
-//       isReady.value = true
-//     }
-
-//     isFetching.value = false
-//   }
 
 //   return {
 //     state,

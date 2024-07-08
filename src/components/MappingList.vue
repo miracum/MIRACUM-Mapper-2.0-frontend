@@ -192,8 +192,9 @@
 <script setup lang='ts'>
 import { useProjectStore } from '@/stores/project';
 import { useMappingStore } from '@/stores/mappings';
+import { useDeleteMappingQuery } from '@composables/queries/mapping-query'
 import type { ProjectDetails, Mapping, FullElement, CodeSystemRole } from '@/client/types.gen';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import Ref from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -239,12 +240,12 @@ const confirmDeleteMapping = (mapping: Mapping) => {
 
 const deleteMapping = () => {
 
-    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(currentMappingToDelete.id);
+    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(projectStore.currentProject?.id, currentMappingToDelete.id);
     watch(isFetching, (newVal) => {
         if (!newVal) {
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
-                mappingStore.deleteMapping(id);
+                mappingStore.deleteMapping(currentMappingToDelete.id);
             } else {
                 // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
