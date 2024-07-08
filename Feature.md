@@ -4,6 +4,9 @@
 
 ### Customization
 
+- [ ] Show amount of mappings in each project in the project list
+- [ ] Show people who have access to each project in the list
+- [ ] Show information about the Code System Roles for each project in the overview (Maybe list of source Role names and target role names)
 - [ ] Table: toggle columns (created, modified) and alow to toggle comments. Advanced: Maybe also allow to select which codeSystemroles to show.
 - [ ] System/Dark/Light Switch
 - [ ] Table: Dont show created and modified by default, but make it customizable to shown them see [Column Toggle](https://v3.primevue.org/datatable/#column_toggle)

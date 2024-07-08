@@ -3,7 +3,7 @@
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
-        :stateKey="`mappings-${props.project.id}`" v-model:editingRows="editingRows"
+        scrollable scrollHeight="1000px" :stateKey="`mappings-${props.project.id}`" v-model:editingRows="editingRows"
         v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {
@@ -23,6 +23,8 @@
                         <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
                             @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
                     </div>
+                    <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
+                        :disabled="!selectedMappings || !selectedMappings.length" />
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
@@ -147,7 +149,7 @@
         <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
             <template #body="slotProps">
                 <Button icon="pi pi-trash" outlined rounded severity="danger"
-                    @click="confirmDeleteProduct(slotProps.data)" />
+                    @click="confirmDeleteMapping(slotProps.data)" />
             </template>
         </Column>
         <!-- <template v-if="props.mappings.length > 0" v-for="(col, index) in columns" :key="index">
@@ -164,13 +166,26 @@
     <Dialog v-model:visible="deleteMappingDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>
+            <!--<span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>-->
+            <span>Are you sure you want to delete this mapping?</span>
         </div>
         <template #footer>
             <Button label="No" icon="pi pi-times" text @click="deleteMappingDialog = false" />
-            <Button label="Yes" icon="pi pi-check" text @click="deleteProduct" />
+            <Button label="Yes" icon="pi pi-check" text @click="deleteMapping" />
         </template>
     </Dialog>
+
+    <Dialog v-model:visible="deleteMappingsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span> Are you sure you want to delete the selected products?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" text @click="deleteMappingsDialog = false" />
+            <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedMappings" />
+        </template>
+    </Dialog>
+
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
 </template>
 
@@ -179,8 +194,12 @@ import { useProjectStore } from '@/stores/project';
 import { useMappingStore } from '@/stores/mappings';
 import type { ProjectDetails, Mapping, FullElement, CodeSystemRole } from '@/client/types.gen';
 import { ref, computed } from 'vue';
+import Ref from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
 
 const props = defineProps({
     mappings: {
@@ -210,6 +229,33 @@ const onToggle = (val) => {
 const selectedMappings = ref();
 
 const deleteMappingDialog = ref(false);
+const deleteMappingsDialog = ref(false);
+
+const currentMappingToDelete: Ref<Mapping> = ref<Mapping>({});
+const confirmDeleteMapping = (mapping: Mapping) => {
+    currentMappingToDelete.value = mapping;
+    deleteMappingDialog.value = true;
+};
+
+const deleteMapping = () => {
+
+    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(currentMappingToDelete.id);
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
+                mappingStore.deleteMapping(id);
+            } else {
+                // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+                console.log(error.value?.message.toString());
+            }
+        }
+    });
+    execute();
+
+    deleteMappingDialog.value = false;
+};
 
 const dt = ref();
 
@@ -269,7 +315,16 @@ function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
     return columns;
 }
 
+const confirmDeleteSelected = () => {
+    deleteMappingsDialog.value = true;
+};
 
+const deleteSelectedMappings = () => {
+    transformedMappings.value = transformedMappings.value.filter(val => !transformedMappings.value.includes(val));
+    deleteMappingsDialog.value = false;
+    selectedMappings.value = null;
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+};
 
 const formatDate = (value: Date) => {
     return value.toLocaleDateString('en-US', {
