@@ -2,7 +2,7 @@
     <EditProjectDialog v-model:visible="visible" />
     <!-- Loading State TODO Better align skeletons -->
     <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
-        <Card>
+        <Card class="card">
             <template #title>
                 <Skeleton class="w-10rem border-round h-2rem" />
             </template>
@@ -107,6 +107,11 @@ const onEdit = (id: number) => {
 </script>
 
 <style>
+.card {
+    background-color: #eff0f1;
+    /* Blue Grey background color */
+}
+
 .card-spacing {
     margin-bottom: 1rem;
     /* Adjust the spacing as needed */

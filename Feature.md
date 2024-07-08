@@ -4,6 +4,7 @@
 
 ### Customization
 
+- [ ] Table: toggle columns (created, modified) and alow to toggle comments. Advanced: Maybe also allow to select which codeSystemroles to show.
 - [ ] System/Dark/Light Switch
 - [ ] Table: Dont show created and modified by default, but make it customizable to shown them see [Column Toggle](https://v3.primevue.org/datatable/#column_toggle)
 - [ ] Allow Rezising of Columns see [Column Resize](https://v3.primevue.org/datatable/#column_resize)

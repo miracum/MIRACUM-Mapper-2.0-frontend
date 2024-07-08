@@ -1,19 +1,10 @@
 <template>
-
-    <!-- v-model:editingRows="editingRows" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" :pt="{
-    table: { style: 'min-width: 50rem' },
-    column: {
-    bodycell: ({ state }) => ({
-    style: state['d_editing'] && 'padding-top: 0.6rem; padding-bottom: 0.6rem'
-    })
-    }
-    }" -->
-    <!-- v-model:selection="selectedMappings" -->
-    <!-- stateStorage="session" :stateKey="`mapping-${props.project.id}`" -->
+    <!--  -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
-        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave"
-        v-model:editingRows="editingRows" :pt="{
+        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
+        :stateKey="`mappings-${props.project.id}`" v-model:editingRows="editingRows"
+        v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {
                 bodycell: ({ state }) => ({
@@ -28,6 +19,10 @@
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
+                    <div style="text-align:left">
+                        <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
+                            @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
+                    </div>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
@@ -42,16 +37,20 @@
         </template>
         <ColumnGroup type="header">
             <Row>
-                <Column v-for="role in props.project.code_system_roles" :colspan="2">
+                <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0"
+                    :exportable="false" :rowspan="2"></Column>
+                <Column v-for="role in props.project.code_system_roles" :colspan="2" class="grid-column-right"
+                    style="border-right: 1px solid #e3e8f0">
                     <template #header>
-                        <div style="display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
+                        <div style=" display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
                             <Tag :value="role.type" :severity="getRole(role.type)" />
                             <span class="name">{{ role.system.name }}</span>
                             <span class="code p-text-secondary">{{ role.name }}</span>
                         </div>
                     </template>
                 </Column>
-                <Column header="Status" v-if="props.project.status_required" :rowspan="2" field="status" sortable>
+                <Column header="Status" v-if="props.project.status_required" :rowspan="2" field="status" sortable
+                    class="grid-column-right">
                 </Column>
                 <Column header="Equivalence" v-if="props.project.equivalence_required" :rowspan="2" sortable
                     field="equivalence">
@@ -65,26 +64,30 @@
                             placeholder="Search by comment" />
                     </template>
                 </Column>
-                <Column header="Created" :rowspan="2" sortable field="created">
+                <Column v-if="selectedColumns.some(col => col.field === 'created')" header="Created" :rowspan="2"
+                    sortable field="created">
                 </Column>
-                <Column header="Modified" :rowspan="2" sortable field="modified">
+                <Column v-if="selectedColumns.some(col => col.field === 'modified')" header="Modified" :rowspan="2"
+                    sortable field="modified">
                 </Column>
             </Row>
             <Row>
                 <template v-for="role in props.project.code_system_roles">
                     <Column header="Code" :field="`code_${role.id}`" sortable></Column>
-                    <Column header="Meaning" :field="`meaning_${role.id}`" sortable></Column>
+                    <Column header="Meaning" :field="`meaning_${role.id}`" sortable
+                        style="border-right: 1px solid #e3e8f0"></Column>
                 </template>
             </Row>
         </ColumnGroup>
-        <!-- <Column selectionMode="multiple" style="width: 3rem" :exportable="false"></Column> -->
+        <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0" :exportable="false">
+        </Column>
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
                     <InputText v-model="data[field]" />
                 </template>
             </Column>
-            <Column :field="`meaning_${role.id}`" sortable>
+            <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
                     <InputText v-model="data[field]" />
                 </template>
@@ -117,32 +120,57 @@
                 </Dropdown>
             </template>
         </Column>
-        <Column field="comment" sortable>
+        <Column field="comment" sortable class="grid-column-right">
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" />
             </template>
         </Column>
-        <Column field="created" dataType="date" sortable>
+        <!--<Column field="created" dataType="date" sortable style="border-right: 1px solid #000000">-->
+        <Column v-if="selectedColumns.some(col => col.field === 'created')" field="created" dataType="date" sortable>
             <template #body="{ data }">
                 {{ formatDate(data.created) }}
             </template>
         </Column>
-        <Column field="modified" dataType="date" sortable>
+        <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" dataType="date" sortable>
             <template #body="{ data }">
                 {{ formatDate(data.modified) }}
+
             </template>
         </Column>
-        <Column :rowEditor="true" style="width: 3%; min-width: 8rem" bodyStyle="text-align:center"></Column>
+        <!-- <Column :exportable="false" style="min-width:8rem">
+            <template #body="slotProps">
+                <Button :rowEditor="true" icon="pi pi-pencil" outlined rounded class="mr-2" />
+            </template>
+        </Column> -->
+        <Column :rowEditor="true" style="width: auto; margin:0; padding:0%" bodyStyle="text-align:center">
+        </Column>
+        <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
+            <template #body="slotProps">
+                <Button icon="pi pi-trash" outlined rounded severity="danger"
+                    @click="confirmDeleteProduct(slotProps.data)" />
+            </template>
+        </Column>
         <!-- <template v-if="props.mappings.length > 0" v-for="(col, index) in columns" :key="index">
                 <Column :field="col.field" sortable>
                     <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" />
+                        <InputText v-model="data[field]" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
                 </template>
                 </Column>
             </template> -->
         <!-- <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
             </Column> -->
     </DataTable>
+    <Dialog v-model:visible="deleteMappingDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
+        <div class="confirmation-content">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            <span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>
+        </div>
+        <template #footer>
+            <Button label="No" icon="pi pi-times" text @click="deleteMappingDialog = false" />
+            <Button label="Yes" icon="pi pi-check" text @click="deleteProduct" />
+        </template>
+    </Dialog>
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
 </template>
 
@@ -168,7 +196,20 @@ const props = defineProps({
     loading: Boolean
 });
 
-const selectedProducts = ref();
+const toggleColumns = ref([
+    { field: 'created', header: 'Created' },
+    { field: 'modified', header: 'Modified' },
+]);
+
+const selectedColumns = ref([]);
+
+const onToggle = (val) => {
+    selectedColumns.value = toggleColumns.value.filter(col => val.includes(col));
+};
+
+const selectedMappings = ref();
+
+const deleteMappingDialog = ref(false);
 
 const dt = ref();
 
@@ -228,6 +269,8 @@ function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
     return columns;
 }
 
+
+
 const formatDate = (value: Date) => {
     return value.toLocaleDateString('en-US', {
         minute: '2-digit',
@@ -239,7 +282,6 @@ const formatDate = (value: Date) => {
 };
 
 const filters = ref();
-
 
 const initFilters = () => {
     filters.value = {
@@ -354,5 +396,9 @@ const mappingStore = useMappingStore();
     /* Align items vertically */
     width: 100%;
     /* Ensure the container takes full width */
+}
+
+.grid-column-right {
+    border-right: 1px solid #bebebe;
 }
 </style>

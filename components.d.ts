@@ -43,6 +43,7 @@ declare module 'vue' {
     MenuHeader: typeof import('./src/components/shared/MenuHeader.vue')['default']
     Message: typeof import('primevue/message')['default']
     Modal: typeof import('./src/components/shared/Modal.vue')['default']
+    MultiSelect: typeof import('primevue/multiselect')['default']
     Navigator: typeof import('./src/components/shared/Navigator.vue')['default']
     ProjectList: typeof import('./src/components/shared/ProjectList.vue')['default']
     ProjectTable: typeof import('./src/components/ProjectTable.vue')['default']

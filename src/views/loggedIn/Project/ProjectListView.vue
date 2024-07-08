@@ -13,7 +13,7 @@
         <template #list="slotProps">
             <div v-for="(project, index) in slotProps.items" :key="project.id" class="card-spacing"
                 style="margin-bottom: 1rem;">
-                <Card @click="navigateToProject(project.id)">
+                <Card @click="navigateToProject(project.id)" class="card">
                     <template #title>{{ project.name }}</template>
                     <template #subtitle>{{ project.version }}</template>
                     <template #content>
@@ -108,6 +108,11 @@ const layout = ref<'grid' | 'list'>('list');
 </script>
 
 <style scoped>
+.card {
+    background-color: #eff0f1;
+    /* Blue Grey background color */
+}
+
 .flex {
     display: flex;
 }
