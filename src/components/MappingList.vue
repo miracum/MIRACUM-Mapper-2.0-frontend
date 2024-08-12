@@ -1,5 +1,4 @@
 <template>
-    <!--  -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
@@ -72,6 +71,10 @@
                 <Column v-if="selectedColumns.some(col => col.field === 'modified')" header="Modified" :rowspan="2"
                     sortable field="modified">
                 </Column>
+                <Column :rowspan="2">
+                </Column>
+                <Column :rowspan="2">
+                </Column>
             </Row>
             <Row>
                 <template v-for="role in props.project.code_system_roles">
@@ -86,12 +89,28 @@
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" />
+                    <AutoComplete v-model="data[field]" optionLabel="code" :suggestions="filteredConcepts"
+                        @complete="(event) => searchCode(event, role.id)">
+                        <template #option="slotProps">
+                            <div class="flex align-options-center flex-column align-left">
+                                <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
+                                <div>{{ slotProps.option.meaning }}</div>
+                            </div>
+                        </template>
+                    </AutoComplete>
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" />
+                    <AutoComplete v-model="data[field]" optionLabel="meaning" :suggestions="filteredConcepts"
+                        @complete="(event) => searchMeaning(event, role.id)">
+                        <template #option="slotProps">
+                            <div class="flex align-options-center flex-column align-left">
+                                <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
+                                <div>{{ slotProps.option.code }}</div>
+                            </div>
+                        </template>
+                    </AutoComplete>
                 </template>
             </Column>
         </template>
@@ -107,7 +126,6 @@
                     </template>
                 </Dropdown>
             </template>
-
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" sortable>
             <template #body="{ data }">
@@ -156,7 +174,7 @@
                 <Column :field="col.field" sortable>
                     <template #editor="{ data, field }">
                         <InputText v-model="data[field]" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
+                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)" />
                 </template>
                 </Column>
             </template> -->
@@ -178,7 +196,7 @@
     <Dialog v-model:visible="deleteMappingsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span> Are you sure you want to delete the selected products?</span>
+            <span> Are you sure you want to delete the selected mappings?</span>
         </div>
         <template #footer>
             <Button label="No" icon="pi pi-times" text @click="deleteMappingsDialog = false" />
@@ -191,13 +209,14 @@
 
 <script setup lang='ts'>
 import { useProjectStore } from '@/stores/project';
+import type { ProjectDetails } from '@/stores/project';
 import { useMappingStore } from '@/stores/mappings';
-import type { ProjectDetails, Mapping, FullElement, CodeSystemRole } from '@/client/types.gen';
-import { ref, computed } from 'vue';
-import Ref from 'vue';
+import type { Mapping, UpdateMapping } from '@/stores/mappings';
+import { ref, computed, watch, reactive } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useToast } from "primevue/usetoast";
+import { useDeleteMappingQuery, useGetConceptsQuery, useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 
 const toast = useToast();
 
@@ -220,6 +239,47 @@ const toggleColumns = ref([
     { field: 'modified', header: 'Modified' },
 ]);
 
+const lookupCodesystemIds: { [key: number]: number } = {};
+const fillLookupCodesystemIds = () => {
+    const roles = props.project.code_system_roles;
+    for (let i = 0; i < roles.length; i++) {
+        lookupCodesystemIds[roles[i].id] = roles[i].system.id;
+    }
+}
+fillLookupCodesystemIds();
+
+const filteredConcepts = ref();
+// const filteredMeanings = ref();
+
+const searchConcept = (code: string | null, meaning: string | null, codeystemRoleId: number) => {
+    if (code?.trim().length && meaning?.trim().length) {
+        filteredConcepts.value = [];
+    } else {
+        const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(lookupCodesystemIds[codeystemRoleId], code, meaning, 5);
+        watch(isFetching, (newVal) => {
+            if (!newVal) {
+                if (isReady.value) {
+                    filteredConcepts.value = state.value?.map(concept => ({ code: concept.code, meaning: concept.meaning, value: concept }));
+                    console.log(state.value);
+                } else {
+                    toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+                    console.log(error.value?.message.toString());
+                }
+            }
+        });
+        execute();
+        // filteredConcepts.value = []; // do search with function from backend
+    }
+}
+
+const searchCode = (event, codeystemRoleId: number) => {
+    searchConcept(event.query.toLowerCase(), null, codeystemRoleId);
+}
+
+const searchMeaning = (event, codeystemRoleId: number) => {
+    searchConcept(null, event.query.toLowerCase(), codeystemRoleId);
+}
+
 const selectedColumns = ref([]);
 
 const onToggle = (val) => {
@@ -231,23 +291,24 @@ const selectedMappings = ref();
 const deleteMappingDialog = ref(false);
 const deleteMappingsDialog = ref(false);
 
-const currentMappingToDelete: Ref<Mapping> = ref<Mapping>({});
-const confirmDeleteMapping = (mapping: Mapping) => {
-    currentMappingToDelete.value = mapping;
+// TODO confirmDeleteMapping saves the current row of the table in currentMappingToDelete, which is of the type that was produced by the flattening process
+let currentMappingToDelete: any;
+const confirmDeleteMapping = (flattened_mapping: any) => {
+    currentMappingToDelete = flattened_mapping;
     deleteMappingDialog.value = true;
 };
 
 const deleteMapping = () => {
-
-    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(currentMappingToDelete.id);
+    // console.log(currentMappingToDelete);
+    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(props.project.id, currentMappingToDelete.id);
     watch(isFetching, (newVal) => {
         if (!newVal) {
             if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
-                mappingStore.deleteMapping(id);
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping successfully deleted', life: 5000 });
+                mappingStore.deleteMapping(currentMappingToDelete.id);
             } else {
                 // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
                 console.log(error.value?.message.toString());
             }
         }
@@ -257,16 +318,55 @@ const deleteMapping = () => {
     deleteMappingDialog.value = false;
 };
 
+
+// TODO mapping is of the type that was produced by the flattening process
+function updateMapping(flattened_mapping: any, index: number) {
+    let updated_mapping: UpdateMapping = {
+        id: flattened_mapping.id,
+        equivalence: flattened_mapping.equivalence,
+        status: flattened_mapping.status,
+        comment: flattened_mapping.comment,
+        elements: [],
+    };
+
+    for (let i = 0; i < props.project.code_system_roles.length; i++) {
+        const code_system_role_id = props.project.code_system_roles[i].id;
+        if (flattened_mapping[`id_${code_system_role_id}`] != null) {
+            updated_mapping.elements!.push({
+                concept: flattened_mapping[`id_${code_system_role_id}`],
+                codeSystemRole: code_system_role_id
+            });
+        }
+    }
+
+    console.log(updated_mapping);
+
+    const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, updated_mapping);
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
+                console.log(state);
+                transformedMappings.value[index] = flattened_mapping;
+                // mappingStore.updateMapping(updated_mapping);
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+            }
+        }
+    });
+    execute();
+}
+
 const dt = ref();
 
 const exportCSV = () => {
     dt.value.exportCSV();
 };
 
-const emptyRow = ref(new Array(1));
+// const emptyRow = ref(new Array(1));
 
 const transformedMappings = ref(flattenMappings(props.mappings, props.project.code_system_roles));
-const columns = generateColumns(props.project.code_system_roles);
+// const columns = generateColumns(props.project.code_system_roles);
 
 function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     const transformedMappings: any = [];
@@ -281,13 +381,15 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
         };
 
         roles.forEach(role => {
-            flattened[`code_${role.id}`] = '';
-            flattened[`meaning_${role.id}`] = '';
-
             const element: FullElement | undefined = mapping.elements.find(el => el.codeSystemRole === role.id);
             if (element) {
                 flattened[`code_${role.id}`] = element.concept.code;
                 flattened[`meaning_${role.id}`] = element.concept.meaning;
+                flattened[`id_${role.id}`] = element.id;
+            } else {
+                flattened[`code_${role.id}`] = '';
+                flattened[`meaning_${role.id}`] = '';
+                flattened[`id_${role.id}`] = null;
             }
         })
         transformedMappings.push(flattened);
@@ -296,24 +398,53 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     return transformedMappings;
 }
 
-function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
-    const columns = [];
+// const state = reactive({
+//     data: {}
+// });
 
-    for (let i = 0; i < codeSystemRoles.length; i++) {
-        columns.push({ field: `code_${codeSystemRoles[i].id}`, header: 'Code' });
-        columns.push({ field: `meaning_${codeSystemRoles[i].id}`, header: 'Meaning' });
-    }
+// const getDataForRole = (role) => {
+//     if (!state.data[role.id]) {
+//         state.data[role.id] = {};
+//     }
+//     return state.data[role.id];
+// };
 
-    if (props.project.status_required) {
-        columns.push({ field: 'status', header: 'Status' });
-    }
-    if (props.project.equivalence_required) {
-        columns.push({ field: 'equivalence', header: 'Equivalence' });
-    }
-    columns.push({ field: 'comment', header: 'Comment' });
+// watch(() => props.project.code_system_roles, (newRoles) => {
+//     newRoles.forEach(role => {
+//         watch(() => data.value[`code_${role.id}`], (newValue) => {
+//             const concept = filteredConcepts.value.find(concept => concept.code === newValue);
+//             if (concept) {
+//                 data.value[`meaning_${role.id}`] = concept.meaning;
+//             }
+//         });
 
-    return columns;
-}
+//         watch(() => data.value[`meaning_${role.id}`], (newValue) => {
+//             const concept = filteredConcepts.value.find(concept => concept.meaning === newValue);
+//             if (concept) {
+//                 data.value[`code_${role.id}`] = concept.code;
+//             }
+//         });
+//     });
+// }, { immediate: true });
+
+// function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
+//     const columns = [];
+
+//     for (let i = 0; i < codeSystemRoles.length; i++) {
+//         columns.push({ field: `code_${codeSystemRoles[i].id}`, header: 'Code' });
+//         columns.push({ field: `meaning_${codeSystemRoles[i].id}`, header: 'Meaning' });
+//     }
+
+//     if (props.project.status_required) {
+//         columns.push({ field: 'status', header: 'Status' });
+//     }
+//     if (props.project.equivalence_required) {
+//         columns.push({ field: 'equivalence', header: 'Equivalence' });
+//     }
+//     columns.push({ field: 'comment', header: 'Comment' });
+
+//     return columns;
+// }
 
 const confirmDeleteSelected = () => {
     deleteMappingsDialog.value = true;
@@ -323,7 +454,7 @@ const deleteSelectedMappings = () => {
     transformedMappings.value = transformedMappings.value.filter(val => !transformedMappings.value.includes(val));
     deleteMappingsDialog.value = false;
     selectedMappings.value = null;
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Successful', detail: 'Mappings Deleted', life: 3000 });
 };
 
 const formatDate = (value: Date) => {
@@ -427,10 +558,11 @@ const editingRows = ref([]);
 
 const onRowEditSave = (event: any) => {
     let { newData, index } = event;
-    transformedMappings.value[index] = newData;
+    updateMapping(newData, index);
+    // transformedMappings.value[index] = newData;
 }
 
-const projectStore = useProjectStore();
+// const projectStore = useProjectStore();
 const mappingStore = useMappingStore();
 
 </script>
@@ -455,5 +587,13 @@ const mappingStore = useMappingStore();
 
 .grid-column-right {
     border-right: 1px solid #bebebe;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.align-left {
+    align-items: flex-start;
 }
 </style>

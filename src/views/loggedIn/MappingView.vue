@@ -28,7 +28,7 @@ import { useMappingStore } from '@/stores/mappings';
 import { useProjectStore } from '@/stores/project';
 import MappingList from '@/components/MappingList.vue';
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
-import { useMappingsQuery } from '@/composables/queries/mapping-query';
+import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
@@ -53,7 +53,7 @@ onMounted(() => {
       isFetching: mappingsIsFetching,
       error: mappingsError,
       execute: executeMappingsQuery
-    } = useMappingsQuery(Number(projectId.value));
+    } = useGetMappingsQuery(Number(projectId.value));
 
     executeProjectDetailsQuery();
     executeMappingsQuery();

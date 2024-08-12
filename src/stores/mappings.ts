@@ -7,6 +7,7 @@ interface MappingState {
 }
 
 export type Mapping = components['schemas']['Mapping']
+export type UpdateMapping = components['schemas']['UpdateMapping']
 
 export const useMappingStore = defineStore('mappings', {
   state: (): MappingState => ({

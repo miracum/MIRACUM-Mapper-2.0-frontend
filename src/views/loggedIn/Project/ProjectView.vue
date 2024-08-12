@@ -41,7 +41,7 @@ import { useToast } from "primevue/usetoast";
 import { computed, onMounted } from 'vue';
 import { useProjectStore } from '@/stores/project';
 import { ref, watch } from "vue";
-import { useProjectQuery, useDeleteProjectQuery, usePutProjectQuery } from '@/composables/queries/project-query';
+import { useProjectQuery, useDeleteProjectQuery } from '@/composables/queries/project-query';
 import EditProjectDialog from "./EditProjectDialog.vue";
 import ProjectListView from "./ProjectListView.vue";
 
