@@ -89,8 +89,13 @@
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
-                    <AutoComplete v-model="data[field]" optionLabel="code" :suggestions="filteredConcepts"
-                        @complete="(event) => searchCode(event, role.id)">
+                    <AutoComplete v-model="data[field]" optionLabel="code" optionValue="code"
+                        :suggestions="filteredConcepts" @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
+                            data[field] = event.value.code;
+                            data[`meaning_${role.id}`] = event.value.meaning; // Set the meaning field
+                            data[`id_${role.id}`] = event.value.id;
+                        }">
+                        <!-- customfunc(event.value, data[field]) -->
                         <template #option="slotProps">
                             <div class="flex align-options-center flex-column align-left">
                                 <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
@@ -102,8 +107,13 @@
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
-                    <AutoComplete v-model="data[field]" optionLabel="meaning" :suggestions="filteredConcepts"
-                        @complete="(event) => searchMeaning(event, role.id)">
+                    <AutoComplete v-model="data[field]" optionLabel="meaning" optionValue="meaning"
+                        :suggestions="filteredConcepts" @complete="(event) => searchMeaning(event, role.id)"
+                        @item-select="(event) => {
+                            data[field] = event.value.meaning;
+                            data[`code_${role.id}`] = event.value.code; // Set the code field
+                            data[`id_${role.id}`] = event.value.id;
+                        }">
                         <template #option="slotProps">
                             <div class="flex align-options-center flex-column align-left">
                                 <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
@@ -259,11 +269,11 @@ const searchConcept = (code: string | null, meaning: string | null, codeystemRol
         watch(isFetching, (newVal) => {
             if (!newVal) {
                 if (isReady.value) {
-                    filteredConcepts.value = state.value?.map(concept => ({ code: concept.code, meaning: concept.meaning, value: concept }));
-                    console.log(state.value);
+                    filteredConcepts.value = state.value;
+                    // console.log(state.value);
                 } else {
                     toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-                    console.log(error.value?.message.toString());
+                    // console.log(error.value?.message.toString());
                 }
             }
         });
@@ -309,7 +319,7 @@ const deleteMapping = () => {
             } else {
                 // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-                console.log(error.value?.message.toString());
+                // console.log(error.value?.message.toString());
             }
         }
     });
@@ -317,6 +327,13 @@ const deleteMapping = () => {
 
     deleteMappingDialog.value = false;
 };
+
+function customfunc(event_value: any, data: any) {
+    console.log("hhhhhhh");
+    console.log(event_value);
+    console.log("iiiiiiii");
+    console.log(data);
+}
 
 
 // TODO mapping is of the type that was produced by the flattening process
@@ -346,7 +363,7 @@ function updateMapping(flattened_mapping: any, index: number) {
         if (!newVal) {
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
-                console.log(state);
+                // console.log(state);
                 transformedMappings.value[index] = flattened_mapping;
                 // mappingStore.updateMapping(updated_mapping);
             } else {
@@ -558,6 +575,7 @@ const editingRows = ref([]);
 
 const onRowEditSave = (event: any) => {
     let { newData, index } = event;
+    console.log(newData);
     updateMapping(newData, index);
     // transformedMappings.value[index] = newData;
 }
