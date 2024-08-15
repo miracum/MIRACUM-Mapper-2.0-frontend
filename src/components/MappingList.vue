@@ -146,11 +146,11 @@
                 <Dropdown v-model="data[field]" :options="statusOptions" optionLabel="label" optionValue="value"
                     placeholder="Select a Status">
                     <template #value="slotProps">
-                        <div v-if="slotProps.value && slotProps.value.value">
-                            <Tag :value="slotProps.value.value" :severity="getStatus(slotProps.value.value)" />
+                        <div v-if="slotProps.value && slotProps.value.label">
+                            <Tag :value="slotProps.value.label" :severity="getStatus(slotProps.value.value)" />
                         </div>
-                        <div v-else-if="slotProps.value && !slotProps.value.value">
-                            <Tag :value="slotProps.value" :severity="getStatus(slotProps.value)" />
+                        <div v-else-if="slotProps.value && !slotProps.value.label">
+                            <Tag :value="statuses[slotProps.value]" :severity="getStatus(slotProps.value)" />
                         </div>
                         <span v-else>
                             {{ slotProps.placeholder }}
@@ -169,6 +169,17 @@
             <template #editor="{ data, field }">
                 <Dropdown v-model="data[field]" :options="equivalenceOptions" optionLabel="label" optionValue="value"
                     placeholder="Select an Equivalence">
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value && slotProps.value.label">
+                            <Tag :value="slotProps.value.label" :severity="getEquivalence(slotProps.value.value)" />
+                        </div>
+                        <div v-else-if="slotProps.value && !slotProps.value.label">
+                            <Tag :value="equivalences[slotProps.value]" :severity="getEquivalence(slotProps.value)" />
+                        </div>
+                        <span v-else>
+                            {{ slotProps.placeholder }}
+                        </span>
+                    </template>
                     <template #option="{ option }">
                         <Tag :value="option.label" :severity="getEquivalence(option.value)" />
                     </template>
@@ -294,7 +305,7 @@
                     <div v-if="slotProps.value && slotProps.value.label">
                         <Tag :value="slotProps.value.label" :severity="getStatus(slotProps.value.value)" />
                     </div>
-                    <div v-else-if="slotProps.value && !slotProps.value.value">
+                    <div v-else-if="slotProps.value && !slotProps.value.label">
                         <Tag :value="slotProps.value" :severity="getStatus(slotProps.value)" />
                     </div>
                     <span v-else>
@@ -315,7 +326,7 @@
                     <div v-if="slotProps.value && slotProps.value.label">
                         <Tag :value="slotProps.value.label" :severity="getEquivalence(slotProps.value.value)" />
                     </div>
-                    <div v-else-if="slotProps.value && !slotProps.value.value">
+                    <div v-else-if="slotProps.value && !slotProps.value.label">
                         <Tag :value="slotProps.value" :severity="getEquivalence(slotProps.value)" />
                     </div>
                     <span v-else>
