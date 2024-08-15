@@ -20,6 +20,7 @@ import './assets/main.css'
 // })
 import 'primevue/resources/primevue.min.css'
 import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primeflex/primeflex.css'
 import PrimeVue from 'primevue/config'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'

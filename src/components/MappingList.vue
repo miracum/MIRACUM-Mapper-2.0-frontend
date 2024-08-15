@@ -15,21 +15,31 @@
         :rowsPerPageOptions="[5, 10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
         <template #header>
-            <div class="flex justify-content-between">
+            <div class="flex justify-content-between" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
-                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
-                    <div style="text-align:left">
-                        <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
-                            @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
-                    </div>
+                    <Button label="Add" icon="pi pi-plus" severity="success" @click="openNewMapping" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                         :disabled="!selectedMappings || !selectedMappings.length" />
                 </div>
                 <div style="display: flex; gap: 10px;">
+                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
+                </div>
+            </div>
+            <div class="flex align-items-center justify-content-between">
+                <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
+                    <!-- <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" /> -->
+                    <h2 class="m-0">Mapping Table</h2>
+                    <div style="text-align:left">
+                        <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
+                            @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
+                    </div>
+
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
                     <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
                     <IconField iconPosition="left">
                         <InputIcon>
-                            <i class="pi pi-search" />
+                            <i class="pi pi-search" style="line-height: 1; vertical-align: middle;" />
                         </InputIcon>
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                     </IconField>
@@ -135,6 +145,17 @@
             <template #editor="{ data, field }">
                 <Dropdown v-model="data[field]" :options="statusOptions" optionLabel="label" optionValue="value"
                     placeholder="Select a Status">
+                    <template #value="slotProps">
+                        <div v-if="slotProps.value && slotProps.value.value">
+                            <Tag :value="slotProps.value.value" :severity="getStatus(slotProps.value.value)" />
+                        </div>
+                        <div v-else-if="slotProps.value && !slotProps.value.value">
+                            <Tag :value="slotProps.value" :severity="getStatus(slotProps.value)" />
+                        </div>
+                        <span v-else>
+                            {{ slotProps.placeholder }}
+                        </span>
+                    </template>
                     <template #option="{ option }">
                         <Tag :value="option.label" :severity="getStatus(option.value)" />
                     </template>
@@ -218,6 +239,106 @@
         </template>
     </Dialog>
 
+    <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping Nina" :modal="true"
+        class="p-fluid">
+        <Fieldset legend="Code Systems" :toggleable="true">
+            <template v-for="role in props.project.code_system_roles">
+                <div style=" display: flex; gap: 5px;">
+                    <Tag :value="role.type" :severity="getRole(role.type)" />
+                    <span class="name">{{ role.system.name }}</span>
+                    <span class="code p-text-secondary">{{ role.name }}</span>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label :for="`code_${role.id}`">Code</label>
+                        <AutoComplete :v-model="`mapping.code_${role.id}`" :suggestions="filteredConcepts"
+                            @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
+                                mapping[`code_${role.id}`] = event.value.code;
+                                mapping[`meaning_${role.id}`] = event.value.meaning; // Set the meaning field
+                                mapping[`id_${role.id}`] = event.value.id;
+                            }">
+                            <template #option="slotProps">
+                                <div class="flex align-options-center flex-column align-left">
+                                    <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
+                                    <div>{{ slotProps.option.meaning }}</div>
+                                </div>
+                            </template>
+                        </AutoComplete>
+                        <!-- <InputText :id="`code_${role.id}`" :v-model="`mapping.code_${role.id}`" required="false" /> -->
+                    </div>
+                    <div class="field col">
+                        <label for="`meaning_${role.id}`">Meaning</label>
+                        <!-- <InputText id="`meaning_${role.id}`" :v-model="`mapping.meaning_${role.id}`" required="false" /> -->
+                        <AutoComplete :v-model="`mapping.meaning_${role.id}`" :suggestions="filteredConcepts"
+                            @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
+                                mapping[`meaning_${role.id}`] = event.value.meaning;
+                                mapping[`code_${role.id}`] = event.value.code; // Set the code field
+                                mapping[`id_${role.id}`] = event.value.id;
+                            }">
+                            <template #option="slotProps">
+                                <div class="flex align options-center flex-column align-left">
+                                    <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
+                                    <div>{{ slotProps.option.code }}</div>
+                                </div>
+                            </template>
+                        </AutoComplete>
+                    </div>
+                </div>
+            </template>
+        </Fieldset>
+
+        <div class="field" v-if="props.project.status_required">
+            <label for="status" class="mb-3">Status</label>
+            <Dropdown id="status" v-model="mapping.status" :options="statusOptions" placeholder="Select a Status">
+                <template #value="slotProps">
+                    <div v-if="slotProps.value && slotProps.value.label">
+                        <Tag :value="slotProps.value.label" :severity="getStatus(slotProps.value.value)" />
+                    </div>
+                    <div v-else-if="slotProps.value && !slotProps.value.value">
+                        <Tag :value="slotProps.value" :severity="getStatus(slotProps.value)" />
+                    </div>
+                    <span v-else>
+                        {{ slotProps.placeholder }}
+                    </span>
+                </template>
+                <template #option="{ option }">
+                    <Tag :value="option.label" :severity="getStatus(option.value)" />
+                </template>
+            </Dropdown>
+        </div>
+
+        <div class="field" v-if="props.project.equivalence_required">
+            <label for="equivalence" class="mb-3">Equivalence</label>
+            <Dropdown id="equivalence" v-model="mapping.equivalence" :options="equivalenceOptions"
+                placeholder="Select the equivalence">
+                <template #value="slotProps">
+                    <div v-if="slotProps.value && slotProps.value.label">
+                        <Tag :value="slotProps.value.label" :severity="getEquivalence(slotProps.value.value)" />
+                    </div>
+                    <div v-else-if="slotProps.value && !slotProps.value.value">
+                        <Tag :value="slotProps.value" :severity="getEquivalence(slotProps.value)" />
+                    </div>
+                    <span v-else>
+                        {{ slotProps.placeholder }}
+                    </span>
+                </template>
+                <template #option="{ option }">
+                    <Tag :value="option.label" :severity="getEquivalence(option.value)" />
+                </template>
+            </Dropdown>
+        </div>
+
+        <div class="field">
+            <label for="comment">Comment</label>
+            <InputText id="comment" v-model="mapping.comment" required="false" />
+        </div>
+
+        <template #footer>
+            <Button label="Cancel" icon="pi pi-times" text @click="hideMappingDialog" />
+            <Button label="Save" icon="pi pi-check" text @click="saveMapping" />
+        </template>
+    </Dialog>
+
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
 </template>
 
@@ -231,6 +352,9 @@ import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useToast } from "primevue/usetoast";
 import { useDeleteMappingQuery, useGetConceptsQuery, useUpdateMappingQuery } from '@/composables/queries/mapping-query';
+
+// TODO DropDowns für Status und Equivalence in eigene wiederverwnedbare Komponente
+// Autocomplete für Code und Meaning in eigene wiederverwendbare Komponente
 
 const toast = useToast();
 
@@ -247,6 +371,37 @@ const props = defineProps({
     // project: ProjectDetails,
     loading: Boolean
 });
+
+const mappingDialog = ref(false);
+
+const mapping = ref({});
+
+const submitted = ref(false);
+
+const openNewMapping = () => {
+    mapping.value = {};
+    submitted.value = false;
+    mappingDialog.value = true;
+};
+
+const hideMappingDialog = () => {
+    mappingDialog.value = false;
+    submitted.value = false;
+};
+
+const saveMapping = () => {
+    submitted.value = true;
+    mappingDialog.value = false;
+    mapping.value = {};
+    // TODO
+    console.log(mapping.value)
+    transformedMappings.value.push(mapping.value);
+};
+
+const openEditMapping = (mapping) => {
+    mapping.value = { ...mapping };
+    mappingDialog.value = true;
+};
 
 const toggleColumns = ref([
     { field: 'created', header: 'Created' },
