@@ -4,7 +4,7 @@
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
         scrollable scrollHeight="1000px" :stateKey="`mappings-${props.project.id}`" v-model:editingRows="editingRows"
         v-model:selection="selectedMappings" :pt="{
-            table: { style: 'min-width: 10' },
+            table: { style: 'min-width: 10' }, // TODO what does this do?
             column: {
                 bodycell: ({ state }) => ({
                     style: state['d_editing'] && 'padding-top: 0.6rem; padding-bottom: 0.6rem'
@@ -89,13 +89,13 @@
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
-                    <AutoComplete v-model="data[field]" optionLabel="code" optionValue="code"
-                        :suggestions="filteredConcepts" @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
+                    <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
+                        @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
+                            console.log(data);
                             data[field] = event.value.code;
                             data[`meaning_${role.id}`] = event.value.meaning; // Set the meaning field
                             data[`id_${role.id}`] = event.value.id;
                         }">
-                        <!-- customfunc(event.value, data[field]) -->
                         <template #option="slotProps">
                             <div class="flex align-options-center flex-column align-left">
                                 <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
@@ -107,9 +107,8 @@
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
-                    <AutoComplete v-model="data[field]" optionLabel="meaning" optionValue="meaning"
-                        :suggestions="filteredConcepts" @complete="(event) => searchMeaning(event, role.id)"
-                        @item-select="(event) => {
+                    <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
+                        @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
                             data[field] = event.value.meaning;
                             data[`code_${role.id}`] = event.value.code; // Set the code field
                             data[`id_${role.id}`] = event.value.id;
@@ -123,6 +122,11 @@
                     </AutoComplete>
                 </template>
             </Column>
+            <!-- <Column :field="`id_${role.id}`" v-show="false">
+                <template #editor="{ data, field }">
+                    <InputText v-model="data[field]" />
+                </template>
+            </Column> -->
         </template>
         <Column v-if="props.project.status_required" field="status" sortable>
             <template #body="{ data }">
@@ -328,13 +332,6 @@ const deleteMapping = () => {
     deleteMappingDialog.value = false;
 };
 
-function customfunc(event_value: any, data: any) {
-    console.log("hhhhhhh");
-    console.log(event_value);
-    console.log("iiiiiiii");
-    console.log(data);
-}
-
 
 // TODO mapping is of the type that was produced by the flattening process
 function updateMapping(flattened_mapping: any, index: number) {
@@ -356,6 +353,7 @@ function updateMapping(flattened_mapping: any, index: number) {
         }
     }
 
+    console.log("log from update_mapping");
     console.log(updated_mapping);
 
     const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, updated_mapping);
@@ -402,7 +400,7 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
             if (element) {
                 flattened[`code_${role.id}`] = element.concept.code;
                 flattened[`meaning_${role.id}`] = element.concept.meaning;
-                flattened[`id_${role.id}`] = element.id;
+                flattened[`id_${role.id}`] = element.concept.id;
             } else {
                 flattened[`code_${role.id}`] = '';
                 flattened[`meaning_${role.id}`] = '';
@@ -575,9 +573,10 @@ const editingRows = ref([]);
 
 const onRowEditSave = (event: any) => {
     let { newData, index } = event;
+    console.log("log from onroweditsave");
     console.log(newData);
     updateMapping(newData, index);
-    // transformedMappings.value[index] = newData;
+    //ransformedMappings.value[index] = newData;
 }
 
 // const projectStore = useProjectStore();
