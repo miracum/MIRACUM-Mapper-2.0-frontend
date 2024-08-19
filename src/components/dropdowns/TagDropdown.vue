@@ -1,10 +1,10 @@
 <template>
     <Dropdown :id="props.id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
-        :options="props.options" :placeholder="props.placeholder" :optionLabel="props.optionLabel"
-        :optionValue="props.optionValue">
+        :options="props.options" :placeholder="props.placeholder" optionLabel="label" optionValue="value">
         <template #value="slotProps">
             <div v-if="slotProps.value">
-                <Tag :value="getLabel(slotProps.value)" :severity="getSeverity(slotProps.value)" />
+                <Tag :value="getLabel(props.options, slotProps.value)"
+                    :severity="getSeverity(props.options, slotProps.value)" />
             </div>
             <span v-else>
                 {{ slotProps.placeholder }}
@@ -17,9 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import type { DropdownElement } from '@/composables/utils';
+import type { DropdownElement } from '../../utils/dropdownElement';
 import { defineProps, ref, watch, defineEmits } from 'vue';
 import type { PropType } from 'vue';
+import { getLabel, getSeverity } from '@/utils/dropdownElement';
 
 const props = defineProps({
     id: {
@@ -27,19 +28,11 @@ const props = defineProps({
         default: null
     },
     modelValue: {
-        type: String,
+        type: [String, null] as PropType<string | null>,
         required: true
     },
     options: {
         type: Array as PropType<DropdownElement[]>,
-        required: true
-    },
-    optionLabel: {
-        type: String,
-        required: true
-    },
-    optionValue: {
-        type: String,
         required: true
     },
     placeholder: {
@@ -55,14 +48,6 @@ const props = defineProps({
         default: false
     }
 });
-
-const getSeverity = (value: string): string => {
-    return props.options.find((element) => element.value === value)?.severity || '';
-};
-
-const getLabel = (value: string): string => {
-    return props.options.find((element) => element.value === value)?.label || '';
-};
 
 const emit = defineEmits(['update:modelValue']);
 

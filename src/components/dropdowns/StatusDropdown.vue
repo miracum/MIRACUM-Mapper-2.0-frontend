@@ -1,12 +1,13 @@
 <template>
     <DropdownTag :id="id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
-        :options="equivalenceDropdownElements" :placeholder="placeholder" optionLabel="label" optionValue="value" />
+        :options="statusElements" :placeholder="placeholder" optionLabel="label" optionValue="value" />
 </template>
 
 <script setup lang="ts">
 import { defineProps, ref, watch, defineEmits } from 'vue';
-import DropdownTag from '@/components/dropdowns/DropdownTag.vue';
-import type { DropdownElement } from '@/composables/utils';
+import DropdownTag from '@/components/dropdowns/TagDropdown.vue';
+import type { PropType } from 'vue';
+import { statusElements } from '../../utils/dropdownElement';
 
 const props = defineProps({
     id: {
@@ -14,7 +15,7 @@ const props = defineProps({
         default: null
     },
     modelValue: {
-        type: String,
+        type: [String, null] as PropType<string | null>,
         required: true
     },
     required: {
@@ -39,11 +40,4 @@ watch(localModelValue, (newValue) => {
     emit('update:modelValue', newValue);
 });
 
-const equivalenceDropdownElements: DropdownElement[] = [
-    { label: 'Related To', value: 'related-to', severity: 'info' },
-    { label: 'Equivalent', value: 'equivalent', severity: 'success' },
-    { label: 'Narrower', value: 'source-is-narrower-than-target', severity: 'warning' },
-    { label: 'Broader', value: 'source-is-broader-than-target', severity: 'warning' },
-    { label: 'Not Related', value: 'not-related', severity: 'danger' }
-];
 </script>

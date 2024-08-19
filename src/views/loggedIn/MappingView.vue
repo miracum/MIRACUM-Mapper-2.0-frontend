@@ -26,7 +26,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted, watch } from 'vue';
 import { useMappingStore } from '@/stores/mappings';
 import { useProjectStore } from '@/stores/project';
-import MappingList from '@/components/MappingList.vue';
+import MappingList from '@/components/mappingList/MappingList.vue';
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 

@@ -53,9 +53,7 @@
                     style="border-right: 1px solid #e3e8f0">
                     <template #header>
                         <div style=" display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
-                            <Tag :value="role.type" :severity="getRole(role.type)" />
-                            <span class="name">{{ role.system.name }}</span>
-                            <span class="code p-text-secondary">{{ role.name }}</span>
+                            <CodeSystemRole :role="role" />
                         </div>
                     </template>
                 </Column>
@@ -98,6 +96,7 @@
         <template v-for="role in props.project.code_system_roles">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
+                    <!-- TODO: In eigene Komponente. -->
                     <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
                         @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
                             console.log(data);
@@ -116,6 +115,7 @@
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
+                    <!-- TODO: In eigene Komponente. -->
                     <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
                         @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
                             data[field] = event.value.meaning;
@@ -139,53 +139,18 @@
         </template>
         <Column v-if="props.project.status_required" field="status" sortable>
             <template #body="{ data }">
-                <Tag :value="statuses[data.status]" :severity="getStatus(data.status)" />
+                <StatusTag :value="data.status" />
             </template>
             <template #editor="{ data, field }">
-                <!-- <Dropdown v-model="data[field]" :options="statusOptions" optionLabel="label" optionValue="value"
-                    placeholder="no status selected">
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value && slotProps.value.label">
-                            <Tag :value="slotProps.value.label" :severity="getStatus(slotProps.value.value)" />
-                        </div>
-                        <div v-if="slotProps.value && !slotProps.value.label">
-                            <Tag :value="statuses[slotProps.value]" :severity="getStatus(slotProps.value)" />
-                        </div>
-                        <span v-else>
-                            {{ slotProps.placeholder }}
-                        </span>
-                    </template>
-    <template #option="{ option }">
-                        <Tag :value="option.label" :severity="getStatus(option.value)" />
-                    </template>
-    </Dropdown> -->
-                <DropdownStatus v-model="data[field]" />
-
+                <StatusDropdown v-model="data[field]" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" sortable>
             <template #body="{ data }">
-                <Tag :value="equivalences[data.equivalence]" :severity="getEquivalence(data.equivalence)" />
+                <EquivalenceTag :value="data.equivalence" />
             </template>
             <template #editor="{ data, field }">
-                <!-- <Dropdown v-model="data[field]" :options="equivalenceOptions" optionLabel="label" optionValue="value"
-                    placeholder="no equivalence selected">
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value && slotProps.value.label">
-                            <Tag :value="slotProps.value.label" :severity="getEquivalence(slotProps.value.value)" />
-                        </div>
-                        <div v-if="slotProps.value && !slotProps.value.label">
-                            <Tag :value="equivalences[slotProps.value]" :severity="getEquivalence(slotProps.value)" />
-                        </div>
-                        <span v-else>
-                            {{ slotProps.placeholder }}
-                        </span>
-                    </template>
-    <template #option="{ option }">
-                        <Tag :value="option.label" :severity="getEquivalence(option.value)" />
-                    </template>
-    </Dropdown> -->
-                <DropdownEquivalence v-model="data[field]" />
+                <EquivalenceDropdown v-model="data[field]" />
             </template>
         </Column>
         <Column field="comment" sortable class="grid-column-right">
@@ -193,23 +158,16 @@
                 <InputText v-model="data[field]" />
             </template>
         </Column>
-        <!--<Column field="created" dataType="date" sortable style="border-right: 1px solid #000000">-->
         <Column v-if="selectedColumns.some(col => col.field === 'created')" field="created" dataType="date" sortable>
             <template #body="{ data }">
-                {{ formatDate(data.created) }}
+                <DateFormat :value="data.created" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" dataType="date" sortable>
             <template #body="{ data }">
-                {{ formatDate(data.modified) }}
-
+                <DateFormat :value="data.modified" />
             </template>
         </Column>
-        <!-- <Column :exportable="false" style="min-width:8rem">
-            <template #body="slotProps">
-                <Button :rowEditor="true" icon="pi pi-pencil" outlined rounded class="mr-2" />
-            </template>
-        </Column> -->
         <Column :rowEditor="true" style="width: auto; margin:0; padding:0%" bodyStyle="text-align:center">
         </Column>
         <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
@@ -219,17 +177,9 @@
                     @click="confirmDeleteMapping(slotProps.data)" />
             </template>
         </Column>
-        <!-- <template v-if="props.mappings.length > 0" v-for="(col, index) in columns" :key="index">
-                <Column :field="col.field" sortable>
-                    <template #editor="{ data, field }">
-                        <InputText v-model="data[field]" />
-                        <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)" />
-                </template>
-                </Column>
-            </template> -->
-        <!-- <Column :rowEditor="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center">
-            </Column> -->
     </DataTable>
+
+    <!-- TODO: In componente auslagern (DeleteMappingDialog.vue) -->
     <Dialog v-model:visible="deleteMappingDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -242,6 +192,7 @@
         </template>
     </Dialog>
 
+    <!-- TODO:  In componente auslagern (DeleteMappingDialog.vue, diese konfigurierbar für ein oder viele Mappings machen. Vielleicht einfach entweder ein mapping oder eine liste übergeben und abhängig davon Dialog) -->
     <Dialog v-model:visible="deleteMappingsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
         <div class="confirmation-content">
             <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -253,19 +204,17 @@
         </template>
     </Dialog>
 
+    <!-- TODO: in Mappingdialog Komponente verschieben-->
     <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" :modal="true"
         class="p-fluid">
         <Fieldset legend="Code Systems" :toggleable="true">
             <template v-for="role in props.project.code_system_roles">
                 <div style="margin-top: 10px;">
-                    <div style=" display: flex; gap: 5px;">
-                        <Tag :value="role.type" :severity="getRole(role.type)" />
-                        <span class="name">{{ role.system.name }}</span>
-                        <span class="code p-text-secondary">{{ role.name }}</span>
-                    </div>
+                    <CodeSystemRole :role="role" />
                     <div class="formgrid grid">
                         <div class="field col">
                             <label :for="`code_${role.id}`">Code</label>
+                            <!-- TODO: In eigene Komponente. AutoComplete wird vielleicht noch an einer anderne Stelle (z.B. Suche der Nutzer um Projkete anzulegen) benötigt. Daher erst generischere Komponente anlegen, welche dann weiderum die AutoComplete Nutzersuche und CodeMeaning Suche nutzen-->
                             <AutoComplete v-model="mapping['code_' + role.id]" :suggestions="filteredConcepts"
                                 field="code" @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
                                     mapping[`code_${role.id}`] = event.value.code;
@@ -280,11 +229,10 @@
                                     </div>
                                 </template>
                             </AutoComplete>
-                            <!-- <InputText :id="`code_${role.id}`" :v-model="`mapping.code_${role.id}`" required="false" /> -->
                         </div>
                         <div class="field col">
                             <label for="`meaning_${role.id}`">Meaning</label>
-                            <!-- <InputText id="`meaning_${role.id}`" :v-model="`mapping.meaning_${role.id}`" required="false" /> -->
+                            <!-- TODO: In eigene Komponente. -->
                             <AutoComplete v-model="mapping['meaning_' + role.id]" :suggestions="filteredConcepts"
                                 field="meaning" @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
                                     mapping[`meaning_${role.id}`] = event.value.meaning;
@@ -308,49 +256,14 @@
         <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px; width: 100%;">
             <div class="field" style="flex: 1;" v-if="props.project.status_required">
                 <label for="status" class="mb-3">Status</label>
-                <!-- <Dropdown id="status" required="true" :invalid="submitted && !mapping.status" v-model="mapping.status"
-                    :options="statusOptions" placeholder="Select a Status" optionLabel="label" optionValue="value">
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value && slotProps.value.value">
-                            <Tag :value="slotProps.value.value" :severity="getStatus(slotProps.value.value)" />
-                        </div>
-                        <div v-else-if="slotProps.value && !slotProps.value.value">
-                            <Tag :value="slotProps.value" :severity="getStatus(slotProps.value)" />
-                        </div>
-                        <span v-else>
-                            {{ slotProps.placeholder }}
-                        </span>
-                    </template>
-                    <template #option="{ option }">
-                        <Tag :value="option.label" :severity="getStatus(option.value)" />
-                    </template>
-                </Dropdown> -->
-                <DropdownStatus v-model="mapping.status" :required="true" :invalid="submitted && !mapping.status"
+                <StatusDropdown v-model="mapping.status" :required="true" :invalid="submitted && !mapping.status"
                     placeholder="Select a Status" />
                 <small class="p-error" v-if="submitted && !mapping.status">Status is required.</small>
             </div>
 
             <div class="field" style="flex: 1;" v-if="props.project.equivalence_required">
                 <label for="equivalence" class="mb-3">Equivalence</label>
-                <!-- <Dropdown id="equivalence" required="true" :invalid="submitted && !mapping.equivalence"
-                    v-model="mapping.equivalence" :options="equivalenceOptions" placeholder="Select the equivalence"
-                    optionLabel="label" optionValue="value">
-                    <template #value="slotProps">
-                        <div v-if="slotProps.value && slotProps.value.label">
-                            <Tag :value="slotProps.value.label" :severity="getEquivalence(slotProps.value.value)" />
-                        </div>
-                        <div v-else-if="slotProps.value && !slotProps.value.label">
-                            <Tag :value="slotProps.value" :severity="getEquivalence(slotProps.value)" />
-                        </div>
-                        <span v-else>
-                            {{ slotProps.placeholder }}
-                        </span>
-                    </template>
-                    <template #option="{ option }">
-                        <Tag :value="option.label" :severity="getEquivalence(option.value)" />
-                    </template>
-                </Dropdown> -->
-                <DropdownEquivalence v-model="mapping.equivalence" :required="true"
+                <EquivalenceDropdown v-model="mapping.equivalence" :required="true"
                     :invalid="submitted && !mapping.equivalence" placeholder="Select the equivalence" />
                 <small class="p-error" v-if="submitted && !mapping.equivalence">Equivalence is required.</small>
             </div>
@@ -380,8 +293,12 @@ import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useToast } from "primevue/usetoast";
 import { useDeleteMappingQuery, useGetConceptsQuery, useUpdateMappingQuery } from '@/composables/queries/mapping-query';
-import DropdownStatus from "@/components/dropdowns/DropdownStatus.vue"
-import DropdownEquivalence from "@/components/dropdowns/DropdownEquivalence.vue"
+import StatusTag from '../tags/StatusTag.vue';
+import EquivalenceTag from '../tags/EquivalenceTag.vue';
+import StatusDropdown from '@/components/dropdowns/StatusDropdown.vue';
+import EquivalenceDropdown from "@/components/dropdowns/EquivalenceDropdown.vue"
+import DateFormat from '../DateFormat.vue';
+import CodeSystemRole from './CodeSystemRole.vue';
 
 // TODO DropDowns für Status und Equivalence in eigene wiederverwnedbare Komponente
 // Autocomplete für Code und Meaning in eigene wiederverwendbare Komponente
@@ -404,12 +321,18 @@ const props = defineProps({
 
 const mappingDialog = ref(false);
 
-const mapping = ref({});
+const mapping = ref({
+    equivalence: null,
+    status: null,
+});
 
 const submitted = ref(false);
 
 const openNewMapping = () => {
-    mapping.value = {};
+    mapping.value = {
+        equivalence: null,
+        status: null,
+    };
     submitted.value = false;
     mappingDialog.value = true;
 };
@@ -418,21 +341,6 @@ const hideMappingDialog = () => {
     mappingDialog.value = false;
     submitted.value = false;
 };
-
-// const getMappingValue = (type: string, roleId: string): any => {
-//     return computed({
-//         get: () => {
-//             console.log("set");
-//             console.log(mapping.value);
-//             mapping.value[`${type}_${roleId}`]
-//         },
-//         set: (value) => {
-//             console.log("get");
-//             console.log(mapping.value);
-//             mapping.value[`${type}_${roleId}`] = value;
-//         }
-//     });
-// };
 
 const saveMapping = () => {
     submitted.value = true;
@@ -620,54 +528,6 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     return transformedMappings;
 }
 
-// const state = reactive({
-//     data: {}
-// });
-
-// const getDataForRole = (role) => {
-//     if (!state.data[role.id]) {
-//         state.data[role.id] = {};
-//     }
-//     return state.data[role.id];
-// };
-
-// watch(() => props.project.code_system_roles, (newRoles) => {
-//     newRoles.forEach(role => {
-//         watch(() => data.value[`code_${role.id}`], (newValue) => {
-//             const concept = filteredConcepts.value.find(concept => concept.code === newValue);
-//             if (concept) {
-//                 data.value[`meaning_${role.id}`] = concept.meaning;
-//             }
-//         });
-
-//         watch(() => data.value[`meaning_${role.id}`], (newValue) => {
-//             const concept = filteredConcepts.value.find(concept => concept.meaning === newValue);
-//             if (concept) {
-//                 data.value[`code_${role.id}`] = concept.code;
-//             }
-//         });
-//     });
-// }, { immediate: true });
-
-// function generateColumns(codeSystemRoles: CodeSystemRole[]): any[] {
-//     const columns = [];
-
-//     for (let i = 0; i < codeSystemRoles.length; i++) {
-//         columns.push({ field: `code_${codeSystemRoles[i].id}`, header: 'Code' });
-//         columns.push({ field: `meaning_${codeSystemRoles[i].id}`, header: 'Meaning' });
-//     }
-
-//     if (props.project.status_required) {
-//         columns.push({ field: 'status', header: 'Status' });
-//     }
-//     if (props.project.equivalence_required) {
-//         columns.push({ field: 'equivalence', header: 'Equivalence' });
-//     }
-//     columns.push({ field: 'comment', header: 'Comment' });
-
-//     return columns;
-// }
-
 const confirmDeleteSelected = () => {
     deleteMappingsDialog.value = true;
 };
@@ -677,16 +537,6 @@ const deleteSelectedMappings = () => {
     deleteMappingsDialog.value = false;
     selectedMappings.value = null;
     toast.add({ severity: 'success', summary: 'Successful', detail: 'Mappings Deleted', life: 3000 });
-};
-
-const formatDate = (value: Date) => {
-    return value.toLocaleDateString('en-US', {
-        minute: '2-digit',
-        hour: '2-digit',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
 };
 
 const filters = ref();
@@ -712,11 +562,6 @@ const clearFilter = () => {
 };
 
 
-function getOptions(obj: any) {
-    return Object.keys(obj).map(key => ({ label: obj[key], value: key }));
-}
-
-
 // TODO when filtering for status or equivalence, filter for the label, not the value
 const globalFilterFields: string[] = [
     'status',
@@ -724,57 +569,6 @@ const globalFilterFields: string[] = [
     'comment',
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
-
-// console.log(globalFilterFields);
-
-// TODO put this in a single map, e.g. active: { label: 'Active', severity: 'success' }
-const statuses = { 'active': "Active", 'inactive': "Inactive", 'pending': "Pending" };
-const statusOptions = ref(getOptions(statuses));
-const getStatus = (status: string) => {
-    switch (status) {
-        case 'active':
-            return 'success';
-        case 'inactive':
-            return 'danger';
-        // case 'new':
-        //     return 'info';
-        case 'pending':
-            return 'warning';
-        default:
-            return 'info';
-    }
-}
-
-const equivalences = { 'related-to': 'Related To', 'equivalent': 'Equivalent', 'source-is-narrower-than-target': 'Narrower', 'source-is-broader-than-target': 'Broader', 'not-related': 'Not Related' };
-const equivalenceOptions = ref(getOptions(equivalences));
-const getEquivalence = (equivalence: string) => {
-    switch (equivalence) {
-        case 'related-to':
-            return 'info';
-        case 'equivalent':
-            return 'success';
-        case 'source-is-narrower-than-target':
-            return 'warning';
-        case 'source-is-broader-than-target':
-            return 'warning';
-        case 'not-related':
-            return 'danger';
-        default:
-            return 'info';
-    }
-}
-
-const roles = ref(['source', 'target']);
-const getRole = (role: string) => {
-    switch (role) {
-        case 'source':
-            return 'info';
-        case 'target':
-            return 'info';
-        default:
-            return 'info';
-    }
-}
 
 const editingRows = ref([]);
 
