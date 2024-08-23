@@ -1,12 +1,9 @@
 <template>
-    <AutoComplete v-model="localMappingValue[props.field + '_' + props.roleId]" :suggestions="filteredConcepts"
-        :field="field" @complete="(event) => searchConcept(event)" @item-select="(event) => {
-            localMappingValue[`meaning_${props.roleId}`] = event.value.meaning;
-            localMappingValue[`code_${props.roleId}`] = event.value.code;
-            localMappingValue[`id_${props.roleId}`] = event.value.id;
-        }">
+    <!-- v-model="localMappingValue[props.field + '_' + props.roleId]"  -->
+    <AutoComplete :suggestions="filteredConcepts" :field="field" @complete="(event) => searchConcept(event)"
+        @item-select="props['item-select']">
         <template #option="slotProps">
-            <div v-if="error" style="color: red;">{{ error() }}</div>
+            <div v-if="error()" style="color: red;">{{ error() }}</div>
             <div v-else>
                 <div style="font-weight: bold;">{{ firstElement(slotProps) }}</div>
                 <div>{{ secondElement(slotProps) }}</div>
@@ -17,7 +14,7 @@
 
 
 <script setup lang="ts">
-// import type { AutoCompleteItemSelectEvent } from 'primevue/autocomplete';
+import type { AutoCompleteItemSelectEvent } from 'primevue/autocomplete';
 import { ref, watch, type PropType } from 'vue';
 import { useToast } from "primevue/usetoast";
 import type { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
@@ -32,10 +29,10 @@ interface SlotProps {
 
 // input of the component
 const props = defineProps({
-    mapping: {
-        type: Object as PropType<{ [key: string]: string }>,
-        required: true
-    },
+    // mapping: {
+    //     type: Object as PropType<{ [key: string]: string }>,
+    //     required: true
+    // },
     field: {            // meaning or code
         type: String,
         required: true
@@ -44,6 +41,10 @@ const props = defineProps({
         type: Number,
         required: true
     },
+    'item-select': {
+        type: Function as PropType<(event: AutoCompleteItemSelectEvent) => void>,
+        required: false
+    }
 });
 
 // for possible error messages
@@ -56,31 +57,27 @@ const projectStore = useProjectStore();
 const filteredConcepts = ref();
 const searchConcept = (event: AutoCompleteCompleteEvent) => {
     const text = event.query.toLowerCase()
-    if (text.trim().length) {
-        filteredConcepts.value = [];
-    } else {
-        var code = null;
-        var meaning = null;
-        if (props.field == 'code') {
-            code = text;
-        } else if (props.field == 'meaning') {
-            meaning = text;
-        }
-        if (!projectStore.currentLookupCodeSystemRoleIds) {
-            return;
-        }
-        const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(projectStore.currentLookupCodeSystemRoleIds[props.roleId], code, meaning, 10);
-        watch(isFetching, (newVal) => {
-            if (!newVal) {
-                if (isReady.value) {
-                    filteredConcepts.value = state.value;
-                } else {
-                    toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
-                }
-            }
-        });
-        execute();
+    var code = null;
+    var meaning = null;
+    if (props.field === 'code') {
+        code = text;
+    } else if (props.field === 'meaning') {
+        meaning = text;
     }
+    if (!projectStore.currentLookupCodeSystemRoleIds) {
+        return;
+    }
+    const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(projectStore.currentLookupCodeSystemRoleIds[props.roleId], code, meaning, 10);
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                filteredConcepts.value = state.value;
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+            }
+        }
+    });
+    execute();
 }
 
 // to display code or meaning first, depending on the field (code or meaning field) in which is being typed
@@ -104,16 +101,23 @@ const secondElement = (slotProps: SlotProps) => {
 };
 const error = () => {
     if (props.field !== 'meaning' && props.field !== 'code') {
+        console.log('error no first or second field')
         return 'Invalid field value';
     }
     return null;
 };
 
 // to use v-model on the mapping prop
-const emit = defineEmits(['update:mapping']);
-const localMappingValue = ref<{ [key: string]: string; }>(props.mapping);
-watch(localMappingValue, (newValue) => {
-    emit('update:mapping', newValue);
-});
+// const emit = defineEmits(['update:mapping']);
+// const localMappingValue = ref<{ [key: string]: string; }>(props.mapping);
+// watch(localMappingValue, (newValue) => {
+//     emit('update:mapping', newValue);
+// });
+
+// const handleItemSelect = (event: any) => {
+//     localMappingValue.value[`meaning_${props.roleId}`] = event.value.meaning;
+//     localMappingValue.value[`code_${props.roleId}`] = event.value.code;
+//     localMappingValue.value[`id_${props.roleId}`] = event.value.id;
+// };
 
 </script>

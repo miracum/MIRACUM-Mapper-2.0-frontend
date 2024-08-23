@@ -26,11 +26,9 @@
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <!-- <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" /> -->
-
                     <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success" @click="openNewMapping" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                         :disabled="!selectedMappings || !selectedMappings.length" />
-
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <div style="text-align:left">
@@ -50,7 +48,7 @@
                 <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0"
                     :exportable="false" :rowspan="2"></Column>
                 <Column v-for="role in props.project.code_system_roles" :colspan="2" class="grid-column-right"
-                    style="border-right: 1px solid #e3e8f0">
+                    style="border-right: 1px solid #e3e8f0" :key="role.id">
                     <template #header>
                         <div style=" display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
                             <CodeSystemRole :role="role" />
@@ -84,7 +82,7 @@
                 </Column>
             </Row>
             <Row>
-                <template v-for="role in props.project.code_system_roles">
+                <template v-for="role in props.project.code_system_roles" :key="role.id">
                     <Column header="Code" :field="`code_${role.id}`" sortable></Column>
                     <Column header="Meaning" :field="`meaning_${role.id}`" sortable
                         style="border-right: 1px solid #e3e8f0"></Column>
@@ -93,50 +91,21 @@
         </ColumnGroup>
         <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0" :exportable="false">
         </Column>
-        <template v-for="role in props.project.code_system_roles">
+        <template v-for="role in props.project.code_system_roles" :key="role.id">
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
-                    <!-- TODO: In eigene Komponente. -->
-                    <ConceptAutoComplete v-model="data" :roleId="role.id" field="code" />
-                    <!-- <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
-                        @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
-                            console.log(data);
-                            data[field] = event.value.code;
-                            data[`meaning_${role.id}`] = event.value.meaning; // Set the meaning field
-                            data[`id_${role.id}`] = event.value.id;
-                        }">
-                        <template #option="slotProps">
-                            <div class="flex align-options-center flex-column align-left">
-                                <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
-                                <div>{{ slotProps.option.meaning }}</div>
-                            </div>
-                        </template>
-</AutoComplete> -->
+                    <ConceptAutoComplete :roleId="role.id" field="code"
+                        @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
+                        v-model="data[field]" />
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
-                    <!-- TODO: In eigene Komponente. -->
-                    <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
-                        @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
-                            data[field] = event.value.meaning;
-                            data[`code_${role.id}`] = event.value.code; // Set the code field
-                            data[`id_${role.id}`] = event.value.id;
-                        }">
-                        <template #option="slotProps">
-                            <div class="flex align-options-center flex-column align-left">
-                                <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
-                                <div>{{ slotProps.option.code }}</div>
-                            </div>
-                        </template>
-                    </AutoComplete>
+                    <ConceptAutoComplete :roleId="role.id" field="meaning"
+                        @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
+                        v-model="data[field]" />
                 </template>
             </Column>
-            <!-- <Column :field="`id_${role.id}`" v-show="false">
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" />
-                </template>
-            </Column> -->
         </template>
         <Column v-if="props.project.status_required" field="status" sortable>
             <template #body="{ data }">
@@ -180,76 +149,28 @@
         </Column>
     </DataTable>
 
-    <!-- TODO: In componente auslagern (DeleteMappingDialog.vue) -->
-    <Dialog v-model:visible="deleteMappingDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <!--<span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>-->
-            <span>Are you sure you want to delete this mapping?</span>
-        </div>
-        <template #footer>
-            <Button label="No" icon="pi pi-times" text @click="deleteMappingDialog = false" />
-            <Button label="Yes" icon="pi pi-check" text @click="deleteMapping" />
-        </template>
-    </Dialog>
-
-    <!-- TODO:  In componente auslagern (DeleteMappingDialog.vue, diese konfigurierbar für ein oder viele Mappings machen. Vielleicht einfach entweder ein mapping oder eine liste übergeben und abhängig davon Dialog) -->
-    <Dialog v-model:visible="deleteMappingsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
-        <div class="confirmation-content">
-            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-            <span> Are you sure you want to delete the selected mappings?</span>
-        </div>
-        <template #footer>
-            <Button label="No" icon="pi pi-times" text @click="deleteMappingsDialog = false" />
-            <Button label="Yes" icon="pi pi-check" text @click="deleteSelectedMappings" />
-        </template>
-    </Dialog>
+    <DeleteMappingDialog v-model:visible="deleteMappingDialog" :mappings="mappingsToDelete"
+        :onDelete="onDeleteMapping" />
 
     <!-- TODO: in Mappingdialog Komponente verschieben-->
     <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" :modal="true"
         class="p-fluid">
         <Fieldset legend="Code Systems" :toggleable="true">
-            <template v-for="role in props.project.code_system_roles">
+            <template v-for="role in props.project.code_system_roles" :key="role.id">
                 <div style="margin-top: 10px;">
                     <CodeSystemRole :role="role" />
                     <div class="formgrid grid">
                         <div class="field col">
                             <label :for="`code_${role.id}`">Code</label>
-                            <!-- TODO: In eigene Komponente. AutoComplete wird vielleicht noch an einer anderne Stelle (z.B. Suche der Nutzer um Projkete anzulegen) benötigt. Daher erst generischere Komponente anlegen, welche dann weiderum die AutoComplete Nutzersuche und CodeMeaning Suche nutzen-->
-                            <AutoComplete v-model="mapping['code_' + role.id]" :suggestions="filteredConcepts"
-                                field="code" @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
-                                    mapping[`code_${role.id}`] = event.value.code;
-                                    mapping[`meaning_${role.id}`] = event.value.meaning; // Set the meaning field
-                                    mapping[`id_${role.id}`] = event.value.id;
-                                    console.log(mapping);
-                                }">
-                                <template #option="slotProps">
-                                    <div class="flex align-options-center flex-column align-left">
-                                        <div style="font-weight: bold;">{{ slotProps.option.code }}</div>
-                                        <div>{{ slotProps.option.meaning }}</div>
-                                    </div>
-                                </template>
-                            </AutoComplete>
+                            <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id"
+                                field="code"
+                                @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
                         </div>
                         <div class="field col">
                             <label for="`meaning_${role.id}`">Meaning</label>
-                            <!-- TODO: In eigene Komponente. -->
-                            <MeaningAutoComplete>
-                            </MeaningAutoComplete>
-                            <AutoComplete v-model="mapping['meaning_' + role.id]" :suggestions="filteredConcepts"
-                                field="meaning" @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
-                                    mapping[`meaning_${role.id}`] = event.value.meaning;
-                                    mapping[`code_${role.id}`] = event.value.code; // Set the code field
-                                    mapping[`id_${role.id}`] = event.value.id;
-                                    console.log(mapping);
-                                }">
-                                <template #option="slotProps">
-                                    <div class="flex align options-center flex-column align-left">
-                                        <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
-                                        <div>{{ slotProps.option.code }}</div>
-                                    </div>
-                                </template>
-                            </AutoComplete>
+                            <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id"
+                                field="meaning"
+                                @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
                         </div>
                     </div>
                 </div>
@@ -259,22 +180,22 @@
         <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px; width: 100%;">
             <div class="field" style="flex: 1;" v-if="props.project.status_required">
                 <label for="status" class="mb-3">Status</label>
-                <StatusDropdown v-model="mapping.status" :required="true" :invalid="submitted && !mapping.status"
-                    placeholder="Select a Status" />
-                <small class="p-error" v-if="submitted && !mapping.status">Status is required.</small>
+                <StatusDropdown v-model="currentMapping.status" :required="true"
+                    :invalid="submitted && !currentMapping.status" placeholder="Select a Status" />
+                <small class="p-error" v-if="submitted && !currentMapping.status">Status is required.</small>
             </div>
 
             <div class="field" style="flex: 1;" v-if="props.project.equivalence_required">
                 <label for="equivalence" class="mb-3">Equivalence</label>
-                <EquivalenceDropdown v-model="mapping.equivalence" :required="true"
-                    :invalid="submitted && !mapping.equivalence" placeholder="Select the equivalence" />
-                <small class="p-error" v-if="submitted && !mapping.equivalence">Equivalence is required.</small>
+                <EquivalenceDropdown v-model="currentMapping.equivalence" :required="true"
+                    :invalid="submitted && !currentMapping.equivalence" placeholder="Select the equivalence" />
+                <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is required.</small>
             </div>
         </div>
 
         <div class="field" style="margin-top: 10px;">
             <label for="comment">Comment</label>
-            <InputText id="comment" v-model="mapping.comment" required="false" />
+            <InputText id="comment" v-model="currentMapping.comment" required="false" />
         </div>
 
         <template #footer>
@@ -287,15 +208,13 @@
 </template>
 
 <script setup lang='ts'>
-import { useProjectStore } from '@/stores/project';
 import type { ProjectDetails } from '@/stores/project';
-import { useMappingStore } from '@/stores/mappings';
-import type { Mapping, UpdateMapping, CreateMapping } from '@/stores/mappings';
-import { ref, computed, watch, reactive } from 'vue';
+import type { Mapping, UpdateMapping } from '@/stores/mappings'; // , CreateMapping
+import { ref, watch } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 import { useToast } from "primevue/usetoast";
-import { useDeleteMappingQuery, useGetConceptsQuery, useUpdateMappingQuery } from '@/composables/queries/mapping-query';
+import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import StatusTag from '../tags/StatusTag.vue';
 import EquivalenceTag from '../tags/EquivalenceTag.vue';
 import StatusDropdown from '@/components/dropdowns/StatusDropdown.vue';
@@ -303,9 +222,14 @@ import EquivalenceDropdown from "@/components/dropdowns/EquivalenceDropdown.vue"
 import DateFormat from '../DateFormat.vue';
 import CodeSystemRole from './CodeSystemRole.vue';
 import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.vue';
+import { on_item_select_autocomplete } from '@/utils/autocomplete';
 
-// TODO DropDowns für Status und Equivalence in eigene wiederverwnedbare Komponente
-// Autocomplete für Code und Meaning in eigene wiederverwendbare Komponente
+
+// const updateData = (data, field, value) {
+//     data[field] = value.meaning;
+//     data[`meaning_${value.roleId}`] = value.meaning; // Update the meaning field
+//     data[`id_${value.roleId}`] = value.id; // Update the id field
+// };
 
 const toast = useToast();
 
@@ -324,16 +248,14 @@ const props = defineProps({
 });
 
 const mappingDialog = ref(false);
-
-const mapping = ref({
+const submitted = ref(false);
+const currentMapping = ref({
     equivalence: null,
     status: null,
 });
 
-const submitted = ref(false);
-
 const openNewMapping = () => {
-    mapping.value = {
+    currentMapping.value = {
         equivalence: null,
         status: null,
     };
@@ -350,21 +272,21 @@ const saveMapping = () => {
     submitted.value = true;
 
     // was tut das? muss das nicht abhängig von project einstellungen sein?
-    if (!mapping.value.status || !mapping.value.equivalence) {
+    if (!currentMapping.value.status || !currentMapping.value.equivalence) {
         return;
     }
 
     mappingDialog.value = false;
     // mapping.value = {};
     // TODO
-    console.log(mapping.value)
-    transformedMappings.value.push(mapping.value);
+    console.log(currentMapping.value)
+    transformedMappings.value.push(currentMapping.value);
 
 
     const saved_mapping: CreateMapping = {
-        equivalence: mapping.value.equivalence,
-        status: mapping.value.status,
-        comment: mapping.value.comment,
+        equivalence: currentMapping.value.equivalence,
+        status: currentMapping.value.status,
+        comment: currentMapping.value.comment,
         elements: [],
     };
     const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, saved_mapping);
@@ -381,7 +303,7 @@ const saveMapping = () => {
         }
     })
 
-    mapping.value = {};
+    currentMapping.value = {};
 
 }
 
@@ -397,47 +319,6 @@ const toggleColumns = ref([
     { field: 'modified', header: 'Modified' },
 ]);
 
-// const lookupCodesystemIds: { [key: number]: number } = {};
-// const fillLookupCodesystemIds = () => {
-//     const roles = props.project.code_system_roles;
-//     for (let i = 0; i < roles.length; i++) {
-//         lookupCodesystemIds[roles[i].id] = roles[i].system.id;
-//     }
-// }
-// fillLookupCodesystemIds();
-
-// const filteredConcepts = ref();
-// const filteredMeanings = ref();
-
-// const searchConcept = (code: string | null, meaning: string | null, codeystemRoleId: number) => {
-//     if (code?.trim().length && meaning?.trim().length) {
-//         filteredConcepts.value = [];
-//     } else {
-//         const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(lookupCodesystemIds[codeystemRoleId], code, meaning, 5);
-//         watch(isFetching, (newVal) => {
-//             if (!newVal) {
-//                 if (isReady.value) {
-//                     filteredConcepts.value = state.value;
-//                     // console.log(state.value);
-//                 } else {
-//                     toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-//                     // console.log(error.value?.message.toString());
-//                 }
-//             }
-//         });
-//         execute();
-//         // filteredConcepts.value = []; // do search with function from backend
-//     }
-// }
-
-// const searchCode = (event, codeystemRoleId: number) => {
-//     searchConcept(event.query.toLowerCase(), null, codeystemRoleId);
-// }
-
-// const searchMeaning = (event, codeystemRoleId: number) => {
-//     searchConcept(null, event.query.toLowerCase(), codeystemRoleId);
-// }
-
 const selectedColumns = ref([]);
 
 const onToggle = (val) => {
@@ -446,36 +327,24 @@ const onToggle = (val) => {
 
 const selectedMappings = ref();
 
-const deleteMappingDialog = ref(false);
-const deleteMappingsDialog = ref(false);
+const mappingsToDelete = ref([]);
 
-// TODO confirmDeleteMapping saves the current row of the table in currentMappingToDelete, which is of the type that was produced by the flattening process
-let currentMappingToDelete: any;
+const deleteMappingDialog = ref(false);
+
 const confirmDeleteMapping = (flattened_mapping: any) => {
-    currentMappingToDelete = flattened_mapping;
+    mappingsToDelete.value = [flattened_mapping];
     deleteMappingDialog.value = true;
 };
 
-const deleteMapping = () => {
-    // console.log(currentMappingToDelete);
-    const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(props.project.id, currentMappingToDelete.id);
-    watch(isFetching, async (newVal) => {
-        if (!newVal) {
-            // TODO show loading state in the ui (spinner icon while pressing save)
-            if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping successfully deleted', life: 5000 });
-                mappingStore.deleteMapping(currentMappingToDelete.id);
-            } else {
-                // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-                // console.log(error.value?.message.toString());
-            }
-            deleteMappingDialog.value = false;
-        }
-    });
-    execute();
+const confirmDeleteSelected = () => {
+    mappingsToDelete.value = selectedMappings.value;
+    deleteMappingDialog.value = true;
 };
 
+const onDeleteMapping = (mappings: Object[]) => {
+    mappingsToDelete.value = [];
+    transformedMappings.value = transformedMappings.value.filter(val => !mappings.includes(val));
+};
 
 // TODO mapping is of the type that was produced by the flattening process
 function updateMapping(flattened_mapping: any, index: number) {
@@ -557,17 +426,6 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     return transformedMappings;
 }
 
-const confirmDeleteSelected = () => {
-    deleteMappingsDialog.value = true;
-};
-
-const deleteSelectedMappings = () => {
-    transformedMappings.value = transformedMappings.value.filter(val => !transformedMappings.value.includes(val));
-    deleteMappingsDialog.value = false;
-    selectedMappings.value = null;
-    toast.add({ severity: 'success', summary: 'Successful', detail: 'Mappings Deleted', life: 3000 });
-};
-
 const filters = ref();
 
 const initFilters = () => {
@@ -608,9 +466,6 @@ const onRowEditSave = (event: any) => {
     updateMapping(newData, index);
     //ransformedMappings.value[index] = newData;
 }
-
-// const projectStore = useProjectStore();
-const mappingStore = useMappingStore();
 
 </script>
 

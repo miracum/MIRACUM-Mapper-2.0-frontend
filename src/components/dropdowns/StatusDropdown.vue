@@ -1,6 +1,6 @@
 <template>
-    <CustomDropdown :id="id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
-        :options="statusElements" :placeholder="placeholder" optionLabel="label" optionValue="value" />
+    <CustomDropdown :id="id" :required="props.required" :invalid="props.invalid" :options="statusElements"
+        :placeholder="placeholder" optionLabel="label" optionValue="value" /> <!-- v-model="localModelValue"  -->
 </template>
 
 <script setup lang="ts">
@@ -14,10 +14,10 @@ const props = defineProps({
         type: String,
         default: null
     },
-    modelValue: {
-        type: [String, null] as PropType<string | null>,
-        required: true
-    },
+    // modelValue: {
+    //     type: [String, null] as PropType<string | null>,
+    //     required: true
+    // },
     required: {
         type: Boolean,
         default: false
@@ -32,12 +32,12 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['update:modelValue']);
+// const emit = defineEmits(['update:modelValue']);
 
-const localModelValue = ref<string | null>(props.modelValue);
+// const localModelValue = ref<string | null>(props.modelValue);
 
-watch(localModelValue, (newValue) => {
-    emit('update:modelValue', newValue);
-});
+// watch(localModelValue, (newValue) => {
+//     emit('update:modelValue', newValue);
+// });
 
 </script>

@@ -1,7 +1,7 @@
 <template>
-    <Dropdown :id="props.id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
-        :options="props.options" :placeholder="props.placeholder" optionLabel="label" optionValue="value">
-        <template #value="slotProps">
+    <Dropdown :id="props.id" :required="props.required" :invalid="props.invalid" :options="props.options"
+        :placeholder="props.placeholder" optionLabel="label" optionValue="value">
+        <template #value="slotProps"> <!-- v-model="localModelValue" -->
             <div v-if="slotProps.value">
                 <Tag :value="getLabel(props.options, slotProps.value)"
                     :severity="getSeverity(props.options, slotProps.value)" />
@@ -27,10 +27,10 @@ const props = defineProps({
         type: String,
         default: null
     },
-    modelValue: {
-        type: [String, null] as PropType<string | null>,
-        required: true
-    },
+    // modelValue: {
+    //     type: [String, null] as PropType<string | null>,
+    //     required: true
+    // },
     options: {
         type: Array as PropType<DropdownElement[]>,
         required: true
@@ -49,11 +49,11 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['update:modelValue']);
+// const emit = defineEmits(['update:modelValue']);
 
-const localModelValue = ref<string | null>(props.modelValue);
+// const localModelValue = ref<string | null>(props.modelValue);
 
-watch(localModelValue, (newValue) => {
-    emit('update:modelValue', newValue);
-});
+// watch(localModelValue, (newValue) => {
+//     emit('update:modelValue', newValue);
+// });
 </script>

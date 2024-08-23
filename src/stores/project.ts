@@ -14,6 +14,7 @@ interface ProjectState {
 export type Project = components['schemas']['Project']
 export type UpdateProject = components['schemas']['UpdateProject']
 export type ProjectDetails = components['schemas']['ProjectDetails']
+export type CodeSystemRole = components['schemas']['CodeSystemRole']
 
 export const useProjectStore = defineStore('projects', {
   state: (): ProjectState => ({

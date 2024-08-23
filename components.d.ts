@@ -18,6 +18,7 @@ declare module 'vue' {
     Column: typeof import('primevue/column')['default']
     ColumnGroup: typeof import('primevue/columngroup')['default']
     ConceptAutoComplete: typeof import('./src/components/autocomplete/ConceptAutoComplete.vue')['default']
+    ConceptAutoComplete2: typeof import('./src/components/autocomplete/ConceptAutoComplete2.vue')['default']
     CustomAutoComplete: typeof import('./src/components/autocomplete/CustomAutoComplete.vue')['default']
     CustomDropdown: typeof import('./src/components/dropdowns/CustomDropdown.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
