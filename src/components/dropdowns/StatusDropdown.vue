@@ -1,11 +1,11 @@
 <template>
-    <DropdownTag :id="id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
+    <CustomDropdown :id="id" :required="props.required" :invalid="props.invalid" v-model="localModelValue"
         :options="statusElements" :placeholder="placeholder" optionLabel="label" optionValue="value" />
 </template>
 
 <script setup lang="ts">
 import { defineProps, ref, watch, defineEmits } from 'vue';
-import DropdownTag from '@/components/dropdowns/TagDropdown.vue';
+import CustomDropdown from '@/components/dropdowns/CustomDropdown.vue';
 import type { PropType } from 'vue';
 import { statusElements } from '../../utils/dropdownElement';
 

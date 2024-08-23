@@ -146,6 +146,11 @@ export const useUpdateMappingQuery = (project_id: number, updateMapping: UpdateM
   }
 }
 
+export type CreateMappingResponse =
+  paths['/projects/{project_id}/mappings']['post']['responses']['200']['content']['application/json']
+
+export const useCreateMappingQuery = (project_id: number, mapping: Mapping) => {}
+
 type ConceptQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
 export type ConceptsResponse =

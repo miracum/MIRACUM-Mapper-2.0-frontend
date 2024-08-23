@@ -1,10 +1,11 @@
 <template>
-    <Tag :value="props.value" :severity="getRoleSeverity(props.value)" />
+    <Tag :value="getRoleLabel(props.value)" :severity="getRoleSeverity(props.value)" />
 </template>
 
 <script setup lang="ts">
 
 import { defineProps } from 'vue';
+import { getRoleLabel, getRoleSeverity } from '@/utils/dropdownElement';
 
 const props = defineProps({
     value: {
@@ -12,16 +13,5 @@ const props = defineProps({
         required: true
     }
 });
-
-const getRoleSeverity = (role: string) => {
-    switch (role) {
-        case 'source':
-            return 'info';
-        case 'target':
-            return 'info';
-        default:
-            return 'info';
-    }
-}
 
 </script>

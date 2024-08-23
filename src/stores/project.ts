@@ -8,6 +8,7 @@ interface ProjectState {
   projects: Project[]
   currentProject: Project | null
   currentProjectDetails: ProjectDetails | null
+  currentLookupCodeSystemRoleIds: { [key: number]: number } | null
 }
 
 export type Project = components['schemas']['Project']
@@ -18,7 +19,8 @@ export const useProjectStore = defineStore('projects', {
   state: (): ProjectState => ({
     projects: [],
     currentProject: null,
-    currentProjectDetails: null
+    currentProjectDetails: null,
+    currentLookupCodeSystemRoleIds: null
   }),
   actions: {
     setProjects(projects: Project[]) {
@@ -29,6 +31,13 @@ export const useProjectStore = defineStore('projects', {
     },
     setCurrentProjectDetails(projectDetails: ProjectDetails) {
       this.currentProjectDetails = projectDetails
+
+      // Create a lookup table for code system roles
+      this.currentLookupCodeSystemRoleIds = {}
+      const roles = projectDetails.code_system_roles
+      for (let i = 0; i < roles.length; i++) {
+        this.currentLookupCodeSystemRoleIds[roles[i].id] = roles[i].system.id
+      }
     },
     updateProject(updatedProject: Project) {
       const index = this.projects.findIndex((p) => p.id === updatedProject.id)

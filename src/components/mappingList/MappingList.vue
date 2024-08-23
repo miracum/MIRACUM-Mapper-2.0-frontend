@@ -97,7 +97,8 @@
             <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
                     <!-- TODO: In eigene Komponente. -->
-                    <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
+                    <ConceptAutoComplete v-model="data" :roleId="role.id" field="code" />
+                    <!-- <AutoComplete v-model="data[field]" :suggestions="filteredConcepts"
                         @complete="(event) => searchCode(event, role.id)" @item-select="(event) => {
                             console.log(data);
                             data[field] = event.value.code;
@@ -110,7 +111,7 @@
                                 <div>{{ slotProps.option.meaning }}</div>
                             </div>
                         </template>
-                    </AutoComplete>
+</AutoComplete> -->
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
@@ -233,6 +234,8 @@
                         <div class="field col">
                             <label for="`meaning_${role.id}`">Meaning</label>
                             <!-- TODO: In eigene Komponente. -->
+                            <MeaningAutoComplete>
+                            </MeaningAutoComplete>
                             <AutoComplete v-model="mapping['meaning_' + role.id]" :suggestions="filteredConcepts"
                                 field="meaning" @complete="(event) => searchMeaning(event, role.id)" @item-select="(event) => {
                                     mapping[`meaning_${role.id}`] = event.value.meaning;
@@ -287,7 +290,7 @@
 import { useProjectStore } from '@/stores/project';
 import type { ProjectDetails } from '@/stores/project';
 import { useMappingStore } from '@/stores/mappings';
-import type { Mapping, UpdateMapping } from '@/stores/mappings';
+import type { Mapping, UpdateMapping, CreateMapping } from '@/stores/mappings';
 import { ref, computed, watch, reactive } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -299,6 +302,7 @@ import StatusDropdown from '@/components/dropdowns/StatusDropdown.vue';
 import EquivalenceDropdown from "@/components/dropdowns/EquivalenceDropdown.vue"
 import DateFormat from '../DateFormat.vue';
 import CodeSystemRole from './CodeSystemRole.vue';
+import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.vue';
 
 // TODO DropDowns für Status und Equivalence in eigene wiederverwnedbare Komponente
 // Autocomplete für Code und Meaning in eigene wiederverwendbare Komponente
@@ -345,6 +349,7 @@ const hideMappingDialog = () => {
 const saveMapping = () => {
     submitted.value = true;
 
+    // was tut das? muss das nicht abhängig von project einstellungen sein?
     if (!mapping.value.status || !mapping.value.equivalence) {
         return;
     }
@@ -354,8 +359,32 @@ const saveMapping = () => {
     // TODO
     console.log(mapping.value)
     transformedMappings.value.push(mapping.value);
+
+
+    const saved_mapping: CreateMapping = {
+        equivalence: mapping.value.equivalence,
+        status: mapping.value.status,
+        comment: mapping.value.comment,
+        elements: [],
+    };
+    const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, saved_mapping);
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
+                // console.log(state);
+                transformedMappings.value[index] = flattened_mapping;
+                // mappingStore.updateMapping(updated_mapping);
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+            }
+        }
+    })
+
     mapping.value = {};
-};
+
+}
+
 
 const openEditMapping = (mapping) => {
     // TODO differenciate between add and edit dialog
@@ -368,46 +397,46 @@ const toggleColumns = ref([
     { field: 'modified', header: 'Modified' },
 ]);
 
-const lookupCodesystemIds: { [key: number]: number } = {};
-const fillLookupCodesystemIds = () => {
-    const roles = props.project.code_system_roles;
-    for (let i = 0; i < roles.length; i++) {
-        lookupCodesystemIds[roles[i].id] = roles[i].system.id;
-    }
-}
-fillLookupCodesystemIds();
+// const lookupCodesystemIds: { [key: number]: number } = {};
+// const fillLookupCodesystemIds = () => {
+//     const roles = props.project.code_system_roles;
+//     for (let i = 0; i < roles.length; i++) {
+//         lookupCodesystemIds[roles[i].id] = roles[i].system.id;
+//     }
+// }
+// fillLookupCodesystemIds();
 
-const filteredConcepts = ref();
+// const filteredConcepts = ref();
 // const filteredMeanings = ref();
 
-const searchConcept = (code: string | null, meaning: string | null, codeystemRoleId: number) => {
-    if (code?.trim().length && meaning?.trim().length) {
-        filteredConcepts.value = [];
-    } else {
-        const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(lookupCodesystemIds[codeystemRoleId], code, meaning, 5);
-        watch(isFetching, (newVal) => {
-            if (!newVal) {
-                if (isReady.value) {
-                    filteredConcepts.value = state.value;
-                    // console.log(state.value);
-                } else {
-                    toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-                    // console.log(error.value?.message.toString());
-                }
-            }
-        });
-        execute();
-        // filteredConcepts.value = []; // do search with function from backend
-    }
-}
+// const searchConcept = (code: string | null, meaning: string | null, codeystemRoleId: number) => {
+//     if (code?.trim().length && meaning?.trim().length) {
+//         filteredConcepts.value = [];
+//     } else {
+//         const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(lookupCodesystemIds[codeystemRoleId], code, meaning, 5);
+//         watch(isFetching, (newVal) => {
+//             if (!newVal) {
+//                 if (isReady.value) {
+//                     filteredConcepts.value = state.value;
+//                     // console.log(state.value);
+//                 } else {
+//                     toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch concepts due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+//                     // console.log(error.value?.message.toString());
+//                 }
+//             }
+//         });
+//         execute();
+//         // filteredConcepts.value = []; // do search with function from backend
+//     }
+// }
 
-const searchCode = (event, codeystemRoleId: number) => {
-    searchConcept(event.query.toLowerCase(), null, codeystemRoleId);
-}
+// const searchCode = (event, codeystemRoleId: number) => {
+//     searchConcept(event.query.toLowerCase(), null, codeystemRoleId);
+// }
 
-const searchMeaning = (event, codeystemRoleId: number) => {
-    searchConcept(null, event.query.toLowerCase(), codeystemRoleId);
-}
+// const searchMeaning = (event, codeystemRoleId: number) => {
+//     searchConcept(null, event.query.toLowerCase(), codeystemRoleId);
+// }
 
 const selectedColumns = ref([]);
 
@@ -430,8 +459,9 @@ const confirmDeleteMapping = (flattened_mapping: any) => {
 const deleteMapping = () => {
     // console.log(currentMappingToDelete);
     const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(props.project.id, currentMappingToDelete.id);
-    watch(isFetching, (newVal) => {
+    watch(isFetching, async (newVal) => {
         if (!newVal) {
+            // TODO show loading state in the ui (spinner icon while pressing save)
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping successfully deleted', life: 5000 });
                 mappingStore.deleteMapping(currentMappingToDelete.id);
@@ -440,11 +470,10 @@ const deleteMapping = () => {
                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
                 // console.log(error.value?.message.toString());
             }
+            deleteMappingDialog.value = false;
         }
     });
     execute();
-
-    deleteMappingDialog.value = false;
 };
 
 
