@@ -153,21 +153,20 @@
         :onDelete="onDeleteMapping" />
 
     <!-- TODO: in Mappingdialog Komponente verschieben-->
-    <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" :modal="true"
-        class="p-fluid">
+    <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" modal class="p-fluid">
         <Fieldset legend="Code Systems" :toggleable="true">
             <template v-for="role in props.project.code_system_roles" :key="role.id">
                 <div style="margin-top: 10px;">
                     <CodeSystemRole :role="role" />
-                    <div class="formgrid grid">
-                        <div class="field col">
+                    <div class="field-container" style="display: flex;">
+                        <div class="field col flex-column" style="flex: 1;">
                             <label :for="`code_${role.id}`">Code</label>
                             <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id"
                                 field="code"
                                 @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
                         </div>
-                        <div class="field col">
-                            <label for="`meaning_${role.id}`">Meaning</label>
+                        <div class="field col flex-column" style="flex: 1;">
+                            <label :for="`meaning_${role.id}`">Meaning</label>
                             <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id"
                                 field="meaning"
                                 @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
@@ -178,22 +177,22 @@
         </Fieldset>
 
         <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px; width: 100%;">
-            <div class="field" style="flex: 1;" v-if="props.project.status_required">
-                <label for="status" class="mb-3">Status</label>
+            <div class="field col flex-column" style="flex: 1;" v-if="props.project.status_required">
+                <label for="status">Status</label>
                 <StatusDropdown v-model="currentMapping.status" :required="true"
                     :invalid="submitted && !currentMapping.status" placeholder="Select a Status" />
                 <small class="p-error" v-if="submitted && !currentMapping.status">Status is required.</small>
             </div>
 
-            <div class="field" style="flex: 1;" v-if="props.project.equivalence_required">
-                <label for="equivalence" class="mb-3">Equivalence</label>
+            <div class="field col flex-column" style="flex: 1;" v-if="props.project.equivalence_required">
+                <label for="equivalence">Equivalence</label>
                 <EquivalenceDropdown v-model="currentMapping.equivalence" :required="true"
                     :invalid="submitted && !currentMapping.equivalence" placeholder="Select the equivalence" />
                 <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is required.</small>
             </div>
         </div>
 
-        <div class="field" style="margin-top: 10px;">
+        <div class="field col flex-column">
             <label for="comment">Comment</label>
             <InputText id="comment" v-model="currentMapping.comment" required="false" />
         </div>
@@ -212,7 +211,7 @@ import type { ProjectDetails } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings'; // , CreateMapping
 import { ref, watch } from 'vue';
 import Column from 'primevue/column';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import StatusTag from '../tags/StatusTag.vue';
@@ -492,6 +491,7 @@ const onRowEditSave = (event: any) => {
 }
 
 .flex-column {
+    display: flex;
     flex-direction: column;
 }
 

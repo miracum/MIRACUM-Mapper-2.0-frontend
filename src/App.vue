@@ -7,6 +7,7 @@ const authStore = useAuthStore();
 </script>
 
 <template>
+  <!-- <ThemeSwitcher /> -->
   <LandingPageView v-if="!authStore.isAuthenticated" />
   <DashboardView v-else />
 </template>

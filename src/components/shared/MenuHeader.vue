@@ -1,6 +1,7 @@
 <template>
     <!-- <div class="card"> -->
-    <Menubar :model="items">
+
+    <Menubar :model="props.items">
         <template #start>
             <div class="header-container">
                 <img src="@/assets/logo.png" alt="Logo" width="55" />
@@ -21,21 +22,37 @@
         </template>
         <template #end>
             <div class="avatar-container">
-                <Avatar icon="pi pi-user" class="mr-2" size="large" style="background-color: #ece9fc; color: #2a1261"
-                    shape="circle" />
+                <AvatarMenuPopup />
             </div>
         </template>
     </Menubar>
-    <!-- </div> -->
 </template>
 
 <script setup>
 import 'primeicons/primeicons.css';
+import AvatarMenuPopup from '@/components/shared/AvatarMenuPopup.vue';
+import { ref } from "vue";
 
-// Define props
+
 const props = defineProps({
     items: Array
 });
+
+const avatarItems = ref([
+    {
+        label: 'Options',
+        items: [
+            {
+                label: 'Refresh',
+                icon: 'pi pi-refresh'
+            },
+            {
+                label: 'Export',
+                icon: 'pi pi-upload'
+            }
+        ]
+    }
+]);
 
 </script>
 

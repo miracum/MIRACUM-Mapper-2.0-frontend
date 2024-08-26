@@ -4,7 +4,7 @@
   <ConfirmDialog></ConfirmDialog>
   <div class="padding-all">
     <!-- <Header :buttons="headerButtons" /> -->
-
+    <!-- <ThemeSwitcher /> -->
     <RouterView />
     <!-- <ProjectList /> -->
     <!-- <DataTableMapping /> -->

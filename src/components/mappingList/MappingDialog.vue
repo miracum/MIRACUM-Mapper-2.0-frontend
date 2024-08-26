@@ -1,6 +1,6 @@
 <template>
-    <Dialog :visible="props.showMappingDialog" :style="{ width: '900px' }" :header="props.header" :modal="true"
-        class="p-fluid" v-model="currentMapping">
+    <Dialog :visible="props.showMappingDialog" modal :style="{ width: '900px' }" :header="props.header" class="p-fluid"
+        v-model="currentMapping">
         <Fieldset legend="Code Systems" :toggleable="true" v-if="projectStore.currentProjectDetails">
             <template v-for="role in projectStore.currentProjectDetails.code_system_roles" :key="role.id">
                 <div style="margin-top: 10px;">

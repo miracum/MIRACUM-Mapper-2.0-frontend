@@ -18,8 +18,8 @@ utils for equivalence
 export const equivalenceElements: DropdownElement[] = [
   { label: 'Related To', value: 'related-to', severity: 'info' },
   { label: 'Equivalent', value: 'equivalent', severity: 'success' },
-  { label: 'Narrower', value: 'source-is-narrower-than-target', severity: 'warning' },
-  { label: 'Broader', value: 'source-is-broader-than-target', severity: 'warning' },
+  { label: 'Narrower', value: 'source-is-narrower-than-target', severity: 'warn' },
+  { label: 'Broader', value: 'source-is-broader-than-target', severity: 'warn' },
   { label: 'Not Related', value: 'not-related', severity: 'danger' }
 ]
 
@@ -37,7 +37,7 @@ utils for status
 export const statusElements: DropdownElement[] = [
   { label: 'Active', value: 'active', severity: 'success' },
   { label: 'Inactive', value: 'inactive', severity: 'danger' },
-  { label: 'Pending', value: 'pending', severity: 'warning' }
+  { label: 'Pending', value: 'pending', severity: 'warn' }
 ]
 
 export const getStatusLabel = (value: string): string => {

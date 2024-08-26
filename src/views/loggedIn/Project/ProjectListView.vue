@@ -7,7 +7,7 @@
             <div class="flex justify-content-between align-items-center">
                 <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort by Name"
                     @change="onSortChange($event)" />
-                <DataViewLayoutOptions v-model="layout" />
+                <!-- <DataViewLayoutOptions v-model="layout" /> -->
             </div>
         </template>
         <template #list="slotProps">
