@@ -34,7 +34,7 @@ const computedNavItems = computed(() => {
     const routeToLabelMap = {
         // '/dashboard': 'Project',
         // '/projects/:projectId/mappings': 'Mappings',
-        'mappings': 'Project'
+        'mappings': 'Project',
     };
 
     // Split the current path and build navigation items

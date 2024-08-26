@@ -1,5 +1,5 @@
 <template>
-    <Dropdown :id="props.id" :required="props.required" :invalid="props.invalid" :options="props.options"
+    <Select :id="props.id" :required="props.required" :invalid="props.invalid" :options="props.options"
         :placeholder="props.placeholder" optionLabel="label" optionValue="value">
         <template #value="slotProps"> <!-- v-model="localModelValue" -->
             <div v-if="slotProps.value">
@@ -13,14 +13,15 @@
         <template #option="{ option }">
             <Tag :value="option.label" :severity="option.severity" />
         </template>
-    </Dropdown>
+    </Select>
 </template>
 
 <script setup lang="ts">
-import type { DropdownElement } from '../../utils/dropdownElement';
+import type { SelectElement } from '../../utils/selectElement';
 import { defineProps, ref, watch, defineEmits } from 'vue';
 import type { PropType } from 'vue';
-import { getLabel, getSeverity } from '@/utils/dropdownElement';
+import { getLabel, getSeverity } from '@/utils/selectElement';
+import Select from 'primevue/select';
 
 const props = defineProps({
     id: {
@@ -32,7 +33,7 @@ const props = defineProps({
     //     required: true
     // },
     options: {
-        type: Array as PropType<DropdownElement[]>,
+        type: Array as PropType<SelectElement[]>,
         required: true
     },
     placeholder: {
@@ -48,6 +49,8 @@ const props = defineProps({
         default: false
     }
 });
+
+// TODO: all props except options can be deleted
 
 // const emit = defineEmits(['update:modelValue']);
 

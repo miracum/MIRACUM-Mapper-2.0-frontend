@@ -53,41 +53,41 @@ const menuItems = ref([
   //   label: 'Import Project',
   //   icon: 'pi pi-file-import'
   // },
-  {
-    label: 'Settings',
-    icon: 'pi pi-cog',
-    items: [
-      // {
-      //     separator: true
-      // },
-      {
-        label: 'Theme',
-        icon: 'pi pi-palette',
-        items: [
-          {
-            label: 'System',
-            icon: 'pi pi-bolt',
-            id: 'system'
-          },
-          {
-            label: 'Light',
-            icon: 'pi pi-sun',
-            id: 'light'
-          },
-          {
-            label: 'Dark',
-            icon: 'pi pi-moon',
-            id: 'dark'
-          },
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Sign Out',
-    icon: 'pi pi-sign-out ',
-    command: logoutAndNavigate
-  }
+  // {
+  //   label: 'Settings',
+  //   icon: 'pi pi-cog',
+  //   items: [
+  //     // {
+  //     //     separator: true
+  //     // },
+  //     {
+  //       label: 'Theme',
+  //       icon: 'pi pi-palette',
+  //       items: [
+  //         {
+  //           label: 'System',
+  //           icon: 'pi pi-bolt',
+  //           id: 'system'
+  //         },
+  //         {
+  //           label: 'Light',
+  //           icon: 'pi pi-sun',
+  //           id: 'light'
+  //         },
+  //         {
+  //           label: 'Dark',
+  //           icon: 'pi pi-moon',
+  //           id: 'dark'
+  //         },
+  //       ]
+  //     }
+  //   ]
+  // },
+  // {
+  //   label: 'Sign Out',
+  //   icon: 'pi pi-sign-out ',
+  //   command: logoutAndNavigate
+  // }
 ]);
 
 // const headerButtons = ref([

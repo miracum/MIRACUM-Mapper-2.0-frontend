@@ -1,14 +1,13 @@
 <template>
-    <CustomDropdown :id="id" :required="props.required" :invalid="props.invalid" :options="equivalenceElements"
-        :placeholder="placeholder" />
-    <!-- v-model="localModelValue"  -->
+    <CustomSelect :id="id" :required="props.required" :invalid="props.invalid" :options="statusElements"
+        :placeholder="placeholder" optionLabel="label" optionValue="value" /> <!-- v-model="localModelValue"  -->
 </template>
 
 <script setup lang="ts">
 import { defineProps, ref, watch, defineEmits } from 'vue';
-import CustomDropdown from '@/components/dropdowns/CustomDropdown.vue';
+import CustomSelect from '@/components/selects/CustomSelect.vue';
 import type { PropType } from 'vue';
-import { equivalenceElements } from '../../utils/dropdownElement';
+import { statusElements } from '../../utils/selectElement';
 
 const props = defineProps({
     id: {
@@ -32,6 +31,8 @@ const props = defineProps({
         default: ''
     },
 });
+
+// TODO: all props can be deleted
 
 // const emit = defineEmits(['update:modelValue']);
 

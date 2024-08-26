@@ -5,7 +5,7 @@
 <script setup lang="ts">
 
 import { defineProps } from 'vue';
-import { getRoleLabel, getRoleSeverity } from '@/utils/dropdownElement';
+import { getRoleLabel, getRoleSeverity } from '@/utils/selectElement';
 
 const props = defineProps({
     value: {

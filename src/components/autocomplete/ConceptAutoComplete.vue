@@ -1,7 +1,7 @@
 <template>
     <!-- v-model="localMappingValue[props.field + '_' + props.roleId]"  -->
-    <AutoComplete :suggestions="filteredConcepts" :field="field" @complete="(event) => searchConcept(event)"
-        @item-select="props['item-select']">
+    <AutoComplete :suggestions="filteredConcepts" :field="field" forceSelection
+        @complete="(event) => searchConcept(event)" @item-select="props['item-select']">
         <template #option="slotProps">
             <div v-if="error()" style="color: red;">{{ error() }}</div>
             <div v-else>

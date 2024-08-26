@@ -2,20 +2,28 @@
   <div>
     <div class="container-fluid">
       <main role="main" class="pb-3">
-        <template v-if="isLoading">
-          <div class="card">
-            <DataTable :value="loadingMappingPlaceholder">
-              <Column v-for="i in 5" header="">
-                <template #body>
-                  <Skeleton></Skeleton>
-                </template>
-              </Column>
-            </DataTable>
-          </div>
-        </template>
-        <MappingList :mappings="mappingStore.mappings" :project="projectStore.currentProjectDetails"
-          v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" />
-        <p v-else>There was an error with loading the projectdetails or mappings.</p>
+        <Panel>
+          <template #header>
+            <div class="header">
+              <h1 class="title">Mapping Table</h1>
+              <!-- <h2 class="subtitle">Create a new Mapping Project</h2> -->
+            </div>
+          </template>
+          <template v-if="isLoading">
+            <div class="card">
+              <DataTable :value="loadingMappingPlaceholder">
+                <Column v-for="i in 5" header="">
+                  <template #body>
+                    <Skeleton></Skeleton>
+                  </template>
+                </Column>
+              </DataTable>
+            </div>
+          </template>
+          <MappingList :mappings="mappingStore.mappings" :project="projectStore.currentProjectDetails"
+            v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" />
+          <p v-else>There was an error with loading the projectdetails or mappings.</p>
+        </Panel>
       </main>
     </div>
   </div>

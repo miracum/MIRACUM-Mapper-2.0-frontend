@@ -4,7 +4,9 @@
     <Menubar :model="props.items">
         <template #start>
             <div class="header-container">
-                <img src="@/assets/logo.png" alt="Logo" width="55" />
+                <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
+                <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
+                <div class="divider mx-2"></div>
                 <Navigator />
             </div>
         </template>
@@ -31,28 +33,28 @@
 <script setup>
 import 'primeicons/primeicons.css';
 import AvatarMenuPopup from '@/components/shared/AvatarMenuPopup.vue';
-import { ref } from "vue";
+// import { ref } from "vue";
 
 
 const props = defineProps({
     items: Array
 });
 
-const avatarItems = ref([
-    {
-        label: 'Options',
-        items: [
-            {
-                label: 'Refresh',
-                icon: 'pi pi-refresh'
-            },
-            {
-                label: 'Export',
-                icon: 'pi pi-upload'
-            }
-        ]
-    }
-]);
+// const avatarItems = ref([
+//     {
+//         label: 'Options',
+//         items: [
+//             {
+//                 label: 'Refresh',
+//                 icon: 'pi pi-refresh'
+//             },
+//             {
+//                 label: 'Export',
+//                 icon: 'pi pi-upload'
+//             }
+//         ]
+//     }
+// ]);
 
 </script>
 
@@ -80,5 +82,10 @@ const avatarItems = ref([
     /* Aligns the Avatar to the end */
     width: 100%;
     /* Optional, depending on your layout needs */
+}
+
+.logo-margin {
+    margin-right: 10px;
+    /* Adjust the value as needed */
 }
 </style>

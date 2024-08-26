@@ -2,7 +2,7 @@ import client from '../../lib'
 import { ref } from 'vue'
 import type { ParamsOption, RequestBodyOption } from 'openapi-fetch'
 import type { paths, components } from '../../client/types'
-import type { Mapping, UpdateMapping } from '@/stores/mappings'
+import type { CreateMapping, UpdateMapping } from '@/stores/mappings'
 
 export interface AppError {
   //   code: number
@@ -149,7 +149,22 @@ export const useUpdateMappingQuery = (project_id: number, updateMapping: UpdateM
 export type CreateMappingResponse =
   paths['/projects/{project_id}/mappings']['post']['responses']['200']['content']['application/json']
 
-export const useCreateMappingQuery = (project_id: number, mapping: Mapping) => {}
+export const useCreateMappingQuery = (project_id: number, mapping: CreateMapping) => {
+  const state = ref<UpdateMappingResponse>()
+  const isReady = ref(false)
+  const isFetching = ref(false)
+  const error = ref<AppError | undefined>(undefined)
+
+  async function execute() {}
+
+  return {
+    state,
+    isReady,
+    isFetching,
+    error,
+    execute
+  }
+}
 
 type ConceptQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 

@@ -1,37 +1,47 @@
 <template>
     <EditProjectDialog v-model:visible="visible" />
-    <!-- Loading State TODO Better align skeletons -->
-    <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
-        <Card class="card">
-            <template #title>
-                <Skeleton class="w-10rem border-round h-2rem" />
-            </template>
-            <template #subtitle>
-                <Skeleton class="w-8rem border-round h-1rem" />
-            </template>
-            <template #content>
-                <div class="card-content">
+
+    <Panel>
+        <template #header>
+            <div class="header">
+                <h1 class="title">Mapping Table</h1>
+                <!-- <h2 class="subtitle">Create a new Mapping Project</h2> -->
+            </div>
+        </template>
+        <!-- Loading State TODO Better align skeletons -->
+        <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
+            <Card class="card">
+                <template #title>
+                    <Skeleton class="w-10rem border-round h-2rem" />
+                </template>
+                <template #subtitle>
                     <Skeleton class="w-8rem border-round h-1rem" />
-                    <div class="card-actions">
-                        <Skeleton class="w-4rem border-round h-2rem" />
-                        <Skeleton class="w-4rem border-round h-2rem" />
+                </template>
+                <template #content>
+                    <div class="card-content">
+                        <Skeleton class="w-8rem border-round h-1rem" />
+                        <div class="card-actions">
+                            <Skeleton class="w-4rem border-round h-2rem" />
+                            <Skeleton class="w-4rem border-round h-2rem" />
+                        </div>
                     </div>
-                </div>
-            </template>
-        </Card>
-    </div>
+                </template>
+            </Card>
+        </div>
 
-    <!-- Error State -->
-    <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
+        <!-- Error State -->
+        <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
 
-    <!-- Data View -->
-    <ProjectListView v-else-if="projects != undefined && projects!.length > 0" :data="projects" :onEdit="onEdit"
-        :onDelete="onDelete" />
+        <!-- Data View -->
+        <ProjectListView v-else-if="projects != undefined && projects!.length > 0" :data="projects" :onEdit="onEdit"
+            :onDelete="onDelete" />
 
-    <!-- No Projects Found -->
-    <!-- <Message v-else severity="error">Currently, there are no projects available.</Message> -->
-    <Message v-else severity="warn" :closable="false">Currently, there are no projects available. Create one by clicking
-        on Add Project.</Message>
+        <!-- No Projects Found -->
+        <!-- <Message v-else severity="error">Currently, there are no projects available.</Message> -->
+        <Message v-else severity="warn" :closable="false">Currently, there are no projects available. Create one by
+            clicking
+            on Add Project.</Message>
+    </Panel>
 
 </template>
 

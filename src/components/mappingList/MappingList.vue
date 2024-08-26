@@ -16,8 +16,8 @@
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
         <template #header>
             <div class="flex justify-content-between" style="margin-bottom: 20px;">
-                <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
-                    <h2 class="m-0">Mapping Table</h2>
+                <div style="display: flex; gap: 10px;">
+                    <h2 class="m-0"></h2>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
@@ -26,7 +26,9 @@
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <!-- <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" /> -->
-                    <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success" @click="openNewMapping" />
+                    <!-- <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success" @click="openNewMapping" /> -->
+                    <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success"
+                        @click="showCreateMappingDialog = true" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                         :disabled="!selectedMappings || !selectedMappings.length" />
                 </div>
@@ -112,7 +114,7 @@
                 <StatusTag :value="data.status" />
             </template>
             <template #editor="{ data, field }">
-                <StatusDropdown v-model="data[field]" />
+                <StatusSelect v-model="data[field]" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" sortable>
@@ -120,7 +122,7 @@
                 <EquivalenceTag :value="data.equivalence" />
             </template>
             <template #editor="{ data, field }">
-                <EquivalenceDropdown v-model="data[field]" />
+                <EquivalenceSelect v-model="data[field]" />
             </template>
         </Column>
         <Column field="comment" sortable class="grid-column-right">
@@ -153,7 +155,10 @@
         :onDelete="onDeleteMapping" />
 
     <!-- TODO: in Mappingdialog Komponente verschieben-->
-    <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" modal class="p-fluid">
+    <CreateMappingDialog v-model:visible="showCreateMappingDialog" :onSubmit="onCreateSubmit" />
+    <EditMappingDialog v-model:visible="showEditMappingDialog" :mapping="editedMapping" :onSubmit="onEditSubmit" />
+
+    <!-- <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" modal class="p-fluid">
         <Fieldset legend="Code Systems" :toggleable="true">
             <template v-for="role in props.project.code_system_roles" :key="role.id">
                 <div style="margin-top: 10px;">
@@ -201,10 +206,10 @@
             <Button label="Cancel" icon="pi pi-times" text @click="hideMappingDialog" />
             <Button label="Save" icon="pi pi-check" text @click="saveMapping" />
         </template>
-    </Dialog>
-
+    </Dialog> -->
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
 </template>
+
 
 <script setup lang='ts'>
 import type { ProjectDetails } from '@/stores/project';
@@ -216,14 +221,12 @@ import { useToast } from "primevue/usetoast";
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import StatusTag from '../tags/StatusTag.vue';
 import EquivalenceTag from '../tags/EquivalenceTag.vue';
-import StatusDropdown from '@/components/dropdowns/StatusDropdown.vue';
-import EquivalenceDropdown from "@/components/dropdowns/EquivalenceDropdown.vue"
 import DateFormat from '../DateFormat.vue';
 import CodeSystemRole from './CodeSystemRole.vue';
 import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.vue';
 import { on_item_select_autocomplete } from '@/utils/autocomplete';
-
-
+import CreateMappingDialog from './CreateMappingDialog.vue';
+import EditMappingDialog from './EditMappingDialog.vue';
 // const updateData = (data, field, value) {
 //     data[field] = value.meaning;
 //     data[`meaning_${value.roleId}`] = value.meaning; // Update the meaning field
@@ -246,71 +249,80 @@ const props = defineProps({
     loading: Boolean
 });
 
-const mappingDialog = ref(false);
-const submitted = ref(false);
-const currentMapping = ref({
+const showCreateMappingDialog = ref(false);
+const showEditMappingDialog = ref(false);
+// const submitted = ref(false);
+// const currentMapping = ref({
+//     equivalence: null,
+//     status: null,
+// });
+
+// const openNewMapping = () => {
+//     // currentMapping.value = {
+//     //     equivalence: null,
+//     //     status: null,
+//     // };
+//     // submitted.value = false;
+//     mappingDialog.value = true;
+// };
+
+// const hideMappingDialog = () => {
+//     mappingDialog.value = false;
+//     submitted.value = false;
+// };
+
+// const saveMapping = () => {
+//     submitted.value = true;
+
+//     // was tut das? muss das nicht abhängig von project einstellungen sein?
+//     if (!currentMapping.value.status || !currentMapping.value.equivalence) {
+//         return;
+//     }
+
+//     mappingDialog.value = false;
+//     // mapping.value = {};
+//     // TODO
+//     console.log(currentMapping.value)
+//     transformedMappings.value.push(currentMapping.value);
+
+//     const saved_mapping: CreateMapping = {
+//         equivalence: currentMapping.value.equivalence,
+//         status: currentMapping.value.status,
+//         comment: currentMapping.value.comment,
+//         elements: [],
+//     };
+//     const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, saved_mapping);
+//     watch(isFetching, (newVal) => {
+//         if (!newVal) {
+//             if (isReady.value) {
+//                 toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
+//                 // console.log(state);
+//                 transformedMappings.value[index] = flattened_mapping;
+//                 // mappingStore.updateMapping(updated_mapping);
+//             } else {
+//                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+//             }
+//         }
+//     })
+
+//     currentMapping.value = {};
+
+// }
+const onCreateSubmit = (mapping: any) => {
+    transformedMappings.value.push(mapping);
+    console.log("aaaaaaaaaa");
+}
+const editedMapping = ref({
     equivalence: null,
     status: null,
 });
-
-const openNewMapping = () => {
-    currentMapping.value = {
-        equivalence: null,
-        status: null,
-    };
-    submitted.value = false;
-    mappingDialog.value = true;
-};
-
-const hideMappingDialog = () => {
-    mappingDialog.value = false;
-    submitted.value = false;
-};
-
-const saveMapping = () => {
-    submitted.value = true;
-
-    // was tut das? muss das nicht abhängig von project einstellungen sein?
-    if (!currentMapping.value.status || !currentMapping.value.equivalence) {
-        return;
-    }
-
-    mappingDialog.value = false;
-    // mapping.value = {};
-    // TODO
-    console.log(currentMapping.value)
-    transformedMappings.value.push(currentMapping.value);
-
-
-    const saved_mapping: CreateMapping = {
-        equivalence: currentMapping.value.equivalence,
-        status: currentMapping.value.status,
-        comment: currentMapping.value.comment,
-        elements: [],
-    };
-    const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, saved_mapping);
-    watch(isFetching, (newVal) => {
-        if (!newVal) {
-            if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
-                // console.log(state);
-                transformedMappings.value[index] = flattened_mapping;
-                // mappingStore.updateMapping(updated_mapping);
-            } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-            }
-        }
-    })
-
-    currentMapping.value = {};
-
-}
-
-
 const openEditMapping = (mapping) => {
-    // TODO differenciate between add and edit dialog
-    mapping.value = { ...mapping };
-    mappingDialog.value = true;
+    editedMapping.value = { ...mapping };
+    showEditMappingDialog.value = true;
+};
+const onEditSubmit = (mapping: any) => {
+    const index = transformedMappings.value.findIndex((m) => m.id === mapping.id);
+    transformedMappings.value[index] = mapping;
 };
 
 const toggleColumns = ref([

@@ -1,13 +1,14 @@
 <template>
     <DataView :value="props.data" :layout="layout" :sortOrder="sortOrder" :sortField="sortField" :dataKey="'id'"
-        paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50]"
+        paginator :rows="4" :rowsPerPageOptions="[4, 10, 20, 50]"
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="{first} to {last} of {totalRecords}">
         <template #header>
             <div class="flex justify-content-between align-items-center">
-                <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort by Name"
+                <Select v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort by Name"
                     @change="onSortChange($event)" />
                 <!-- <DataViewLayoutOptions v-model="layout" /> -->
+                <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success" />
             </div>
         </template>
         <template #list="slotProps">
@@ -63,6 +64,7 @@ import type { ProjectResponse } from '@/composables/queries/project-query';
 import type { PropType } from 'vue';
 import { defineProps, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Select from 'primevue/select';
 
 const props = defineProps({
     data: {
@@ -75,8 +77,12 @@ const props = defineProps({
 const router = useRouter();
 
 const navigateToProject = (projectId: number) => {
-    console.log('Navigating to project', projectId);
+    // console.log('Navigating to project', projectId);
     router.push(`/dashboard/projects/${projectId}/mappings`);
+};
+
+const addProject = () => {
+    router.push('/dashboard/projects/add');
 };
 
 const sortKey = ref();
