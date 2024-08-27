@@ -27,19 +27,24 @@ function saveMapping(mapping: any) {
         return;
     }
 
+
     const saved_mapping: CreateMapping = {
-        equivalence: mapping.equivalence,
-        status: mapping.status,
         comment: mapping.comment,
         elements: [],
     };
+    if (projectStore.currentProjectDetails.equivalence_required) {
+        saved_mapping['equivalence'] = mapping.equivalence;
+    }
+    if (projectStore.currentProjectDetails.status_required) {
+        saved_mapping['status'] = mapping.status;
+    }
 
     for (const role of projectStore.currentProjectDetails.code_system_roles) {
         if (mapping[`id_${role.id}`] != null) {
             saved_mapping.elements.push({
-            codeSystemRole: role.id,
-            concept: mapping[`id_${role.id}`],
-        });
+                codeSystemRole: role.id,
+                concept: mapping[`id_${role.id}`],
+            });
         }
     }
 

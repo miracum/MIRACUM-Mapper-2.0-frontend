@@ -117,7 +117,7 @@ const submitted = ref(false);
 
 const submitMapping = () => {
     submitted.value = true;
-    if (!currentMapping.value.equivalence || !currentMapping.value.status) {
+    if ((projectStore.currentProjectDetails?.equivalence_required && !currentMapping.value.equivalence) || (projectStore.currentProjectDetails?.status_required && !currentMapping.value.status)) {
         return;
     }
     localVisible.value = false;
