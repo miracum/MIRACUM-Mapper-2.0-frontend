@@ -9,11 +9,11 @@ export interface AppError {
   message: string
 }
 
+
 type MappingQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
 export type MappingsResponse =
   paths['/projects/{project_id}/mappings']['get']['responses']['200']['content']['application/json']
-
 export const useGetMappingsQuery = (project_id: number) => {
   const state = ref<MappingsResponse>()
   const isReady = ref(false)
@@ -57,7 +57,6 @@ export const useGetMappingsQuery = (project_id: number) => {
 
 export type DeleteMappingResponse =
   paths['/projects/{project_id}/mappings/{mapping_id}']['delete']['responses']['200']['content']['application/json']
-
 export const useDeleteMappingQuery = (project_id: number, mapping_id: number) => {
   const state = ref<DeleteMappingResponse>()
   const isReady = ref(false)
@@ -103,7 +102,6 @@ export const useDeleteMappingQuery = (project_id: number, mapping_id: number) =>
 
 export type UpdateMappingResponse =
   paths['/projects/{project_id}/mappings']['put']['responses']['200']['content']['application/json']
-
 export const useUpdateMappingQuery = (project_id: number, updateMapping: UpdateMapping) => {
   const state = ref<UpdateMappingResponse>()
   const isReady = ref(false)
@@ -148,15 +146,40 @@ export const useUpdateMappingQuery = (project_id: number, updateMapping: UpdateM
 
 export type CreateMappingResponse =
   paths['/projects/{project_id}/mappings']['post']['responses']['200']['content']['application/json']
-
-export const useCreateMappingQuery = (project_id: number, mapping: CreateMapping) => {
-  const state = ref<UpdateMappingResponse>()
+export const useCreateMappingQuery = (project_id: number, createMapping: CreateMapping) => {
+  console.log("in createmappingquery")
+  const state = ref<CreateMappingResponse>()
   const isReady = ref(false)
   const isFetching = ref(false)
   const error = ref<AppError | undefined>(undefined)
 
-  async function execute() {}
+  async function execute() {
+    error.value = undefined
+    isReady.value = false
+    isFetching.value = true
 
+    const fetchOptions: MappingQueryOptions<paths['/projects/{project_id}/mappings']['post']> = {
+      params: {
+        path: { project_id: project_id }
+      },
+      body: createMapping
+    }
+
+    const { data, error: fetchError } = await client.POST(
+      '/projects/{project_id}/mappings',
+      fetchOptions
+    )
+
+    if (fetchError) {
+      error.value = { message: fetchError }
+    } else {
+      state.value = data
+      isReady.value = true
+    }
+
+    isFetching.value = false
+  }
+  
   return {
     state,
     isReady,
@@ -166,11 +189,11 @@ export const useCreateMappingQuery = (project_id: number, mapping: CreateMapping
   }
 }
 
+
 type ConceptQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
 export type ConceptsResponse =
   paths['/codesystems/{codesystem_id}/concepts']['get']['responses']['200']['content']['application/json']
-
 export const useGetConceptsQuery = (
   codesystem_id: number,
   code: string | null,
@@ -226,42 +249,3 @@ export const useGetConceptsQuery = (
     execute
   }
 }
-
-// type PutProjectResponse =
-//   paths['/projects']['put']['responses']['200']['content']['application/json']
-
-// export const usePutProjectQuery = (
-//   fetchOptions: ProjectQueryOptions<paths['/projects']['put']>
-// ) => {
-//   const state = ref<PutProjectResponse>()
-//   const isReady = ref(false)
-//   const isFetching = ref(false)
-//   const error = ref<AppError | undefined>(undefined)
-
-//   async function execute() {
-//     error.value = undefined
-//     isReady.value = false
-//     isFetching.value = true
-
-//     const { data, error: fetchError } = await client.PUT('/projects', fetchOptions)
-
-//     if (fetchError) {
-//       error.value = { message: fetchError }
-//     } else {
-//       state.value = data
-//       isReady.value = true
-//     }
-
-//     isFetching.value = false
-//   }
-
-//   // execute()
-
-//   return {
-//     state,
-//     isReady,
-//     isFetching,
-//     error,
-//     execute
-//   }
-// }

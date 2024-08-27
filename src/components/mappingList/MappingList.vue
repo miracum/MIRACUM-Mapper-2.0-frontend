@@ -153,72 +153,21 @@
 
     <DeleteMappingDialog v-model:visible="deleteMappingDialog" :mappings="mappingsToDelete"
         :onDelete="onDeleteMapping" />
-
-    <!-- TODO: in Mappingdialog Komponente verschieben-->
     <CreateMappingDialog v-model:visible="showCreateMappingDialog" :onSubmit="onCreateSubmit" />
     <EditMappingDialog v-model:visible="showEditMappingDialog" :mapping="editedMapping" :onSubmit="onEditSubmit" />
 
-    <!-- <Dialog v-model:visible="mappingDialog" :style="{ width: '900px' }" header="Add new Mapping" modal class="p-fluid">
-        <Fieldset legend="Code Systems" :toggleable="true">
-            <template v-for="role in props.project.code_system_roles" :key="role.id">
-                <div style="margin-top: 10px;">
-                    <CodeSystemRole :role="role" />
-                    <div class="field-container" style="display: flex;">
-                        <div class="field col flex-column" style="flex: 1;">
-                            <label :for="`code_${role.id}`">Code</label>
-                            <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id"
-                                field="code"
-                                @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
-                        </div>
-                        <div class="field col flex-column" style="flex: 1;">
-                            <label :for="`meaning_${role.id}`">Meaning</label>
-                            <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id"
-                                field="meaning"
-                                @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </Fieldset>
-
-        <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px; width: 100%;">
-            <div class="field col flex-column" style="flex: 1;" v-if="props.project.status_required">
-                <label for="status">Status</label>
-                <StatusDropdown v-model="currentMapping.status" :required="true"
-                    :invalid="submitted && !currentMapping.status" placeholder="Select a Status" />
-                <small class="p-error" v-if="submitted && !currentMapping.status">Status is required.</small>
-            </div>
-
-            <div class="field col flex-column" style="flex: 1;" v-if="props.project.equivalence_required">
-                <label for="equivalence">Equivalence</label>
-                <EquivalenceDropdown v-model="currentMapping.equivalence" :required="true"
-                    :invalid="submitted && !currentMapping.equivalence" placeholder="Select the equivalence" />
-                <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is required.</small>
-            </div>
-        </div>
-
-        <div class="field col flex-column">
-            <label for="comment">Comment</label>
-            <InputText id="comment" v-model="currentMapping.comment" required="false" />
-        </div>
-
-        <template #footer>
-            <Button label="Cancel" icon="pi pi-times" text @click="hideMappingDialog" />
-            <Button label="Save" icon="pi pi-check" text @click="saveMapping" />
-        </template>
-    </Dialog> -->
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
 </template>
 
 
 <script setup lang='ts'>
 import type { ProjectDetails } from '@/stores/project';
-import type { Mapping, UpdateMapping } from '@/stores/mappings'; // , CreateMapping
+import type { Mapping, UpdateMapping } from '@/stores/mappings';
 import { ref, watch } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
-import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
+// import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import StatusTag from '../tags/StatusTag.vue';
 import EquivalenceTag from '../tags/EquivalenceTag.vue';
 import DateFormat from '../DateFormat.vue';
@@ -227,11 +176,7 @@ import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.v
 import { on_item_select_autocomplete } from '@/utils/autocomplete';
 import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
-// const updateData = (data, field, value) {
-//     data[field] = value.meaning;
-//     data[`meaning_${value.roleId}`] = value.meaning; // Update the meaning field
-//     data[`id_${value.roleId}`] = value.id; // Update the id field
-// };
+import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 
 const toast = useToast();
 
@@ -244,86 +189,73 @@ const props = defineProps({
         type: Object as () => ProjectDetails,
         required: true
     },
-    // mappings: Mapping[],
-    // project: ProjectDetails,
     loading: Boolean
 });
 
+// show/hide create/edit dialog
 const showCreateMappingDialog = ref(false);
 const showEditMappingDialog = ref(false);
-// const submitted = ref(false);
-// const currentMapping = ref({
-//     equivalence: null,
-//     status: null,
-// });
 
-// const openNewMapping = () => {
-//     // currentMapping.value = {
-//     //     equivalence: null,
-//     //     status: null,
-//     // };
-//     // submitted.value = false;
-//     mappingDialog.value = true;
-// };
-
-// const hideMappingDialog = () => {
-//     mappingDialog.value = false;
-//     submitted.value = false;
-// };
-
-// const saveMapping = () => {
-//     submitted.value = true;
-
-//     // was tut das? muss das nicht abhängig von project einstellungen sein?
-//     if (!currentMapping.value.status || !currentMapping.value.equivalence) {
-//         return;
-//     }
-
-//     mappingDialog.value = false;
-//     // mapping.value = {};
-//     // TODO
-//     console.log(currentMapping.value)
-//     transformedMappings.value.push(currentMapping.value);
-
-//     const saved_mapping: CreateMapping = {
-//         equivalence: currentMapping.value.equivalence,
-//         status: currentMapping.value.status,
-//         comment: currentMapping.value.comment,
-//         elements: [],
-//     };
-//     const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, saved_mapping);
-//     watch(isFetching, (newVal) => {
-//         if (!newVal) {
-//             if (isReady.value) {
-//                 toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
-//                 // console.log(state);
-//                 transformedMappings.value[index] = flattened_mapping;
-//                 // mappingStore.updateMapping(updated_mapping);
-//             } else {
-//                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-//             }
-//         }
-//     })
-
-//     currentMapping.value = {};
-
-// }
+// creation dialog
 const onCreateSubmit = (mapping: any) => {
     transformedMappings.value.push(mapping);
-    console.log("aaaaaaaaaa");
 }
+
+// editing dialog
 const editedMapping = ref({
     equivalence: null,
     status: null,
 });
-const openEditMapping = (mapping) => {
+const openEditMapping = (mapping: any) => {
+    console.log(mapping);
     editedMapping.value = { ...mapping };
     showEditMappingDialog.value = true;
 };
 const onEditSubmit = (mapping: any) => {
     const index = transformedMappings.value.findIndex((m) => m.id === mapping.id);
-    transformedMappings.value[index] = mapping;
+    updateMapping(mapping, index);
 };
+
+// row editing
+const editingRows = ref([]);
+const onRowEditSave = (event: any) => {
+    let { newData, index } = event;
+    updateMapping(newData, index);
+}
+
+// used for row editing and for edit-dialog
+function updateMapping(flattened_mapping: any, index: number) {
+    const updated_mapping: UpdateMapping = {
+        id: flattened_mapping.id,
+        equivalence: flattened_mapping.equivalence,
+        status: flattened_mapping.status,
+        comment: flattened_mapping.comment,
+        elements: [],
+    };
+
+    for (const role of props.project.code_system_roles) {
+        if (flattened_mapping[`id_${role.id}`] != null) {
+            updated_mapping.elements!.push({
+                codeSystemRole: role.id,
+                concept: flattened_mapping[`id_${role.id}`],
+            });
+        }
+    }
+
+    const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, updated_mapping);
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 10000 });
+                transformedMappings.value[index] = flattened_mapping;
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Mapping due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+            }
+        }
+    });
+    execute();
+}
+
 
 const toggleColumns = ref([
     { field: 'created', header: 'Created' },
@@ -356,45 +288,6 @@ const onDeleteMapping = (mappings: Object[]) => {
     mappingsToDelete.value = [];
     transformedMappings.value = transformedMappings.value.filter(val => !mappings.includes(val));
 };
-
-// TODO mapping is of the type that was produced by the flattening process
-function updateMapping(flattened_mapping: any, index: number) {
-    let updated_mapping: UpdateMapping = {
-        id: flattened_mapping.id,
-        equivalence: flattened_mapping.equivalence,
-        status: flattened_mapping.status,
-        comment: flattened_mapping.comment,
-        elements: [],
-    };
-
-    for (let i = 0; i < props.project.code_system_roles.length; i++) {
-        const code_system_role_id = props.project.code_system_roles[i].id;
-        if (flattened_mapping[`id_${code_system_role_id}`] != null) {
-            updated_mapping.elements!.push({
-                concept: flattened_mapping[`id_${code_system_role_id}`],
-                codeSystemRole: code_system_role_id
-            });
-        }
-    }
-
-    console.log("log from update_mapping");
-    console.log(updated_mapping);
-
-    const { error, isFetching, isReady, state, execute } = useUpdateMappingQuery(props.project.id, updated_mapping);
-    watch(isFetching, (newVal) => {
-        if (!newVal) {
-            if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping updated successfully', life: 5000 });
-                // console.log(state);
-                transformedMappings.value[index] = flattened_mapping;
-                // mappingStore.updateMapping(updated_mapping);
-            } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
-            }
-        }
-    });
-    execute();
-}
 
 const dt = ref();
 
@@ -468,15 +361,6 @@ const globalFilterFields: string[] = [
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
 
-const editingRows = ref([]);
-
-const onRowEditSave = (event: any) => {
-    let { newData, index } = event;
-    console.log("log from onroweditsave");
-    console.log(newData);
-    updateMapping(newData, index);
-    //ransformedMappings.value[index] = newData;
-}
 
 </script>
 

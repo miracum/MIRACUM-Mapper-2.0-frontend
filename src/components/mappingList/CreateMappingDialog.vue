@@ -35,10 +35,12 @@ function saveMapping(mapping: any) {
     };
 
     for (const role of projectStore.currentProjectDetails.code_system_roles) {
-        saved_mapping.elements.push({
+        if (mapping[`id_${role.id}`] != null) {
+            saved_mapping.elements.push({
             codeSystemRole: role.id,
             concept: mapping[`id_${role.id}`],
         });
+        }
     }
 
     const { error, isFetching, isReady, state, execute } = useCreateMappingQuery(projectStore.currentProjectDetails.id, saved_mapping);
@@ -46,16 +48,13 @@ function saveMapping(mapping: any) {
         if (!newVal) {
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping created successfully', life: 10000 });
-                // console.log(state);
                 props.onSubmit(mapping);
-                // mappingStore.updateMapping(updated_mapping);
             } else {
                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not create Mapping due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
             }
         }
     })
-
-
+    execute();
 }
 
 </script>

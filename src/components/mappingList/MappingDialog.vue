@@ -24,6 +24,7 @@
 
         <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px; width: 100%;"
             v-if="projectStore.currentProjectDetails">
+
             <div class="field" style="flex: 1;" v-if="projectStore.currentProjectDetails.status_required">
                 <label for="status" class="mb-3">Status</label>
                 <StatusSelect v-model="currentMapping.status" :required="true"
@@ -37,6 +38,7 @@
                     :invalid="submitted && !currentMapping.equivalence" placeholder="Select the equivalence" />
                 <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is required.</small>
             </div>
+
         </div>
 
         <div class="field" style="margin-top: 10px;">
@@ -94,6 +96,7 @@ watch(localVisible, (newVal) => {
     emit('update:visible', newVal);
 });
 function closeDialog() {
+    submitted.value = false;
     localVisible.value = false;
 }
 
@@ -113,6 +116,10 @@ watch(() => props.mapping, (newVal) => {
 const submitted = ref(false);
 
 const submitMapping = () => {
+    submitted.value = true;
+    if (!currentMapping.value.equivalence || !currentMapping.value.status) {
+        return;
+    }
     localVisible.value = false;
     props.saveMapping(currentMapping.value);
 };
