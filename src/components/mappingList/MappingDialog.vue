@@ -122,6 +122,10 @@ const submitMapping = () => {
     }
     localVisible.value = false;
     props.saveMapping(currentMapping.value);
+    currentMapping.value = {
+        equivalence: null,
+        status: null,
+    };
 };
 
 </script>
