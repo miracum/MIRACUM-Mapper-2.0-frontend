@@ -9,6 +9,9 @@
               <!-- <h2 class="subtitle">Create a new Mapping Project</h2> -->
             </div>
           </template>
+          <!-- <template #icons v-if="projectStore.currentProjectDetails && mappingStore.mappings">
+            <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
+          </template> -->
           <template v-if="isLoading">
             <div class="card">
               <DataTable :value="loadingMappingPlaceholder">
@@ -21,7 +24,7 @@
             </div>
           </template>
           <MappingList :mappings="mappingStore.mappings" :project="projectStore.currentProjectDetails"
-            v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" />
+            v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" ref="mappingList" />
           <p v-else>There was an error with loading the projectdetails or mappings.</p>
         </Panel>
       </main>
@@ -37,6 +40,14 @@ import { useProjectStore } from '@/stores/project';
 import MappingList from '@/components/mappingList/MappingList.vue';
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
+
+// const mappingListRef = ref<InstanceType<typeof MappingList> | null>(null);
+
+// const exportCSV = () => {
+//   if (mappingListRef.value) {
+//     mappingListRef.value.exportCSV();
+//   }
+// };
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
@@ -82,4 +93,15 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #666;
+  margin: 0;
+}
+</style>

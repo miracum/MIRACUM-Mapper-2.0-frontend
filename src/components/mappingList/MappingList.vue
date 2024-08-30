@@ -362,7 +362,7 @@ const globalFilterFields: string[] = [
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
 
-
+defineExpose({ exportCSV });
 </script>
 
 <style scoped>

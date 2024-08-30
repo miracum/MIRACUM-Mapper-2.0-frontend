@@ -1,5 +1,5 @@
 <template>
-    <CustomSelect :options="roleElements" />
+    <CustomSelect :options="roleElements" placeholder="Select Role" />
 </template>
 
 <script setup lang="ts">

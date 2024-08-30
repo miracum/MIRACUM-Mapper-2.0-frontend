@@ -1,5 +1,5 @@
 <template>
-    <CustomSelect :options="userPermissionsElements" />
+    <CustomSelect :options="userPermissionsElements" placeholder="Select Permission" />
 </template>
 
 <script setup lang="ts">
