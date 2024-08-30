@@ -20,7 +20,7 @@ declare module 'vue' {
     CodeSystemASelect: typeof import('./src/components/selects/CodeSystemASelect.vue')['default']
     CodeSystemAutoComplete: typeof import('./src/components/autocomplete/CodeSystemAutoComplete.vue')['default']
     CodeSystemNameAutoComplete: typeof import('./src/components/autocomplete/CodeSystemNameAutoComplete.vue')['default']
-    CodeSystemNameSelect: typeof import('./src/components/autocomplete/CodeSystemNameSelect.vue')['default']
+    CodeSystemNameSelect: typeof import('./src/components/selects/CodeSystemNameSelect.vue')['default']
     CodeSystemRole: typeof import('./src/components/mappingList/CodeSystemRole.vue')['default']
     CodeSystemSelect: typeof import('./src/components/selects/CodeSystemSelect.vue')['default']
     'CodeSystemVersionSelect copy': typeof import('./src/components/selects/CodeSystemVersionSelect copy.vue')['default']

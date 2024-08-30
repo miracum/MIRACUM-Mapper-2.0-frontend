@@ -61,7 +61,8 @@
             <Column header="CodeSystem">
                 <template #body="slotProps">
                     <!-- <RoleSelect v-model="slotProps.data.role" /> -->
-                    <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" />
+                    <!-- <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" /> -->
+                    <CodeSystemSelect v-model="slotProps.data.codeSystem" />
                 </template>
             </Column>
 
@@ -86,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import CodeSystemSelect from '@/components/selects/CodeSystemSelect.vue';
 import { ref } from 'vue';
 
 const userPermissions = ref([
@@ -118,15 +120,19 @@ const onUserPermissionDelete = (index) => {
 const codeSystemRoles = ref([
     {
         codeSystem: {
-            name: 'SNOMED CT',
-            version: '1.2.5',
+            codeSystemName: 'SNOMED CT',
+            name: '1.2.5',
             id: 1
         },
         role: 'source',
         name: 'SNOMED CT'
     },
     {
-        codeSystem: 'LOINC',
+        codeSystem: {
+            codeSystemName: 'Loinc',
+            name: '1.2.5',
+            id: 1
+        },
         role: 'target',
         name: 'LOINC'
     }

@@ -1,9 +1,10 @@
 <template>
+    <!-- <div class="datatable-container"> -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
-        scrollable scrollHeight="1000px" :stateKey="`mappings-${props.project.id}`" v-model:editingRows="editingRows"
-        v-model:selection="selectedMappings" :pt="{
+        scrollable scroll-height="calc(100vh - 430px)" tateKey="`mappings-${props.project.id}`"
+        v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' }, // TODO what does this do?
             column: {
                 bodycell: ({ state }) => ({
@@ -150,7 +151,7 @@
             </template>
         </Column>
     </DataTable>
-
+    <!-- </div> -->
     <DeleteMappingDialog v-model:visible="deleteMappingDialog" :mappings="mappingsToDelete"
         :onDelete="onDeleteMapping" />
     <CreateMappingDialog v-model:visible="showCreateMappingDialog" :onSubmit="onCreateSubmit" />
@@ -394,4 +395,14 @@ const globalFilterFields: string[] = [
 .align-left {
     align-items: flex-start;
 }
+
+/* .datatable-container {
+    height: calc(100vh - 250px);
+    display: flex;
+    flex-direction: column;
+} */
+
+/* .datatable-container .p-datatable {
+    flex: 1;
+} */
 </style>
