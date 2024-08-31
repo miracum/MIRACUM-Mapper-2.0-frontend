@@ -200,7 +200,8 @@ const showEditMappingDialog = ref(false);
 
 // creation dialog
 const onCreateSubmit = (mapping: any) => {
-    transformedMappings.value.push(mapping);
+    const transformedMapping = flattenMappings([mapping], props.project.code_system_roles)
+    transformedMappings.value.push(transformedMapping[0]);
 }
 
 // editing dialog
