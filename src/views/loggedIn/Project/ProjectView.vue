@@ -95,11 +95,11 @@ const onDelete = (id: number, name: string) => {
             watch(isFetching, (newVal) => {
                 if (!newVal) {
                     if (isReady.value) {
-                        toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 5000 });
+                        toast.add({ severity: 'success', summary: 'Success', detail: 'Project successfully deleted', life: 10000 });
                         store.deleteProject(id);
                     } else {
                         // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
-                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
                         console.log(error.value?.message.toString());
                     }
                 }

@@ -31,7 +31,6 @@ export const useQueryWithPathParam = (state: any, options: any, method: Method, 
     let response;
       switch (method.toUpperCase()) {
         case 'GET':
-          console.log('GET')
           response = await client.GET(path, options);
           break;
         case 'POST':

@@ -14,8 +14,8 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, ref, watch, type PropType } from 'vue';
-import { useToast } from 'primevue/usetoast'; // Assuming you are using PrimeVue for toast notifications
-import { useProjectStore } from '@/stores/project'; // Adjust the import path
+import { useToast } from 'primevue/usetoast';
+import { useProjectStore } from '@/stores/project';
 import { useDeleteMappingQuery } from '@/composables/queries/mapping-query';
 
 const props = defineProps({
@@ -51,28 +51,44 @@ function closeDialog() {
 }
 
 function deleteMappings() {
-    const successfullyDeleted: Array<Object> = [];
+    // const successfullyDeleted: Array<Object> = [];
     props.mappings.forEach(mapping => {
-        if (!projectStore.currentProject) {
+        if (!projectStore.currentProjectDetails) {
             return;
         }
-        const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(projectStore.currentProject.id, mapping.id);
+        const { state, isReady, isFetching, error, execute } = useDeleteMappingQuery(projectStore.currentProjectDetails.id, mapping.id);
         watch(isFetching, async (newVal) => {
             if (!newVal) {
                 if (isReady.value) {
                     toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping successfully deleted', life: 10000 });
-                    projectStore.deleteProject(mapping.id);
-                    successfullyDeleted.push(mapping);
+                    // projectStore.deleteProject(mapping.id);
+                    // successfullyDeleted.push(mapping);
+                    const deleted_mappings = Array<Object>();
+                    deleted_mappings.push(mapping);
+                    if (props.onDelete) {
+                        props.onDelete(deleted_mappings);
+                    }
                 } else {
-                    toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 5000 });
+                    toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Mapping due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
                 }
             }
         });
         execute();
     });
-    if (successfullyDeleted.length > 0 && props.onDelete) {
-        props.onDelete(successfullyDeleted);
-    }
+    // because asynchronous, for some reason the length is 0 ???????
+    // const a = successfullyDeleted.length;
+    // console.log(a);
+    // console.log( ...successfullyDeleted);
+    // console.log(successfullyDeleted.length>0 && props.onDelete);
+    // console.log(successfullyDeleted.length);
+    // console.log(successfullyDeleted.length>0);
+    // console.log(1>0)
+    // console.log(1 > 0 && props.onDelete);
+    // console.log(successfullyDeleted);
+    // if (successfullyDeleted.length > 0 && props.onDelete) {
+    //     console.log("ondelete is called")
+    //     props.onDelete(successfullyDeleted);
+    // }
     closeDialog();
 }
 </script>

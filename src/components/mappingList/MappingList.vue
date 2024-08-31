@@ -178,6 +178,7 @@ import { on_item_select_autocomplete } from '@/utils/autocomplete';
 import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
+import { transform } from 'typescript';
 
 const toast = useToast();
 
@@ -208,7 +209,6 @@ const editedMapping = ref({
     status: null,
 });
 const openEditMapping = (mapping: any) => {
-    console.log(mapping);
     editedMapping.value = { ...mapping };
     showEditMappingDialog.value = true;
 };

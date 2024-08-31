@@ -69,10 +69,6 @@ const props = defineProps({
         type: Boolean,
         required: true
     },
-    // submitted: {
-    //     type: Boolean,
-    //     required: true
-    // },
     mapping: {
         type: Object,
         required: false

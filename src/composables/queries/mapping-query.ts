@@ -27,62 +27,19 @@ export const useGetMappingsQuery = (project_id: number) => {
 type DeleteMappingResponse =
   paths['/projects/{project_id}/mappings/{mapping_id}']['delete']['responses']['200']['content']['application/json'];
 
-// export const useDeleteMappingQuery = (project_id: number, mapping_id: number) => {
-//   const state = ref<DeleteMappingResponse>();
-//   const fetchOptions: MappingQueryOptions<
-//     paths['/projects/{project_id}/mappings/{mapping_id}']['delete']
-//   > = {
-//     params: {
-//       path: { project_id: project_id, mapping_id: mapping_id }
-//     }
-//   };
-//   const path = '/projects/{project_id}/mappings/{mapping_id}';
-//   const method = Method.DELETE;
-
-//   return useQueryWithPathParam(state, fetchOptions, method, path);
-// }
-
 export const useDeleteMappingQuery = (project_id: number, mapping_id: number) => {
-  const state = ref<DeleteMappingResponse>()
-  const isReady = ref(false)
-  const isFetching = ref(false)
-  const error = ref<AppError | undefined>(undefined)
-
-  async function execute() {
-    error.value = undefined
-    isReady.value = false
-    isFetching.value = true
-
-    const fetchOptions: MappingQueryOptions<
-      paths['/projects/{project_id}/mappings/{mapping_id}']['delete']
-    > = {
-      params: {
-        path: { project_id: project_id, mapping_id: mapping_id }
-      }
+  const state = ref<DeleteMappingResponse>();
+  const fetchOptions: MappingQueryOptions<
+    paths['/projects/{project_id}/mappings/{mapping_id}']['delete']
+  > = {
+    params: {
+      path: { project_id: project_id, mapping_id: mapping_id }
     }
+  };
+  const path = '/projects/{project_id}/mappings/{mapping_id}';
+  const method = Method.DELETE;
 
-    const { data, error: fetchError } = await client.DELETE(
-      '/projects/{project_id}/mappings/{mapping_id}',
-      fetchOptions
-    )
-
-    if (fetchError) {
-      error.value = { message: fetchError }
-    } else {
-      state.value = data
-      isReady.value = true
-    }
-
-    isFetching.value = false
-  }
-
-  return {
-    state,
-    isReady,
-    isFetching,
-    error,
-    execute
-  }
+  return useQueryWithPathParam(state, fetchOptions, method, path);
 }
 
 type UpdateMappingResponse =

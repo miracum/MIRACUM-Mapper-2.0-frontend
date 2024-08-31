@@ -78,9 +78,9 @@ const props = defineProps({
 const codesystemroles = ref([]);
 
 function getCodeSystemRoles() {
-    console.log("AAAAAAAAAAAAAAAAAAAAA")
-    console.log(props.project)
-    console.log(props.project.code_system_roles)
+    // console.log("AAAAAAAAAAAAAAAAAAAAA")
+    // console.log(props.project)
+    // console.log(props.project.code_system_roles)
     codesystemroles.value = project.code_system_roles;
 }
 
