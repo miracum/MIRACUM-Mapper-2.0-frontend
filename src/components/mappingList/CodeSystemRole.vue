@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, type PropType } from 'vue';
+import { type PropType } from 'vue';
 import RoleTag from '@/components/tags/RoleTag.vue';
 
 // TODO use a proper type here when defined in the future

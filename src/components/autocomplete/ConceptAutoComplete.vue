@@ -1,7 +1,7 @@
 <template>
     <!-- v-model="localMappingValue[props.field + '_' + props.roleId]"  -->
-    <AutoComplete :suggestions="filteredConcepts" :field="field" forceSelection
-        @complete="(event) => searchConcept(event)" @item-select="props['item-select']" style="width: 100%">
+    <AutoComplete :suggestions="filteredConcepts" :field="field" :optionLabel="optionLabel" forceSelection
+        @complete="(event) => searchConcept(event)" style="width: 100%">
         <template #option="slotProps">
             <div v-if="error()" style="color: red;">{{ error() }}</div>
             <div v-else>
@@ -14,8 +14,7 @@
 
 
 <script setup lang="ts">
-import type { AutoCompleteItemSelectEvent } from 'primevue/autocomplete';
-import { ref, watch, type PropType } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useToast } from "primevue/usetoast";
 import type { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 import { useGetConceptsQuery } from '@/composables/queries/mapping-query';
@@ -29,10 +28,6 @@ interface SlotProps {
 
 // input of the component
 const props = defineProps({
-    // mapping: {
-    //     type: Object as PropType<{ [key: string]: string }>,
-    //     required: true
-    // },
     field: {            // meaning or code
         type: String,
         required: true
@@ -41,10 +36,10 @@ const props = defineProps({
         type: Number,
         required: true
     },
-    'item-select': {
-        type: Function as PropType<(event: AutoCompleteItemSelectEvent) => void>,
-        required: false
-    }
+});
+
+const optionLabel = computed(()=> {
+    return props.field === 'code' ? 'code' : 'meaning';
 });
 
 // for possible error messages

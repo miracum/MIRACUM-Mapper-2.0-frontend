@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import type { SelectElement } from '../../utils/selectElement';
-import { defineProps, ref, watch, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import type { PropType } from 'vue';
 import { getLabel, getSeverity } from '@/utils/selectElement';
 import Select from 'primevue/select';

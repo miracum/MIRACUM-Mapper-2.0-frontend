@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, watch, type PropType } from 'vue';
+import { ref, watch, type PropType } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useProjectStore } from '@/stores/project';
 import { useDeleteMappingQuery } from '@/composables/queries/mapping-query';

@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import type { ProjectResponse } from '@/composables/queries/project-query';
 import type { PropType } from 'vue';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Select from 'primevue/select';
 

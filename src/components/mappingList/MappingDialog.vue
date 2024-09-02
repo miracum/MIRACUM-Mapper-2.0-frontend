@@ -7,7 +7,7 @@
                     <div class="field-container" style="display:flex;">
                         <div class="field col" style="flex: 1;">
                             <FloatLabel style="margin-top: 15px;">
-                                <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id" field="code" :inputStyle="{ width: '100%' }" @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
+                                <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id" field="code" :inputStyle="{ width: '100%' }" @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)"/>
                                 <label :for="`code_${role.id}`">Code</label>
                             </FloatLabel>
                         </div>

@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import CustomSelect from '@/components/selects/CustomSelect.vue';
 import type { PropType } from 'vue';
 import { statusElements } from '../../utils/selectElement';

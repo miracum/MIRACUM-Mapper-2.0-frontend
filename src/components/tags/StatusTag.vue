@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 
-import { defineProps } from 'vue';
 import { getStatusLabel, getStatusSeverity } from '@/utils/selectElement';
 
 const props = defineProps({
