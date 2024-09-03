@@ -62,3 +62,35 @@ export const useGetProjectDetailsQuery = (projectId: number) => {
 
   return useQueryWithPathParam(state, fetchOptions, method, path)
 }
+
+type PostProjectResponse =
+  paths['/projects']['post']['responses']['200']['content']['application/json']
+
+export const usePostProjectQuery = (
+  fetchOptions: ProjectQueryOptions<paths['/projects']['post']>
+) => {
+  const state = ref<PostProjectResponse>();
+
+  const path = '/projects';
+  const method = Method.POST;
+
+  return useQueryWithPathParam(state, fetchOptions, method, path);
+}
+
+type GetCodeSystemsResponse = paths['/codesystems']['get']['responses']['200']['content']['application/json']
+
+export const useGetCodeSystemsQuery = () => {
+  const state = ref<GetCodeSystemsResponse>();
+  const path = '/codesystems';
+  const method = Method.GET;
+
+  return useQueryWithPathParam(state, null, method, path);
+}
+
+
+
+
+type PostProjectPermissionResponse =
+  paths['/projects/{project_id}/permissions']['post']['responses']['200']['content']['application/json']
+
+// export const usePostProjectPermissionQuery = (

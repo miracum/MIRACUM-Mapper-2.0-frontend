@@ -2,7 +2,8 @@
 // import type { Project } from '@/client/client-old/types.gen'
 import { defineStore } from 'pinia'
 import type { components } from '../client/types'
-import { getProject } from '@/client/client-old'
+// import { getProject } from '@/client/client-old'
+// import type { ComponentCustomProperties } from 'vue'
 
 interface ProjectState {
   projects: Project[]
@@ -15,6 +16,7 @@ export type Project = components['schemas']['Project']
 export type UpdateProject = components['schemas']['UpdateProject']
 export type ProjectDetails = components['schemas']['ProjectDetails']
 export type CodeSystemRole = components['schemas']['CodeSystemRole']
+export type CodeSystem = components['schemas']['CodeSystem']
 
 export const useProjectStore = defineStore('projects', {
   state: (): ProjectState => ({

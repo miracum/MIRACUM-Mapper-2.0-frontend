@@ -23,7 +23,6 @@ declare module 'vue' {
     CodeSystemNameSelect: typeof import('./src/components/selects/CodeSystemNameSelect.vue')['default']
     CodeSystemRole: typeof import('./src/components/mappingList/CodeSystemRole.vue')['default']
     CodeSystemSelect: typeof import('./src/components/selects/CodeSystemSelect.vue')['default']
-    'CodeSystemVersionSelect copy': typeof import('./src/components/selects/CodeSystemVersionSelect copy.vue')['default']
     Column: typeof import('primevue/column')['default']
     ColumnGroup: typeof import('primevue/columngroup')['default']
     ConceptAutoComplete: typeof import('./src/components/autocomplete/ConceptAutoComplete.vue')['default']

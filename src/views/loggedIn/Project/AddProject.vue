@@ -91,7 +91,7 @@
                         <template #body="slotProps">
                             <!-- <RoleSelect v-model="slotProps.data.role" /> -->
                             <!-- <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" /> -->
-                            <CodeSystemSelect v-model="slotProps.data.codeSystem" />
+                            <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems" />
                         </template>
                     </Column>
 
@@ -120,8 +120,15 @@
 
 <script setup lang="ts">
 import CodeSystemSelect from '@/components/selects/CodeSystemSelect.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useToast } from "primevue/usetoast";
+import { useGetCodeSystemsQuery } from '@/composables/queries/project-query';
+import { type CodeSystem } from '@/stores/project';
 
+// for possible error messages
+const toast = useToast();
+
+/////////// user permissions
 const userPermissions = ref([
     // {
     //     user: {
@@ -168,6 +175,7 @@ const addPermission = () => {
     });
 };
 
+/////////// code system roles
 const codeSystemRoles = ref([
     // {
     //     codeSystem: {
@@ -195,6 +203,34 @@ const codeSystemRoles = ref([
 
 ]);
 
+const codeSystems = ref<Array<{ name: string; versions: { id: number; name: string; codeSystemName: string; }[] }>>([]);
+const getCodeSystems = () => {
+    const { state, isReady, isFetching, error, execute } = useGetCodeSystemsQuery();
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                codeSystems.value = mergeCodeSystems(state.value);
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch codesystems due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+            }
+        }
+    });
+    execute();
+};
+const mergeCodeSystems = (systems: Array<CodeSystem>) => {
+    const merged = systems.reduce((acc: { [key: string]: { name: string, versions: Array<{ id: number, name: string, codeSystemName: string }> } }, system) => {
+        const { name, id, version } = system;
+        if (!acc[name]) {
+            acc[name] = { name, versions: [] };
+        }
+        acc[name].versions.push({ id, name: version, codeSystemName: name });
+        return acc;
+    }, {});
+
+    return Object.values(merged);
+}
+getCodeSystems();
+
 const onCodeSystemRowReorder = (event) => {
     codeSystemRoles.value = event.value;
 };
@@ -211,7 +247,7 @@ const addRole = () => {
     });
 };
 
-
+/////////// general information
 const project = ref({
     name: '',
     version: '',

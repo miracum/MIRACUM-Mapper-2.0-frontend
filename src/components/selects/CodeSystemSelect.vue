@@ -1,6 +1,6 @@
 <template>
     <!-- v-model="localMappingValue[props.field + '_' + props.roleId]"  -->
-    <Select :options="codeSystems" filter optionLabel="name" optionGroupLabel="name"
+    <Select :options="props.codeSystems" filter optionLabel="name" optionGroupLabel="name"
         :filterFields="['codeSystemName', 'name']" optionGroupChildren="versions" placeholder="Select a Code System">
         <template #value="slotProps">
             <div v-if="slotProps.value" class="flex flex-col items-start">
@@ -25,61 +25,16 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 import Select from 'primevue/select';
+import { ref } from 'vue';
 
-// to specify the type of slotProps (copied from the primevue documentation)
-
-const search = (event: AutoCompleteCompleteEvent) => {
-    const text = event.query.toLowerCase()
-    var code = null;
-    var meaning = null;
-};
-
-const codeSystems = ref([
-    {
-        name: 'SNOMED CT',
-        // description: 'SNOMED CT is a clinical terminology that is used for the electronic exchange of clinical health information.',
-        versions: [
-            {
-                id: 1,
-                name: 'v1.2.5',
-                codeSystemName: 'SNOMED CT'
-            },
-            {
-                id: 2,
-                name: 'v1.2.6',
-                codeSystemName: 'SNOMED CT'
-            },
-            {
-                id: 3,
-                name: 'v1.2.7',
-                codeSystemName: 'SNOMED CT'
-            }
-        ]
+// input of the component
+const props = defineProps({
+    codeSystems: {
+        type: Array,
+        required: true
     },
-    {
-        name: 'LOINC',
-        versions: [
-            {
-                id: 1,
-                name: '2.3.4',
-                codeSystemName: 'LOINC'
-            },
-            {
-                id: 2,
-                name: '2.3.5',
-                codeSystemName: 'LOINC'
-            },
-            {
-                id: 3,
-                name: '2.3.6',
-                codeSystemName: 'LOINC'
-            }
-        ]
-    }
-])
+});
 
 
 </script>
