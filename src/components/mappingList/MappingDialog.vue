@@ -1,5 +1,6 @@
 <template>
-    <Dialog v-model:visible="localVisible" modal :style="{ width: '900px' }" :header="props.header" class="p-fluid">
+    <Dialog v-model:visible="localVisible" modal :style="{ width: '900px' }" :header="props.header" class="p-fluid"
+        @hide="handleXButton">
         <Fieldset legend="Code Systems" :toggleable="true" v-if="projectStore.currentProjectDetails">
             <template v-for="role in projectStore.currentProjectDetails.code_system_roles" :key="role.id">
                 <div style="margin-top: 10px;">
@@ -7,13 +8,17 @@
                     <div class="field-container" style="display:flex;">
                         <div class="field col" style="flex: 1;">
                             <FloatLabel style="margin-top: 15px;">
-                                <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id" field="code" :inputStyle="{ width: '100%' }" @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)"/>
+                                <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id"
+                                    field="code" :inputStyle="{ width: '100%' }"
+                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
                                 <label :for="`code_${role.id}`">Code</label>
                             </FloatLabel>
                         </div>
                         <div class="field col" style="flex: 1;">
                             <FloatLabel style="margin-top: 15px;">
-                                <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id" field="meaning" :inputStyle="{ width: '100%' }" @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)"/>
+                                <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id"
+                                    field="meaning" :inputStyle="{ width: '100%' }"
+                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
                                 <label :for="`meaning_${role.id}`">Meaning</label>
                             </FloatLabel>
                         </div>
@@ -25,28 +30,31 @@
         <div class="field-container" style="display: flex; gap: 10px; margin-top: 10px;"
             v-if="projectStore.currentProjectDetails">
 
-            <div class="field col flex-column" style="flex: 1;" v-if="projectStore.currentProjectDetails.status_required">
+            <div class="field col flex-column" style="flex: 1;"
+                v-if="projectStore.currentProjectDetails.status_required">
                 <div class="flex flex-col">
-                        <label for="status" class="mb-3">Status</label>
-                        <StatusSelect v-model="currentMapping.status" :required="true"
-                            :invalid="submitted && !currentMapping.status" placeholder="Select a Status" />
-                        <small class="p-error" v-if="submitted && !currentMapping.status">Status is required.</small>
-                    </div>
+                    <label for="status" class="mb-3">Status</label>
+                    <StatusSelect v-model="currentMapping.status" :required="true"
+                        :invalid="submitted && !currentMapping.status" placeholder="Select a Status" />
+                    <small class="p-error" v-if="submitted && !currentMapping.status">Status is required.</small>
+                </div>
             </div>
 
-            <div class="field col flex-column" style="flex: 1;" v-if="projectStore.currentProjectDetails.equivalence_required">
+            <div class="field col flex-column" style="flex: 1;"
+                v-if="projectStore.currentProjectDetails.equivalence_required">
                 <div class="flex flex-col">
                     <label for="equivalence" class="mb-3">Equivalence</label>
                     <EquivalenceSelect v-model="currentMapping.equivalence" :required="true"
                         :invalid="submitted && !currentMapping.equivalence" placeholder="Select the equivalence" />
-                    <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is required.</small>
+                    <small class="p-error" v-if="submitted && !currentMapping.equivalence">Equivalence is
+                        required.</small>
                 </div>
             </div>
         </div>
 
         <div class="field col flex-column">
             <FloatLabel>
-                <InputText id="comment" v-model="currentMapping.comment" required="false" style="width: 100%"/>
+                <InputText id="comment" v-model="currentMapping.comment" required="false" style="width: 100%" />
                 <label for="comment">Comment</label>
             </FloatLabel>
         </div>
@@ -96,8 +104,20 @@ watch(localVisible, (newVal) => {
     emit('update:visible', newVal);
 });
 function closeDialog() {
-    submitted.value = false;
     localVisible.value = false;
+    resetForm();
+}
+
+function handleXButton() {
+    resetForm();
+}
+
+function resetForm() {
+    submitted.value = false;
+    currentMapping.value = {
+        equivalence: null,
+        status: null,
+    };
 }
 
 const currentMapping = ref({
@@ -122,10 +142,7 @@ const submitMapping = () => {
     }
     localVisible.value = false;
     props.saveMapping(currentMapping.value);
-    currentMapping.value = {
-        equivalence: null,
-        status: null,
-    };
+    resetForm();
 };
 
 </script>
