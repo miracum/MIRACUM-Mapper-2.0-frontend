@@ -1,7 +1,7 @@
 <template>
     <!-- <div class="datatable-container"> -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
-        removableSort sortMode="multiple" filterDisplay="row" :globalFilterFields="globalFilterFields"
+        removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
         scrollable scroll-height="calc(100vh - 430px)" stateKey="`mappings-${props.project.id}`"
         v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
@@ -46,16 +46,14 @@
                 </div>
             </div>
         </template>
-        <!-- <template #empty> No customers found. </template> TODO
-        <template #loading> Loading customers data. Please wait. </template> TODO -->
-        <!-- <ColumnGroup type="header">
+        <ColumnGroup type="header">
             <Row>
                 <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0"
                     :exportable="false" :rowspan="2"></Column>
                 <Column v-for="role in props.project.code_system_roles" :colspan="2" class="grid-column-right"
                     style="border-right: 1px solid #e3e8f0" :key="role.id">
                     <template #header>
-                        <div style=" display: flex; gap: 5px;">
+                        <div style=" display: flex; gap: 5px;"> <!-- TODO gap: 5px; in styles -->
                             <CodeSystemRole :role="role" />
                         </div>
                     </template>
@@ -70,6 +68,13 @@
                     <template #body="{ data }">
                         {{ data.comment }}
                     </template>
+                    <!-- <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" class="p-column-filter"
+                            placeholder="Search by comment" />
+                    </template> -->
+                    <!-- <template #filter="{ filterModel }">
+                        <InputText v-model="filterModel.value" type="text" placeholder="Search by Comment" />
+                    </template> -->
                 </Column>
                 <Column v-if="selectedColumns.some(col => col.field === 'created')" header="Created" :rowspan="2"
                     sortable field="created">
@@ -89,34 +94,26 @@
                         style="border-right: 1px solid #e3e8f0"></Column>
                 </template>
             </Row>
-        </ColumnGroup> -->
+        </ColumnGroup>
         <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0" :exportable="false">
         </Column>
         <template v-for="role in props.project.code_system_roles" :key="role.id">
-            <Column header="Code" :field="`code_${role.id}`" :filterField="`code_${role.id}`" sortable>
+            <Column :field="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="code"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
                         v-model="data[field]" />
                 </template>
-                <!-- <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Code" />
-                </template> -->
             </Column>
-            <Column header="Meaning" :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
+            <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="meaning"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
                         v-model="data[field]" />
                 </template>
-                <!-- <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Meaning" />
-                </template> -->
             </Column>
         </template>
-        <Column v-if="props.project.status_required" header="Status" field="status" filterField="status" sortable>
+        <Column v-if="props.project.status_required" field="status" sortable>
             <template #body="{ data }">
                 <StatusTag :value="data.status" />
             </template>
@@ -124,74 +121,31 @@
                 <StatusSelect v-model="data[field]" />
             </template>
         </Column>
-        <Column v-if="props.project.equivalence_required" header="Equivalence" field="equivalence"
-            filterField="equivalence" sortable :showFilterMenu="false">
+        <Column v-if="props.project.equivalence_required" field="equivalence" sortable>
             <template #body="{ data }">
                 <EquivalenceTag :value="data.equivalence" />
             </template>
             <template #editor="{ data, field }">
                 <EquivalenceSelect v-model="data[field]" />
             </template>
-            <!-- <template #filter="{ filterModel, filterCallback }"> -->
-            <!-- <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="equivalenceElements"
-                optionLabel="label" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                <template #option="slotProps">
-                    <Tag :value="slotProps.label" :severity="slotProps.severity" />
-                </template>
-            </MultiSelect> -->
-            <!-- <EquivalenceMutliSelect v-model="filterModel.value" @change="filterCallback()" optionLabel="name"
-                    placeholder="Any" :maxSelectedLabels="1" /> -->
-            <!-- <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-                    optionLabel="name" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                    <template #option="slotProps">
-                        <div class="flex items-center gap-2">
-                            <img :alt="slotProps.option.name"
-                                :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                                style="width: 32px" />
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </template>
-    </MultiSelect> -->
-            <!-- </template> -->
-            <!-- <template #filter="{ filterModel, filterCallback }">
-                <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-                    optionLabel="name" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                    <template #option="slotProps">
-                        <div class="flex items-center gap-2">
-                            <img :alt="slotProps.option.name"
-                                :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                                style="width: 32px" />
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </template> -->
         </Column>
-        <Column header="Comment" field="comment" filterField="comment" sortable class="grid-column-right">
+        <Column field="comment" sortable class="grid-column-right">
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" />
             </template>
-            <template #filter="{ filterModel, filterCallback }">
+            <!-- <template #filter="{ filterModel, filterCallback }">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                    placeholder="Search by name" />
-            </template>
+                    placeholder="Search by Comment" />
+            </template> -->
         </Column>
-        <Column v-if="selectedColumns.some(col => col.field === 'created')" header="Created" field="created"
-            filterField="created" dataType="date" sortable>
+        <Column v-if="selectedColumns.some(col => col.field === 'created')" field="created" dataType="date" sortable>
             <template #body="{ data }">
                 <DateFormat :value="data.created" />
             </template>
-            <template #filter="{ filterModel }">
-                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
-            </template>
         </Column>
-        <Column v-if="selectedColumns.some(col => col.field === 'modified')" header="Modified" field="modified"
-            filterField="modified" dataType="date" sortable>
+        <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" dataType="date" sortable>
             <template #body="{ data }">
                 <DateFormat :value="data.modified" />
-            </template>
-            <template #filter="{ filterModel }">
-                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
             </template>
         </Column>
         <Column :rowEditor="true" style="width: auto; margin:0; padding:0%" bodyStyle="text-align:center">
@@ -231,22 +185,7 @@ import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import { debounce } from 'lodash';
-import EquivalenceMutliSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
-import DatePicker from 'primevue/datepicker';
-import { equivalenceElements } from '@/utils/selectElement';
 
-const representatives = ref([
-    { name: 'Amy Elsner', image: 'amyelsner.png' },
-    { name: 'Anna Fali', image: 'annafali.png' },
-    { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-    { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-    { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-    { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-    { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-    { name: 'Onyama Limba', image: 'onyamalimba.png' },
-    { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-    { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-]);
 
 const toast = useToast();
 
@@ -264,30 +203,20 @@ const props = defineProps({
 
 // Filters
 
-const filters = ref();
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    comment: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
+});
 
 const initFilters = () => {
-    const baseFilters = {
+    filters.value = {
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        // comment: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
-        comment: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        created: { value: null, matchMode: FilterMatchMode.DATE_IS },
-        modified: { value: null, matchMode: FilterMatchMode.DATE_IS },
-        equivalence: { value: null, matchMode: FilterMatchMode.IN },
+        comment: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }] },
     };
-
-    // Add code and meaning filters dynamically based on code_system_roles
-    props.project.code_system_roles.forEach(role => {
-        baseFilters[`code_${role.id}`] = { value: null, matchMode: FilterMatchMode.CONTAINS };
-        baseFilters[`meaning_${role.id}`] = { value: null, matchMode: FilterMatchMode.CONTAINS };
-    });
-
-    filters.value = baseFilters;
-    console.log(filters.value);
 };
 
 // onMounted(() => {
-initFilters();
+// initFilters();
 // });
 
 const clearFilter = () => {
@@ -295,15 +224,11 @@ const clearFilter = () => {
 };
 
 const globalFilterFields: string[] = [
-    'status.value',
-    'equivalence.value',
+    'status',
+    'equivalence',
     'comment',
-    'created',
-    'modified',
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
-
-console.log(globalFilterFields);
 
 
 
@@ -371,7 +296,6 @@ function updateMapping(flattened_mapping: any, index: number) {
     execute();
 }
 
-
 const toggleColumns = ref([
     { field: 'created', header: 'Created' },
     { field: 'modified', header: 'Modified' },
@@ -410,9 +334,7 @@ const exportCSV = () => {
     dt.value.exportCSV();
 };
 
-// const emptyRow = ref(new Array(1));
 const transformedMappings = ref(flattenMappings(props.mappings, props.project.code_system_roles));
-// const columns = generateColumns(props.project.code_system_roles);
 
 function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     const transformedMappings: any = [];
