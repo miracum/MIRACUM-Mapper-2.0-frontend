@@ -25,7 +25,7 @@
           </template>
           <MappingList :mappings="mappingStore.mappings" :project="projectStore.currentProjectDetails"
             v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" ref="mappingList" />
-          <p v-else>There was an error with loading the projectdetails or mappings.</p>
+          <p v-else>The backend cannot be reached. Please make sure that it is available.</p>
         </Panel>
       </main>
     </div>

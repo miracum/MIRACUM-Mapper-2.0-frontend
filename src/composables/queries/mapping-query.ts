@@ -1,10 +1,8 @@
-import client from '../../lib'
 import { ref } from 'vue'
 import type { ParamsOption, RequestBodyOption } from 'openapi-fetch'
-import type { paths, components } from '../../client/types'
+import type { paths } from '../../client/types'
 import type { CreateMapping, UpdateMapping } from '@/stores/mappings'
 import { useQueryWithPathParam, Method } from './query'
-import { type AppError } from './query'
 
 type MappingQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 

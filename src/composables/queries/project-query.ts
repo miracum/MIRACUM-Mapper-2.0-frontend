@@ -1,7 +1,6 @@
-import client from '../../lib'
 import { ref } from 'vue'
 import type { ParamsOption, RequestBodyOption } from 'openapi-fetch'
-import type { paths, components } from '../../client/types'
+import type { paths } from '../../client/types'
 import { useQueryWithPathParam, Method } from './query'
 
 
