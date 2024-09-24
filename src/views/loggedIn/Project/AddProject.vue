@@ -1,52 +1,43 @@
 <template>
-    <!-- <Panel>
-        <template #header>
-            <div class="header">
-                <h1 class="title">Add Project</h1>
-            </div>
-        </template>
-<h2 class="subtitle">Create a new Mapping Project</h2>
-</Panel> -->
-
-    <div class="flex-row">
-        <Panel header="Add Project">
-            <div class="panel-container-information">
-                Create a new Mapping Project.
-            </div>
-        </Panel>
-        <Panel header="General Information">
-            <div class="panel-container-general">
-                <div class="flex flex-row gap-4 mt-3">
-                    <FloatLabel class="flex flex-col flex-2">
-                        <InputText id="name" v-model="project.name" />
+    <div class="grid-container">
+        <Card class="grid-item">
+            <template #title>
+                Add Project
+            </template>
+            <template #content>
+                <div>Create a new Mapping Project.</div>
+            </template>
+        </Card>
+        <Card class="grid-item">
+            <template #title>
+                General Information
+            </template>
+            <template #content>
+                <div class="flex gap-4">
+                    <FloatLabel style="flex:2"> <!--class="flex flex-col flex-2"-->
+                        <InputText id="name" v-model="project.name" class="w-full" />
                         <label for="name">Name</label>
                     </FloatLabel>
-                    <FloatLabel class="flex flex-col flex-1">
-                        <InputText id="version" v-model="project.version" />
+                    <FloatLabel style="flex:1"> <!--class="flex flex-col flex-1"-->
+                        <InputText id="version" v-model="project.version" class="w-full" />
                         <label for="version">Version</label>
                     </FloatLabel>
                 </div>
-                <FloatLabel class="w-full mt-5">
+                <FloatLabel class="mt-5">
                     <Textarea id="description" v-model="project.description" rows="5" class="w-full" />
                     <label for="description">Description</label>
                 </FloatLabel>
-            </div>
-        </Panel>
-    </div>
-    <div class="flex-row">
-        <Panel>
-            <template #header>
-                <div class="flex justify-content-between">
-                    <div class="font-bold">Permissions</div>
-                </div>
             </template>
-            <template #icons>
+        </Card>
+        <Card class="grid-item">
+            <template #title>
+                <div>Permissions</div>
+            </template>
+            <template #content>
                 <Button label="Add Permission" icon="pi pi-plus" severity="success" class="mr-2"
                     @click="addPermission" />
-            </template>
-            <div class="panel-container-permissions">
                 <DataTable :value="userPermissions" tableStyle="min-width: 30rem"
-                    @rowReorder="onUserPermissionsRowReorder" scrollable scroll-height="500px">
+                    @rowReorder="onUserPermissionsRowReorder" scrollable scroll-height="200px">
                     <Column rowReorder headerStyle="width: 3rem" />
                     <Column header="User">
                         <template #body="slotProps">
@@ -72,20 +63,16 @@
                         </template>
                     </Column>
                 </DataTable>
-            </div>
-        </Panel>
-        <Panel>
-            <template #header>
-                <div class="flex justify-content-between">
-                    <div class="font-bold">Code System Roles</div>
-                </div>
             </template>
-            <template #icons>
+        </Card>
+        <Card class="grid-item">
+            <template #title>
+                Code System Roles
+            </template>
+            <template #content>
                 <Button label="Add Role" icon="pi pi-plus" severity="success" class="mr-2" @click="addRole" />
-            </template>
-            <div class="panel-container-roles">
                 <DataTable :value="codeSystemRoles" tableStyle="min-width: 30rem" @rowReorder="onCodeSystemRowReorder"
-                    scrollable scroll-height="500px">
+                    scrollable scroll-height="200px">
                     <Column rowReorder headerStyle="width: 3rem" />
                     <Column header="CodeSystem">
                         <template #body="slotProps">
@@ -112,13 +99,14 @@
                         </template>
                     </Column>
                 </DataTable>
-            </div>
-        </Panel>
+            </template>
+        </Card>
     </div>
 
 </template>
 
 <script setup lang="ts">
+import Card from 'primevue/card';
 import CodeSystemSelect from '@/components/selects/CodeSystemSelect.vue';
 import { ref, watch } from 'vue';
 import { useToast } from "primevue/usetoast";
@@ -256,69 +244,34 @@ const project = ref({
 </script>
 
 <style scoped>
-.full-width {
+/* Grid container for the 2x2 layout */
+.grid-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-auto-rows: min-content;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    /* grid-gap: 1rem;
+    padding: 1rem;
+    box-sizing: border-box;
     width: 100%;
-    margin-top: 10px;
+    height: auto; */
 }
 
-.flex-row {
-    display: flex;
-    width: 100%;
+/* Grid items */
+.grid-item {
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-width: 100%;
 }
 
-.flex-item {
-    display: flex;
-    flex-direction: column;
+/* Responsive Design: Stack on smaller screens */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
 }
-
-.flex-item-name {
-    flex: 2;
-    /* Takes 2/3rds of the space */
-}
-
-.flex-item-version {
-    flex: 1;
-    /* Takes 1/3rd of the space */
-}
-
-
-.panel-container-general {
-    width: 800px;
-    /* height: 190px; */
-    /* margin: 0 auto; */
-    /* Center the container horizontally */
-}
-
-.panel-container-information {
-    width: 600px;
-    height: 205px;
-    /* margin: 0 auto; */
-    /* Center the container horizontally */
-}
-
-.panel-container-permissions {
-    width: 600px;
-    height: 500px;
-    /* margin: 0 auto; */
-    /* Center the container horizontally */
-}
-
-.panel-container-roles {
-    width: 800px;
-    height: 500px;
-    /* margin: 0 auto; */
-    /* Center the container horizontally */
-}
-
-.flex-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-/* .flex-row Panel {
-    width: calc(50% - 10px);
-} */
 </style>
