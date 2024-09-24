@@ -16,6 +16,7 @@ declare module 'vue' {
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
+    Checkbox: typeof import('primevue/checkbox')['default']
     CodeAutoComplete: typeof import('./src/components/autocomplete/CodeAutoComplete.vue')['default']
     CodeSystemASelect: typeof import('./src/components/selects/CodeSystemASelect.vue')['default']
     CodeSystemAutoComplete: typeof import('./src/components/autocomplete/CodeSystemAutoComplete.vue')['default']

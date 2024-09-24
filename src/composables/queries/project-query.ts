@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import type { ParamsOption, RequestBodyOption } from 'openapi-fetch'
 import type { paths } from '../../client/types'
 import { useQueryWithPathParam, Method } from './query'
-
+import { type CreateProject} from '@/stores/project'
 
 type ProjectQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
@@ -66,10 +66,9 @@ export const useGetProjectDetailsQuery = (projectId: number) => {
 type PostProjectResponse =
   paths['/projects']['post']['responses']['200']['content']['application/json']
 
-export const usePostProjectQuery = (
-  fetchOptions: ProjectQueryOptions<paths['/projects']['post']>
-) => {
+export const usePostProjectQuery = (createProject: CreateProject) => {
   const state = ref<PostProjectResponse>();
+  const fetchOptions: ProjectQueryOptions<paths['/projects']['post']> = { body: createProject}
 
   const path = '/projects';
   const method = Method.POST;

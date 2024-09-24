@@ -13,6 +13,7 @@ interface ProjectState {
 }
 
 export type Project = components['schemas']['Project']
+export type CreateProject = components['schemas']['CreateProjectDetails']
 export type UpdateProject = components['schemas']['UpdateProject']
 export type ProjectDetails = components['schemas']['ProjectDetails']
 export type CodeSystemRole = components['schemas']['CodeSystemRole']
