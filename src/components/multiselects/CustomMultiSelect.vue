@@ -1,7 +1,8 @@
 <template>
-    <MultiSelect :options="props.option" style="min-width: 14rem">
+    <MultiSelect :options="props.options" optionLabel="label" optionVale="value" placeholder="Any"
+        style="min-width: 14rem" :maxSelectedLabels="1">
         <template #option="slotProps">
-            <Tag :value="slotProps.label" :severity="slotProps.severity" />
+            <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
         </template>
     </MultiSelect>
 </template>
@@ -10,18 +11,12 @@
 <script setup lang="ts">
 import type { SelectElement } from '../../utils/selectElement';
 import type { PropType } from 'vue';
-// import { getLabel, getSeverity } from '@/utils/selectElement';
-// import Select from 'primevue/select';
 
 const props = defineProps({
     options: {
         type: Array as PropType<SelectElement[]>,
         required: true
     },
-    // placeholder: {
-    //     type: String,
-    //     default: ''
-    // },
 });
 
 </script>
