@@ -3,19 +3,31 @@
         <Panel class="grid-item" header="Add project">
             <div>Create a new Mapping Project.</div>
             <div class="flex gap-4 mt-4">
-                <FloatLabel style="flex:2"> <!--class="flex flex-col flex-2"-->
-                    <InputText id="name" v-model="project.name" class="w-full" />
-                    <label for="name">Name</label>
-                </FloatLabel>
-                <FloatLabel style="flex:1"> <!--class="flex flex-col flex-1"-->
-                    <InputText id="version" v-model="project.version" class="w-full" />
-                    <label for="version">Version</label>
-                </FloatLabel>
+                <div>
+                    <FloatLabel style="flex:2">
+                        <InputText id="name" v-model="project.name" class="w-full"
+                            :invalid="submitted && !project.name" />
+                        <label for="name">Name</label>
+                    </FloatLabel>
+                    <small class="p-error" v-if="submitted && !project.name">Name is required.</small>
+                </div>
+                <div>
+                    <FloatLabel style="flex:1">
+                        <InputText id="version" v-model="project.version" class="w-full"
+                            :invalid="submitted && !project.version" />
+                        <label for="version">Version</label>
+                    </FloatLabel>
+                    <small class="p-error" v-if="submitted && !project.version">Version is required.</small>
+                </div>
             </div>
-            <FloatLabel class="mt-5">
-                <Textarea id="description" v-model="project.description" rows="5" class="w-full" />
-                <label for="description">Description</label>
-            </FloatLabel>
+            <div>
+                <FloatLabel class="mt-5">
+                    <Textarea id="description" v-model="project.description" rows="5" class="w-full"
+                        :invalid="submitted && !project.description" />
+                    <label for="description">Description</label>
+                </FloatLabel>
+                <small class="p-error" v-if="submitted && !project.description">Description is required.</small>
+            </div>
         </Panel>
         <Panel class="grid-item" header="Specification">
             <div>This cannot be changed later.</div>
@@ -50,7 +62,9 @@
                 </Column>
                 <Column header="Permission">
                     <template #body="slotProps">
-                        <UserPermissionSelect v-model="slotProps.data.role" />
+                        <UserPermissionSelect v-model="slotProps.data.role"
+                            :invalid="submitted && !slotProps.data.role" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
                     </template>
                 </Column>
                 <Column style="width: auto; margin: 0; padding: 0%" v-if="userPermissions.length > 1">
@@ -68,20 +82,23 @@
                 <Column rowReorder headerStyle="width: 3rem" />
                 <Column header="CodeSystem">
                     <template #body="slotProps">
-                        <!-- <RoleSelect v-model="slotProps.data.role" /> -->
-                        <!-- <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" /> -->
-                        <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems" />
+                        <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
+                            :invalid="submitted && !slotProps.data.codeSystem" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.codeSystem">CodeSystem is
+                            required.</small>
                     </template>
                 </Column>
-
                 <Column header="Role">
                     <template #body="slotProps">
-                        <RoleSelect v-model="slotProps.data.role" />
+                        <RoleSelect v-model="slotProps.data.role" :invalid="submitted && !slotProps.data.role" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
                     </template>
                 </Column>
                 <Column header="Name">
                     <template #body="slotProps">
-                        <InputText v-model=slotProps.data.name placeholder="Name" />
+                        <InputText v-model=slotProps.data.name placeholder="Name"
+                            :invalid="submitted && !slotProps.data.name" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.name">Name is required.</small>
                     </template>
                 </Column>
                 <Column style="width: auto; margin: 0; padding: 0%" v-if="codeSystemRoles.length > 1">
@@ -109,27 +126,13 @@ import { type CodeSystem, type CreateProject } from '@/stores/project';
 import Checkbox from 'primevue/checkbox';
 import { useRouter } from 'vue-router';
 
+const submitted = ref(false);
+
 // for possible error messages
 const toast = useToast();
 
 /////////// user permissions
 const userPermissions = ref([
-    // {
-    //     user: {
-    //         name: 'John Doe',
-    //         email: 'john.doe@fau.de',
-    //         id: 1
-    //     },
-    //     role: 'reviewer'
-    // },
-    // {
-    //     user: {
-    //         name: 'Jane Doe',
-    //         email: 'jane.doe@fau.de',
-    //         id: 2
-    //     },
-    //     role: 'project_owner'
-    // }
     {
         user: {
             name: 'John Doe',
@@ -232,7 +235,24 @@ const project = ref({
 const router = useRouter();
 
 const onCreateProject = () => {
-    console.log("hallo")
+    submitted.value = true;
+    if (!project.value.name || !project.value.version || !project.value.description) {
+        console.log("invalid: project name, version or description missing");
+        return;
+    }
+    for (const permission of userPermissions.value) {
+        if (!permission.role) {
+            console.log("invalid: each permission needs a role");
+            return;
+        }
+    }
+    for (const role of codeSystemRoles.value) {
+        if (!role.codeSystem || !role.role || !role.name) {
+            console.log("invalid: each code system role needs a code system, role and name");
+            return;
+        }
+    }
+
     const createProject: CreateProject = {
         name: project.value.name,
         version: project.value.version,
@@ -253,9 +273,6 @@ const onCreateProject = () => {
             }
         })
     };
-
-    console.log("hallo created createproject")
-    console.log(createProject)
 
     const { error, isFetching, isReady, state, execute } = usePostProjectQuery(createProject);
     watch(isFetching, (newVal) => {
