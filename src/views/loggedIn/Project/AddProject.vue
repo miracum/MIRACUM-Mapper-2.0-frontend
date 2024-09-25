@@ -1,118 +1,97 @@
 <template>
     <div class="grid-container">
-        <Card class="grid-item">
-            <template #title>
-                Add project
-            </template>
-            <template #content>
-                <div>Create a new Mapping Project.</div>
-                <div class="flex gap-4 mt-4">
-                    <FloatLabel style="flex:2"> <!--class="flex flex-col flex-2"-->
-                        <InputText id="name" v-model="project.name" class="w-full" />
-                        <label for="name">Name</label>
-                    </FloatLabel>
-                    <FloatLabel style="flex:1"> <!--class="flex flex-col flex-1"-->
-                        <InputText id="version" v-model="project.version" class="w-full" />
-                        <label for="version">Version</label>
-                    </FloatLabel>
-                </div>
-                <FloatLabel class="mt-5">
-                    <Textarea id="description" v-model="project.description" rows="5" class="w-full" />
-                    <label for="description">Description</label>
+        <Panel class="grid-item" header="Add project">
+            <div>Create a new Mapping Project.</div>
+            <div class="flex gap-4 mt-4">
+                <FloatLabel style="flex:2"> <!--class="flex flex-col flex-2"-->
+                    <InputText id="name" v-model="project.name" class="w-full" />
+                    <label for="name">Name</label>
                 </FloatLabel>
-            </template>
-        </Card>
-        <Card class="grid-item">
-            <template #title>
-                Specification
-            </template>
-            <template #content>
-                <div>This cannot be changed later.</div>
-                <div class="flex flex-col">
-                    <div class="flex mt-3">
-                        <Checkbox v-model="project.equivalence_required" :binary="true" />
-                        <label class="ml-2">Enable to select the equivalence of a mapping</label>
-                    </div>
-                    <div class="flex mt-3">
-                        <Checkbox v-model="project.status_required" :binary="true" />
-                        <label class="ml-2">Enable to select the status of a mapping</label>
-                    </div>
+                <FloatLabel style="flex:1"> <!--class="flex flex-col flex-1"-->
+                    <InputText id="version" v-model="project.version" class="w-full" />
+                    <label for="version">Version</label>
+                </FloatLabel>
+            </div>
+            <FloatLabel class="mt-5">
+                <Textarea id="description" v-model="project.description" rows="5" class="w-full" />
+                <label for="description">Description</label>
+            </FloatLabel>
+        </Panel>
+        <Panel class="grid-item" header="Specification">
+            <div>This cannot be changed later.</div>
+            <div class="flex flex-col">
+                <div class="flex mt-3">
+                    <Checkbox v-model="project.equivalence_required" :binary="true" />
+                    <label class="ml-2">Enable to select the equivalence of a mapping</label>
                 </div>
-            </template>
-        </Card>
-        <Card class="grid-item">
-            <template #title>
-                <div>Permissions</div>
-            </template>
-            <template #content>
-                <Button label="Add Permission" icon="pi pi-plus" severity="success" class="mr-2 mt-3"
-                    @click="addPermission" />
-                <DataTable :value="userPermissions" tableStyle="min-width: 30rem"
-                    @rowReorder="onUserPermissionsRowReorder" scrollable scroll-height="200px">
-                    <Column rowReorder headerStyle="width: 3rem" />
-                    <Column header="User">
-                        <template #body="slotProps">
-                            <div class="inline-flex align-items-center gap-1 px-2 py-2">
-                                <Avatar icon="pi pi-user" class="mr-2" size="large"
-                                    style="background-color: #ece9fc; color: #2a1261" shape="circle" />
-                                <span class="inline-flex flex-col items-start">
-                                    <span class="font-bold">{{ slotProps.data.user.name }}</span>
-                                    <span class="text-sm">{{ slotProps.data.user.email }}</span>
-                                </span>
-                            </div>
-                        </template>
-                    </Column>
-                    <Column header="Permission">
-                        <template #body="slotProps">
-                            <UserPermissionSelect v-model="slotProps.data.role" style="width:170px" />
-                        </template>
-                    </Column>
-                    <Column style="width: auto; margin: 0; padding: 0%" v-if="userPermissions.length > 1">
-                        <template #body="slotProps">
-                            <Button icon="pi pi-trash" text rounded severity="danger"
-                                @click="onUserPermissionDelete(slotProps.index)" />
-                        </template>
-                    </Column>
-                </DataTable>
-            </template>
-        </Card>
-        <Card class="grid-item">
-            <template #title>
-                Code System Roles
-            </template>
-            <template #content>
-                <Button label="Add Role" icon="pi pi-plus" severity="success" class="mr-2 mt-3" @click="addRole" />
-                <DataTable :value="codeSystemRoles" tableStyle="min-width: 30rem" @rowReorder="onCodeSystemRowReorder"
-                    scrollable scroll-height="200px">
-                    <Column rowReorder headerStyle="width: 3rem" />
-                    <Column header="CodeSystem">
-                        <template #body="slotProps">
-                            <!-- <RoleSelect v-model="slotProps.data.role" /> -->
-                            <!-- <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" /> -->
-                            <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
-                                style="width:190px" />
-                        </template>
-                    </Column>
+                <div class="flex mt-3">
+                    <Checkbox v-model="project.status_required" :binary="true" />
+                    <label class="ml-2">Enable to select the status of a mapping</label>
+                </div>
+            </div>
+        </Panel>
+        <Panel class="grid-item" header="Permissions">
+            <Button label="Add Permission" icon="pi pi-plus" severity="success" class="mr-2 mt-3"
+                @click="addPermission" />
+            <DataTable :value="userPermissions" tableStyle="min-width: 30rem" @rowReorder="onUserPermissionsRowReorder"
+                scrollable scroll-height="500px">
+                <Column rowReorder headerStyle="width: 3rem" />
+                <Column header="User">
+                    <template #body="slotProps">
+                        <div class="inline-flex align-items-center gap-1 px-2 py-2">
+                            <Avatar icon="pi pi-user" class="mr-2" size="large"
+                                style="background-color: #ece9fc; color: #2a1261" shape="circle" />
+                            <span class="inline-flex flex-col items-start">
+                                <span class="font-bold">{{ slotProps.data.user.name }}</span>
+                                <span class="text-sm">{{ slotProps.data.user.email }}</span>
+                            </span>
+                        </div>
+                    </template>
+                </Column>
+                <Column header="Permission">
+                    <template #body="slotProps">
+                        <UserPermissionSelect v-model="slotProps.data.role" />
+                    </template>
+                </Column>
+                <Column style="width: auto; margin: 0; padding: 0%" v-if="userPermissions.length > 1">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-trash" text rounded severity="danger"
+                            @click="onUserPermissionDelete(slotProps.index)" />
+                    </template>
+                </Column>
+            </DataTable>
+        </Panel>
+        <Panel class="grid-item" header="Code System Roles">
+            <Button label="Add Role" icon="pi pi-plus" severity="success" class="mr-2 mt-3" @click="addRole" />
+            <DataTable :value="codeSystemRoles" tableStyle="min-width: 30rem" @rowReorder="onCodeSystemRowReorder"
+                scrollable scroll-height="500px">
+                <Column rowReorder headerStyle="width: 3rem" />
+                <Column header="CodeSystem">
+                    <template #body="slotProps">
+                        <!-- <RoleSelect v-model="slotProps.data.role" /> -->
+                        <!-- <CodeSystemNameAutoComplete v-model="slotProps.data.codeSystem" /> -->
+                        <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems" />
+                    </template>
+                </Column>
 
-                    <Column header="Role">
-                        <template #body="slotProps">
-                            <RoleSelect v-model="slotProps.data.role" style="width:130px" />
-                        </template>
-                    </Column>
-                    <Column header="Name">
-                        <template #body="slotProps">
-                            <InputText v-model=slotProps.data.name placeholder="Name" />
-                        </template>
-                    </Column>
-                    <Column style="width: auto; margin: 0; padding: 0%" v-if="codeSystemRoles.length > 1">
-                        <template #body="slotProps">
-                            <Button icon="pi pi-trash" text rounded severity="danger"
-                                @click="onCodeSystemDelete(slotProps.index)" />
-                        </template>
-                    </Column>
-                </DataTable>
-            </template>
-        </Card>
+                <Column header="Role">
+                    <template #body="slotProps">
+                        <RoleSelect v-model="slotProps.data.role" />
+                    </template>
+                </Column>
+                <Column header="Name">
+                    <template #body="slotProps">
+                        <InputText v-model=slotProps.data.name placeholder="Name" />
+                    </template>
+                </Column>
+                <Column style="width: auto; margin: 0; padding: 0%" v-if="codeSystemRoles.length > 1">
+                    <template #body="slotProps">
+                        <Button icon="pi pi-trash" text rounded severity="danger"
+                            @click="onCodeSystemDelete(slotProps.index)" />
+                    </template>
+                </Column>
+            </DataTable>
+        </Panel>
     </div>
     <div class="button-container">
         <Button label="Cancel" severity="danger" @click="onCancelProject" />
@@ -122,7 +101,6 @@
 </template>
 
 <script setup lang="ts">
-import Card from 'primevue/card';
 import CodeSystemSelect from '@/components/selects/CodeSystemSelect.vue';
 import { ref, watch } from 'vue';
 import { useToast } from "primevue/usetoast";
@@ -182,7 +160,7 @@ const addPermission = () => {
         user: {
             name: 'John Doe',
             email: 'john.doe@fau.de',
-            id: 1
+            id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
         },
         role: ''
     });
@@ -190,24 +168,6 @@ const addPermission = () => {
 
 /////////// code system roles
 const codeSystemRoles = ref([
-    // {
-    //     codeSystem: {
-    //         codeSystemName: 'SNOMED CT',
-    //         name: '1.2.5',
-    //         id: 1
-    //     },
-    //     role: 'source',
-    //     name: 'SNOMED CT'
-    // },
-    // {
-    //     codeSystem: {
-    //         codeSystemName: 'Loinc',
-    //         name: '1.2.5',
-    //         id: 2
-    //     },
-    //     role: 'target',
-    //     name: 'LOINC'
-    // }
     {
         codeSystem: 0,
         role: '',
@@ -336,7 +296,7 @@ const onCancelProject = () => {
 }
 
 /* stack on smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     .grid-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
