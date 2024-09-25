@@ -1,5 +1,5 @@
 <template>
-    <CustomMultiSelect :options="statusElements" optionLabel="label" optionValue="value" />
+    <CustomMultiSelect :options="statusElements" />
 </template>
 
 <script setup lang="ts">

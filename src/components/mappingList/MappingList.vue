@@ -116,12 +116,16 @@
                 </template> -->
             </Column>
         </template>
-        <Column v-if="props.project.status_required" header="Status" field="status" filterField="status" sortable>
+        <Column v-if="props.project.status_required" header="Status" field="status" filterField="status" sortable
+            :showFilterMenu="false">
             <template #body="{ data }">
                 <StatusTag :value="data.status" />
             </template>
             <template #editor="{ data, field }">
                 <StatusSelect v-model="data[field]" />
+            </template>
+            <template #filter="{ filterModel, filterCallback }">
+                <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" header="Equivalence" field="equivalence"
@@ -132,40 +136,9 @@
             <template #editor="{ data, field }">
                 <EquivalenceSelect v-model="data[field]" />
             </template>
-            <!-- <template #filter="{ filterModel, filterCallback }"> -->
-            <!-- <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="equivalenceElements"
-                optionLabel="label" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                <template #option="slotProps">
-                    <Tag :value="slotProps.label" :severity="slotProps.severity" />
-                </template>
-            </MultiSelect> -->
-            <!-- <EquivalenceMutliSelect v-model="filterModel.value" @change="filterCallback()" optionLabel="name"
-                    placeholder="Any" :maxSelectedLabels="1" /> -->
-            <!-- <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-                    optionLabel="name" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                    <template #option="slotProps">
-                        <div class="flex items-center gap-2">
-                            <img :alt="slotProps.option.name"
-                                :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                                style="width: 32px" />
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </template>
-    </MultiSelect> -->
-            <!-- </template> -->
-            <!-- <template #filter="{ filterModel, filterCallback }">
-                <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-                    optionLabel="name" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
-                    <template #option="slotProps">
-                        <div class="flex items-center gap-2">
-                            <img :alt="slotProps.option.name"
-                                :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                                style="width: 32px" />
-                            <span>{{ slotProps.option.name }}</span>
-                        </div>
-                    </template>
-                </MultiSelect>
-            </template> -->
+            <template #filter="{ filterModel, filterCallback }">
+                <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()" />
+            </template>
         </Column>
         <Column header="Comment" field="comment" filterField="comment" sortable class="grid-column-right">
             <template #editor="{ data, field }">
@@ -217,36 +190,21 @@
 <script setup lang='ts'>
 import type { ProjectDetails } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings';
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
 import StatusTag from '../tags/StatusTag.vue';
 import EquivalenceTag from '../tags/EquivalenceTag.vue';
 import DateFormat from '../DateFormat.vue';
-import CodeSystemRole from './CodeSystemRole.vue';
 import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.vue';
 import { on_item_select_autocomplete } from '@/utils/autocomplete';
 import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
-import { debounce } from 'lodash';
-import EquivalenceMutliSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
+import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
+import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
-import { equivalenceElements } from '@/utils/selectElement';
-
-const representatives = ref([
-    { name: 'Amy Elsner', image: 'amyelsner.png' },
-    { name: 'Anna Fali', image: 'annafali.png' },
-    { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-    { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-    { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-    { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-    { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-    { name: 'Onyama Limba', image: 'onyamalimba.png' },
-    { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-    { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-]);
 
 const toast = useToast();
 
@@ -274,6 +232,7 @@ const initFilters = () => {
         created: { value: null, matchMode: FilterMatchMode.DATE_IS },
         modified: { value: null, matchMode: FilterMatchMode.DATE_IS },
         equivalence: { value: null, matchMode: FilterMatchMode.IN },
+        status: { value: null, matchMode: FilterMatchMode.IN },
     };
 
     // Add code and meaning filters dynamically based on code_system_roles
@@ -283,7 +242,7 @@ const initFilters = () => {
     });
 
     filters.value = baseFilters;
-    console.log(filters.value);
+    // console.log(filters.value);
 };
 
 // onMounted(() => {
@@ -295,15 +254,15 @@ const clearFilter = () => {
 };
 
 const globalFilterFields: string[] = [
-    'status.value',
-    'equivalence.value',
+    'status',
+    'equivalence',
     'comment',
     'created',
     'modified',
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
 
-console.log(globalFilterFields);
+// console.log(globalFilterFields);
 
 
 
