@@ -3,16 +3,16 @@
         <Panel class="grid-item" header="Add project">
             <div>Create a new Mapping Project.</div>
             <div class="flex gap-4 mt-4">
-                <div>
-                    <FloatLabel style="flex:2">
+                <div style="flex:2">
+                    <FloatLabel>
                         <InputText id="name" v-model="project.name" class="w-full"
                             :invalid="submitted && !project.name" />
                         <label for="name">Name</label>
                     </FloatLabel>
                     <small class="p-error" v-if="submitted && !project.name">Name is required.</small>
                 </div>
-                <div>
-                    <FloatLabel style="flex:1">
+                <div style="flex:1">
+                    <FloatLabel>
                         <InputText id="version" v-model="project.version" class="w-full"
                             :invalid="submitted && !project.version" />
                         <label for="version">Version</label>
@@ -62,9 +62,11 @@
                 </Column>
                 <Column header="Permission">
                     <template #body="slotProps">
-                        <UserPermissionSelect v-model="slotProps.data.role"
-                            :invalid="submitted && !slotProps.data.role" />
-                        <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
+                        <div>
+                            <UserPermissionSelect v-model="slotProps.data.role"
+                                :invalid="submitted && !slotProps.data.role" />
+                            <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
+                        </div>
                     </template>
                 </Column>
                 <Column style="width: auto; margin: 0; padding: 0%" v-if="userPermissions.length > 1">
@@ -82,23 +84,29 @@
                 <Column rowReorder headerStyle="width: 3rem" />
                 <Column header="CodeSystem">
                     <template #body="slotProps">
-                        <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
-                            :invalid="submitted && !slotProps.data.codeSystem" />
-                        <small class="p-error" v-if="submitted && !slotProps.data.codeSystem">CodeSystem is
-                            required.</small>
+                        <div>
+                            <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
+                                :invalid="submitted && !slotProps.data.codeSystem" />
+                            <small class="p-error" v-if="submitted && !slotProps.data.codeSystem">CodeSystem is
+                                required.</small>
+                        </div>
                     </template>
                 </Column>
                 <Column header="Role">
                     <template #body="slotProps">
-                        <RoleSelect v-model="slotProps.data.role" :invalid="submitted && !slotProps.data.role" />
-                        <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
+                        <div>
+                            <RoleSelect v-model="slotProps.data.role" :invalid="submitted && !slotProps.data.role" />
+                            <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
+                        </div>
                     </template>
                 </Column>
                 <Column header="Name">
                     <template #body="slotProps">
-                        <InputText v-model=slotProps.data.name placeholder="Name"
-                            :invalid="submitted && !slotProps.data.name" />
-                        <small class="p-error" v-if="submitted && !slotProps.data.name">Name is required.</small>
+                        <div>
+                            <InputText v-model=slotProps.data.name placeholder="Name"
+                                :invalid="submitted && !slotProps.data.name" />
+                            <small class="p-error" v-if="submitted && !slotProps.data.name">Name is required.</small>
+                        </div>
                     </template>
                 </Column>
                 <Column style="width: auto; margin: 0; padding: 0%" v-if="codeSystemRoles.length > 1">
@@ -325,5 +333,9 @@ const onCancelProject = () => {
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.p-error {
+    display: block;
 }
 </style>
