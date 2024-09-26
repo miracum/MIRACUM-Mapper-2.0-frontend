@@ -14,7 +14,6 @@
                 "esbenp.prettier-vscode",
                 "octref.vetur",
                 "ms-azuretools.vscode-docker",
-                "github.copilot",
                 "shardulm94.trailing-spaces"
             ]
         }
