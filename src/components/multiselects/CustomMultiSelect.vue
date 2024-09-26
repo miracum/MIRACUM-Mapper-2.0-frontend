@@ -1,6 +1,6 @@
 <template>
-    <MultiSelect :options="props.options" optionLabel="label" optionVale="value" placeholder="Any"
-        style="min-width: 14rem" :maxSelectedLabels="1">
+    <MultiSelect :options="props.options" optionLabel="label" placeholder="Any" style="min-width: 14rem"
+        :maxSelectedLabels="1">
         <template #option="slotProps">
             <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
         </template>

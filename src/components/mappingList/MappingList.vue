@@ -127,9 +127,9 @@
             <template #editor="{ data, field }">
                 <StatusSelect v-model="data[field]" />
             </template>
-            <template #filter="{ filterModel, filterCallback }">
+            <!-- <template #filter="{ filterModel, filterCallback }">
                 <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" />
-            </template>
+            </template> -->
         </Column>
         <Column v-if="props.project.equivalence_required" header="Equivalence" field="equivalence"
             filterField="equivalence" sortable :showFilterMenu="false">
