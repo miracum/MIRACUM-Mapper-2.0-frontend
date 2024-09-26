@@ -8,7 +8,7 @@ import MappingView from '../views/loggedIn/MappingView.vue'
 
 // import keycloak from '../keycloak'; // Adjust the path as necessary
 import { useAuthStore } from '../stores/auth'
-import AddProject from '@/views/loggedIn/Project/AddProject.vue'
+import AddProjectView from '@/views/loggedIn/Project/AddProjectView.vue'
 
 const routes = [
   {
@@ -48,8 +48,8 @@ const routes = [
   },
   {
     path: '/dashboard/projects/add',
-    name: 'AddProject',
-    component: AddProject,
+    name: 'AddProjectView',
+    component: AddProjectView,
     meta: { requiresAuth: true }
   }
 ]
