@@ -2,10 +2,9 @@
     <!-- <div class="datatable-container"> -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="row" :globalFilterFields="globalFilterFields"
-        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
-        scrollable scroll-height="calc(100vh - 430px)" stateKey="`mappings-${props.project.id}`"
-        v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
-            table: { style: 'min-width: 10' }, // TODO what does this do?
+        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" scrollable
+        scroll-height="calc(100vh - 430px)" v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
+            table: { style: 'min-width: 10' },
             column: {
                 bodycell: ({ state }) => ({
                     style: state['d_editing'] && 'padding-top: 0.6rem; padding-bottom: 0.6rem'
@@ -15,13 +14,11 @@
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         :rowsPerPageOptions="[5, 10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
-        <template #header>
+        <template #header> <!--  stateStorage="session" stateKey="`mappings-${props.project.id}`" -->
             <div class="flex justify-content-between" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 10px;">
-                    <h2 class="m-0"></h2>
-                </div>
-                <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" />
+                    <h2 class="m-0"></h2>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
@@ -51,6 +48,7 @@
         </template>
         <!-- <template #empty> No customers found. </template> TODO
         <template #loading> Loading customers data. Please wait. </template> TODO -->
+        <!-- currently, filtering and column groups are not working but this just got fixed: https://github.com/primefaces/primevue/issues/6151#issue-2437644590 Will be release in 4.1.0 -->
         <!-- <ColumnGroup type="header">
             <Row>
                 <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0"
@@ -102,10 +100,10 @@
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
                         v-model="data[field]" />
                 </template>
-                <!-- <template #filter="{ filterModel, filterCallback }">
+                <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
                         placeholder="Search by Code" />
-                </template> -->
+                </template>
             </Column>
             <Column header="Meaning" :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
                 <template #editor="{ data, field }">
@@ -113,10 +111,10 @@
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
                         v-model="data[field]" />
                 </template>
-                <!-- <template #filter="{ filterModel, filterCallback }">
+                <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
                         placeholder="Search by Meaning" />
-                </template> -->
+                </template>
             </Column>
         </template>
         <Column v-if="props.project.status_required" header="Status" field="status" filterField="status" sortable
@@ -127,9 +125,9 @@
             <template #editor="{ data, field }">
                 <StatusSelect v-model="data[field]" />
             </template>
-            <!-- <template #filter="{ filterModel, filterCallback }">
+            <template #filter="{ filterModel, filterCallback }">
                 <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" />
-            </template> -->
+            </template>
         </Column>
         <Column v-if="props.project.equivalence_required" header="Equivalence" field="equivalence"
             filterField="equivalence" sortable :showFilterMenu="false">
@@ -141,6 +139,13 @@
             </template>
             <template #filter="{ filterModel, filterCallback }">
                 <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()" />
+                <!-- <MultiSelect :options="equivalenceElements" optionLabel="label" placeholder="Any"
+                    style="min-width: 14rem" :maxSelectedLabels="1" v-model="filterModel.value"
+                    @change="() => handleFilterChange(filterModel, filterCallback)">
+                    <template #option="slotProps">
+                        <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
+                    </template>
+    </MultiSelect> -->
             </template>
         </Column>
         <Column header="Comment" field="comment" filterField="comment" sortable class="grid-column-right">
@@ -210,7 +215,6 @@ import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
 import { useRouter } from 'vue-router';
 
-
 const toast = useToast();
 
 const props = defineProps({
@@ -260,15 +264,12 @@ const clearFilter = () => {
 
 const globalFilterFields: string[] = [
     'status',
-    'equivalence',
+    'equivalence.name',
     'comment',
     'created',
     'modified',
     ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
 ];
-
-// console.log(globalFilterFields);
-
 
 
 // show/hide create/edit dialog

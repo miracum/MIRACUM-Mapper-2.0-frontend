@@ -5,7 +5,7 @@
         <ProjectPermissionsPanel :project="project" :userPermissions="userPermissions" :submitted="submitted" />
         <!--@update:userPermissions="updateUserPermissions"-->
         <CodeSystemRolesPanel :project="project" :codeSystemRoles="codeSystemRoles" :submitted="submitted"
-            @update:codeSystemRoles="updateCodeSystemRoleOrder" />
+            @update:codeSystemRoles="updateCodeSystemRoleOrder" editCodeSystemRolesPossible=true />
     </div>
     <div class="button-container">
         <Button label="Cancel" severity="danger" @click="onCancelProject" />
