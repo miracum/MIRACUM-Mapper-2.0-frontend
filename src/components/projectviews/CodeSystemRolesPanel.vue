@@ -1,16 +1,21 @@
 <template>
     <Panel class="grid-item" header="Code System Roles">
-        <Button label="Add Role" icon="pi pi-plus" severity="success" class="mr-2 mt-3" @click="addRole" />
+        <Button label="Add Role" icon="pi pi-plus" severity="success" class="mr-2 mt-3" @click="addRole"
+            v-if="editCodeSystemRolesPossible" />
         <DataTable :value="codeSystemRoles" tableStyle="min-width: 30rem" @rowReorder="onCodeSystemRolesRowReorder"
             scrollable scroll-height="500px">
-            <Column rowReorder headerStyle="width: 3rem" />
+            <Column rowReorder headerStyle="width: 3rem" v-if="editCodeSystemRolesPossible" />
             <Column header="CodeSystem">
                 <template #body="slotProps">
-                    <div>
+                    <div v-if="editCodeSystemRolesPossible">
                         <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
                             :invalid="submitted && !slotProps.data.codeSystem" />
                         <small class="p-error" v-if="submitted && !slotProps.data.codeSystem">CodeSystem is
                             required.</small>
+                    </div>
+                    <div v-else>
+                        <div style="font-weight: bold;">{{ slotProps.data.codeSystem.codeSystemName }}</div>
+                        <div>{{ slotProps.data.codeSystem.name }}</div>
                     </div>
                 </template>
             </Column>
@@ -31,7 +36,8 @@
                     </div>
                 </template>
             </Column>
-            <Column style="width: auto; margin: 0; padding: 0%" v-if="codeSystemRoles.length > 1">
+            <Column style="width: auto; margin: 0; padding: 0%"
+                v-if="codeSystemRoles.length > 1 && editCodeSystemRolesPossible">
                 <template #body="slotProps">
                     <Button icon="pi pi-trash" text rounded severity="danger"
                         @click="onCodeSystemDelete(slotProps.index)" />
@@ -65,8 +71,15 @@ const props = defineProps({
     submitted: {
         type: Boolean,
         required: true
+    },
+    editCodeSystemRolesPossible: {
+        type: Boolean,
+        required: false
     }
 });
+
+const editCodeSystemRolesPossible = props.editCodeSystemRolesPossible ?? true
+
 
 const codeSystems = ref<Array<{ name: string; versions: { id: number; name: string; codeSystemName: string; }[] }>>([]);
 const getCodeSystems = () => {

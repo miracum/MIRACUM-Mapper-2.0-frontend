@@ -1,10 +1,10 @@
 <template>
     <div class="grid-container">
-        <BasicProject :project="project" :submitted="submitted" />
-        <StatusEquivalence :project="project" :submitted="submitted" />
-        <ProjectPermissions :project="project" :userPermissions="userPermissions" :submitted="submitted" />
+        <BasicProjectPanel :project="project" :submitted="submitted" />
+        <StatusEquivalencePanel :project="project" :submitted="submitted" />
+        <ProjectPermissionsPanel :project="project" :userPermissions="userPermissions" :submitted="submitted" />
         <!--@update:userPermissions="updateUserPermissions"-->
-        <CodeSystemRoles :project="project" :codeSystemRoles="codeSystemRoles" :submitted="submitted"
+        <CodeSystemRolesPanel :project="project" :codeSystemRoles="codeSystemRoles" :submitted="submitted"
             @update:codeSystemRoles="updateCodeSystemRoleOrder" />
     </div>
     <div class="button-container">
@@ -15,9 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import BasicProject from '@/components/projectviews/BasicProject.vue'
-import StatusEquivalence from '@/components/projectviews/StatusEquivalence.vue'
-
 import { ref, watch } from 'vue';
 import { useToast } from "primevue/usetoast";
 import { usePostProjectQuery } from '@/composables/queries/project-query';

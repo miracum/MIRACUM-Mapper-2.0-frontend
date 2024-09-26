@@ -21,6 +21,9 @@
                     <h2 class="m-0"></h2>
                 </div>
                 <div style="display: flex; gap: 10px;">
+                    <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" />
+                </div>
+                <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
                 </div>
             </div>
@@ -205,6 +208,8 @@ import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
+import { useRouter } from 'vue-router';
+
 
 const toast = useToast();
 
@@ -368,6 +373,12 @@ const dt = ref();
 const exportCSV = () => {
     dt.value.exportCSV();
 };
+
+const router = useRouter();
+
+const editProjectView = (projectId: number) => {
+    router.push(`/dashboard/projects/${projectId}/edit`);
+}
 
 // const emptyRow = ref(new Array(1));
 const transformedMappings = ref(flattenMappings(props.mappings, props.project.code_system_roles));
