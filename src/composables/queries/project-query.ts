@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import type { ParamsOption, RequestBodyOption } from 'openapi-fetch'
 import type { paths } from '../../client/types'
 import { useQueryWithPathParam, Method } from './query'
-import { type CreateProject} from '@/stores/project'
+import { type CreateProject, type UpdateCodeSystemRole, type ProjectPermission} from '@/stores/project'
 
 type ProjectQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
@@ -68,7 +68,7 @@ type PostProjectResponse =
 
 export const usePostProjectQuery = (createProject: CreateProject) => {
   const state = ref<PostProjectResponse>();
-  const fetchOptions: ProjectQueryOptions<paths['/projects']['post']> = { body: createProject}
+  const fetchOptions: ProjectQueryOptions<paths['/projects']['post']> = { body: createProject};
 
   const path = '/projects';
   const method = Method.POST;
@@ -86,10 +86,60 @@ export const useGetCodeSystemsQuery = () => {
   return useQueryWithPathParam(state, null, method, path);
 }
 
+type PutCodeSystemRoleResponse = paths['/projects/{project_id}/codesystem-roles']['put']['responses']['200']['content']['application/json']
+
+export const usePutCodeSystemRoleQuery = (updateCodeSystemRole: UpdateCodeSystemRole, projectId: number) => {
+  const state = ref<PutCodeSystemRoleResponse>();
+  const path = '/projects/{project_id}/codesystem-roles';
+  const method = Method.PUT;
+  const fetchOptions: ProjectQueryOptions<paths['/projects/{project_id}/codesystem-roles']['put']> = { 
+    params: { path: { project_id: projectId } },
+    body: updateCodeSystemRole
+  };
+
+  return useQueryWithPathParam(state, fetchOptions, method, path);
+}
 
 
 
 type PostProjectPermissionResponse =
   paths['/projects/{project_id}/permissions']['post']['responses']['200']['content']['application/json']
 
-// export const usePostProjectPermissionQuery = (
+export const usePostProjectPermissionQuery = (permission: ProjectPermission, projectId: number) => {
+  const state = ref<PostProjectPermissionResponse>();
+  const path = '/projects/{project_id}/permissions';
+  const method = Method.POST;
+  const fetchOptions: ProjectQueryOptions<paths['/projects/{project_id}/permissions']['post']> = { 
+    params: { path: { project_id: projectId } },
+    body: permission
+  };
+
+  return useQueryWithPathParam(state, fetchOptions, method, path);
+}
+
+type PutProjectPermissionResponse = paths['/projects/{project_id}/permissions']['put']['responses']['200']['content']['application/json']
+
+export const usePutProjectPermissionQuery = (permission: ProjectPermission, projectId: number) => {
+  const state = ref<PutProjectPermissionResponse>();
+  const path = '/projects/{project_id}/permissions';
+  const method = Method.PUT;
+  const fetchOptions: ProjectQueryOptions<paths['/projects/{project_id}/permissions']['put']> = { 
+    params: { path: { project_id: projectId } },
+    body: permission
+  };
+
+  return useQueryWithPathParam(state, fetchOptions, method, path);
+}
+
+type DeleteProjectPermissionResponse = paths['/projects/{project_id}/permissions/{user_id}']['delete']['responses']['200']['content']['application/json']
+
+export const useDeleteProjectPermissionQuery = (userId: string, projectId: number) => {
+  const state = ref<DeleteProjectPermissionResponse>();
+  const path = '/projects/{project_id}/permissions/{user_id}';
+  const method = Method.DELETE;
+  const fetchOptions: ProjectQueryOptions<paths['/projects/{project_id}/permissions/{user_id}']['delete']> = { 
+    params: { path: { project_id: projectId, user_id: userId } }
+  };
+
+  return useQueryWithPathParam(state, fetchOptions, method, path);
+}
