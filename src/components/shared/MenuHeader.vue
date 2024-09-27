@@ -86,6 +86,5 @@ const props = defineProps({
 
 .logo-margin {
     margin-right: 10px;
-    /* Adjust the value as needed */
 }
 </style>

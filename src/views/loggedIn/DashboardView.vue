@@ -119,6 +119,5 @@ function logoutAndNavigate() {
 <style scoped>
 .padding-all {
   padding: 10px;
-  /* Adjust the value as needed */
 }
 </style>

@@ -138,7 +138,6 @@ const dataTableEntries = ref([
         loincCode: '16171819',
         loincMeaning: 'Forced Expiratory Volume'
     },
-    // Add more entries as needed
 ]);
 
 // const formatCurrency = (value) => {

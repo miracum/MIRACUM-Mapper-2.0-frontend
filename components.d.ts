@@ -96,6 +96,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Row: typeof import('primevue/row')['default']
+    ScrollPanel: typeof import('primevue/scrollpanel')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
     selectstatus: typeof import('./src/components/selects/selectstatus.vue')['default']
     Skeleton: typeof import('primevue/skeleton')['default']

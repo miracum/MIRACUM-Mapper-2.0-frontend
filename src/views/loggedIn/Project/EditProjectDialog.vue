@@ -13,7 +13,7 @@
                 </FloatLabel>
             </div>
             <FloatLabel class="full-width">
-                <Textarea v-model="project.description" rows="5" cols="30" />
+                <Textarea v-model="project.description" rows="6" cols="80" />
                 <label for="description">Description</label>
             </FloatLabel>
         </div>
@@ -99,7 +99,6 @@ function updateVisible(value: boolean) {
 <style scoped>
 .dialog-content>*+* {
     margin-top: 1.5rem;
-    /* Adjust the value as needed */
 }
 
 .flex-item {
@@ -122,7 +121,6 @@ function updateVisible(value: boolean) {
 .flex-row {
     display: flex;
     gap: 1rem;
-    /* Adjust the gap between items as needed */
 }
 
 .full-width {

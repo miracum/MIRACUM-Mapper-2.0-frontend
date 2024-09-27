@@ -1,13 +1,12 @@
 <template>
     <EditProjectDialog v-model:visible="visible" />
 
-    <Panel>
-        <template #header>
+    <Panel header="Project Overview">
+        <!-- <template #header>
             <div class="header">
-                <h1 class="title">Mapping Table</h1>
-                <!-- <h2 class="subtitle">Create a new Mapping Project</h2> -->
+                <h1 class="title">Project Overview</h1>
             </div>
-        </template>
+        </template> -->
         <!-- Loading State TODO Better align skeletons -->
         <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
             <Card class="card">
@@ -116,7 +115,7 @@ const onEdit = (id: number) => {
 
 </script>
 
-<style>
+<style scoped>
 .card {
     background-color: #eff0f1;
     /* Blue Grey background color */
@@ -124,7 +123,7 @@ const onEdit = (id: number) => {
 
 .card-spacing {
     margin-bottom: 1rem;
-    /* Adjust the spacing as needed */
+    margin-top: 1rem;
     position: relative;
     /* Ensure the hover effect is contained within the card */
 }
@@ -138,7 +137,6 @@ const onEdit = (id: number) => {
 .card-actions {
     display: flex;
     gap: 10px;
-    /* Adjust the gap between buttons as needed */
     opacity: 0;
     /* Initially hide the buttons */
     transition: opacity 0.3s ease;

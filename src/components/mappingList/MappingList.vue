@@ -3,7 +3,7 @@
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="row" :globalFilterFields="globalFilterFields"
         responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" scrollable
-        scroll-height="calc(100vh - 430px)" v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
+        scroll-height="calc(100vh - 400px)" v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {
                 bodycell: ({ state }) => ({
@@ -102,7 +102,7 @@
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Code" />
+                        placeholder="Search by code" />
                 </template>
             </Column>
             <Column header="Meaning" :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
@@ -113,7 +113,7 @@
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by Meaning" />
+                        placeholder="Search by meaning" />
                 </template>
             </Column>
         </template>
@@ -154,7 +154,7 @@
             </template>
             <template #filter="{ filterModel, filterCallback }">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                    placeholder="Search by name" />
+                    placeholder="Search by comment" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'created')" header="Created" field="created"

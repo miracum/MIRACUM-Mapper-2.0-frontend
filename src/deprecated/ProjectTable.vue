@@ -109,7 +109,6 @@ table.custom-table {
     /* border-collapse: separate; */
     /* This allows border-spacing to take effect */
     /* border-spacing: 10px; */
-    /* Adjust horizontal spacing here */
 }
 
 table.custom-table tbody td {
@@ -121,7 +120,6 @@ table.custom-table tbody td {
 /* Additional styles for visual improvement */
 table.custom-table thead th {
     padding: 10px;
-    /* Optional: Adjust header cell padding to match tbody if desired */
 }
 
 .col {
