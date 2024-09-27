@@ -28,16 +28,18 @@
 
   <!-- Big Title Miracum Mapper centered in the middle and subtitle this is the subtitle-->
   <!-- <Panel> -->
-  <div class="title-group text-center mt-10 mb-20">
-    <h1 class="title text-6xl font-bold mb-4">An Open Source <br> Mapping Tool</h1>
-    <p class="subtitle text-2xl text-gray-600">Miracum Mapper aids the mapping of <code class="font-mono">n:m</code>
-      codesystems <br> and makes the process easy and efficient</p>
+  <div class="title-group text-center mt-10 max-w-4xl mx-auto mb-20">
+    <h1 class="title text-6xl font-bold mb-4">Miracum Mapper <br> An Open Source Mapping Tool</h1>
+    <p class="subtitle text-2xl text-gray-600">Miracum Mapper is a mapping tool to allow mappings from different
+      CodeSystems like <code class="font-mono">Snomed CT</code> or <code class="font-mono">Loinc</code> to be
+      associated in <code class="font-mono">n:m</code>
+      relationships with each other </p>
   </div>
   <!-- </Panel> -->
 
   <div d="overview" class="title-group text-center mt-10 mb-5">
     <h2 class="title text-4xl font-bold">Overview</h2>
-    <p class="subtitle text-1xl text-gray-600">Get an Overview about the Miracum Mapper</p>
+    <p class="subtitle text-1xl text-gray-600">Get an Overview of the Miracum Mapper</p>
   </div>
 
   <div class="mb-20">
@@ -61,7 +63,9 @@
   <div class="about-section text-center mt-10 max-w-4xl mx-auto mb-20">
     <Fieldset legend="Miracum Mapper 2.0" :toggleable="true">
       <p class="m-0">
-        This project is developed at the University of Erlangen-Nuremberg (FAU) as part of the MIRACUM (Medical
+        This project is developed at the Friedrich Alexander University of Erlangen-Nürnberg (FAU) as part of the
+        MIRACUM
+        (Medical
         Informatics in Research and Care in University Medicine) project.
       </p>
     </Fieldset>
@@ -129,42 +133,42 @@ const scrollToSection = (target: string) => {
 
 
 const featureTimelineElements = ref([
-  { title: 'Add Project', subtitle: 'easily create project and user different settings to adjust the project to your needs', icon: 'pi pi-plus', image: createProjectImage },
+  { title: 'Add Project', subtitle: 'easily create projects and set different settings to adjust the project to your needs', icon: 'pi pi-plus', image: createProjectImage },
   { title: 'View Projects', subtitle: 'Get an overview of all available project in the Dashboard View', icon: 'pi pi-eye', image: projectOverviewImage },
-  { title: 'Mappings', subtitle: 'View all Mappings of a project. Easily filter or sort them to find what you are looking for. Edit multiple mappings at once', icon: 'pi pi-table', image: mappingTableImage },
-  { title: 'Create Mappings', subtitle: 'When creating new Mappings, the Tool suggests relevant mappings for a CodeSystem while the user is typing to make it easy to find them', icon: 'pi pi-plus', image: createMappingImage }
+  { title: 'Mappings', subtitle: 'View all Mappings of a project, easily filter or sort them to find what you are looking for, add new mappings or edit multiple mappings at once with inline editing, export the current mapping project in a csv file,...', icon: 'pi pi-table', image: mappingTableImage },
+  { title: 'Create Mappings', subtitle: 'When creating new Mappings, Miracum Mapper suggests relevant mappings for a CodeSystem while the user is typing to make it easy to find them', icon: 'pi pi-plus', image: createMappingImage }
 ]);
 
 const featureCardElements = ref([
   {
     icon: 'pi pi-user',
-    title: 'User-Friendly Interface',
-    subtitle: 'Miracum Mapper offers an intuitive and easy-to-use interface, making it easily accessible for everyone',
+    title: 'Web Interface',
+    subtitle: 'Miracum Mapper offers an easy-to-use web interface, in order to make the mapping process efficient for the user',
   },
   {
     icon: 'pi pi-sitemap',
     title: 'Integration',
-    subtitle: 'Seamlessly integrate Miracum Mapper with your existing user management system using Keycloak for authentication and Postgres for data storage, ensuring secure and centralized user control and data storage.',
+    subtitle: 'Integrate Miracum Mapper with an existing user management system using Keycloak for authentication and Postgres for data storage, which ensures secure user control and data storage.',
   },
   {
     icon: 'pi pi-clock',
-    title: 'More to Come',
-    subtitle: 'Miracum Mapper is now in a stable state and will be improved with more features in the future.',
-  },
-  {
-    icon: 'pi pi-github',
-    title: 'Open Source',
-    subtitle: 'Miracum Mapper is developed as an open source project and licensed under the MIT license.',
+    title: 'Early Stage',
+    subtitle: 'The Miracum Mapper currently support basic functionality but more advanced features are not yet implemented',
   },
   {
     icon: 'pi pi-server',
     title: 'Self-Hosting',
-    subtitle: 'Easily deploy and host Miracum Mapper on your own servers, ensuring full control over your data and environment. Docker Images are available for easy deployment.',
+    subtitle: ' Docker Images are available to easily host Miracum Mapper on an own server, ensuring full control over the data',
+  },
+  {
+    icon: 'pi pi-github',
+    title: 'Open Source',
+    subtitle: 'Miracum Mapper is developed as an open source project and is licensed under the TODO license.',
   },
   {
     icon: 'pi pi-code',
     title: 'Contribution',
-    subtitle: 'Contributions are welcome and development is made easy by providing a DevContainer configuration as well as documentation on how to get started.',
+    subtitle: 'Further Development of the tool is supported by providing a DevContainer configuration as well as documentation on how to get started.',
   },
 ])
 
