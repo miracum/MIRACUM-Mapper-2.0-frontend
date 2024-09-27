@@ -2,7 +2,7 @@
     <Breadcrumb :home="home" :model="computedNavItems">
         <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                <a :href="href" v-bind="props.action" @click="navigate">
+                <a :href="href" v-bind="props.action" @click="navigate(); computedNavItems = []">
                     <span :class="[item.icon, 'text-color']" />
                     <span class="text-primary font-semibold">{{ item.label }}</span>
                 </a>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useProjectStore } from "@/stores/project";
 
@@ -25,29 +25,50 @@ const home = ref({
 });
 
 const store = useProjectStore();
-
 const route = useRoute();
 
-const computedNavItems = computed(() => {
+
+const computedNavItems = ref([]);
+
+watchEffect(async () => {
+    // get projectId out of the path
+    const pathSegments = route.path.split('/').filter(Boolean);
+    const projectsIndex = pathSegments.indexOf("projects");
+    if (projectsIndex === -1 || !(projectsIndex + 1 < pathSegments.length)) {
+        return;
+    }
+    const projectId = pathSegments[projectsIndex + 1]
+
+    // get project name
+    await store.fetchAndSetCurrentProjectDetails(projectId);
+    const projectName = store.currentProjectDetails.name;
+
     let items = [];
-    // Assuming you have a way to map routes to labels
     const routeToLabelMap = {
         // '/dashboard': 'Project',
         // '/projects/:projectId/mappings': 'Mappings',
         'mappings': 'Project',
+        'edit': 'Edit'
     };
 
-    // Split the current path and build navigation items
-    const pathSegments = route.path.split('/').filter(Boolean); // Remove empty segments
     let currentPath = '';
-    // console.log(pathSegments);
     for (const segment of pathSegments) {
-        currentPath += `/${segment}`;
         // TODO very bad, just temporary
         if (routeToLabelMap[segment]) {
             if (segment === 'mappings') {
+                currentPath += `/${segment}`;
                 items.push({
-                    label: store.getProject(Number(pathSegments[2]))?.name,
+                    label: projectName,
+                    route: currentPath
+                });
+            } else if (segment === 'edit') {
+                items.push({
+                    label: projectName,
+                    route: currentPath + "/mappings"
+                });
+                currentPath += `/${segment}`;
+                items.push({
+                    label: 'Edit',
                     route: currentPath
                 });
             } else {
@@ -56,9 +77,11 @@ const computedNavItems = computed(() => {
                     route: currentPath
                 });
             }
+        } else {
+            currentPath += `/${segment}`;
         }
     }
 
-    return items;
+    computedNavItems.value = items
 });
 </script>
