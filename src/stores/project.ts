@@ -17,6 +17,8 @@ export type CreateProject = components['schemas']['CreateProjectDetails']
 export type UpdateProject = components['schemas']['UpdateProject']
 export type ProjectDetails = components['schemas']['ProjectDetails']
 export type CodeSystemRole = components['schemas']['CodeSystemRole']
+export type UpdateCodeSystemRole = components['schemas']['UpdateCodeSystemRole']
+export type ProjectPermission = components['schemas']['SendProjectPermission']
 export type CodeSystem = components['schemas']['CodeSystem']
 
 export const useProjectStore = defineStore('projects', {
