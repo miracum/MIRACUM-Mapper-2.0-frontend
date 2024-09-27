@@ -94,7 +94,13 @@
         <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0" :exportable="false">
         </Column>
         <template v-for="role in props.project.code_system_roles" :key="role.id">
-            <Column header="Code" :field="`code_${role.id}`" :filterField="`code_${role.id}`" sortable>
+            <Column :field="`code_${role.id}`" :filterField="`code_${role.id}`" sortable> <!-- header="Code"-->
+                <template #header>
+                    <div style=" display: flex; gap: 5px;">
+                        <CodeSystemRole :role="role" />
+                        <span style="font-weight: bold;">Code</span>
+                    </div>
+                </template>
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="code"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
@@ -105,7 +111,14 @@
                         placeholder="Search by code" />
                 </template>
             </Column>
-            <Column header="Meaning" :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
+            <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
+                <!-- header="Meaning"-->
+                <template #header>
+                    <div style=" display: flex; gap: 5px;">
+                        <CodeSystemRole :role="role" />
+                        <span style="font-weight: bold;">Meaning</span>
+                    </div>
+                </template>
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="meaning"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"

@@ -59,7 +59,6 @@ const props = defineProps({
 </script>
 
 <style scoped>
-/* If your header has a specific class, replace `.header` with that class name or use an id */
 .p-menubar {
     display: flex;
     /* Ensure Menubar is a flex container */
@@ -81,7 +80,6 @@ const props = defineProps({
     justify-content: flex-end;
     /* Aligns the Avatar to the end */
     width: 100%;
-    /* Optional, depending on your layout needs */
 }
 
 .logo-margin {

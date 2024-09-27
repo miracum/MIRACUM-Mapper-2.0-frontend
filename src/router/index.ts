@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import LandingPageView from '../views/LandingPageView.vue'
 import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
 import ProjectList from '../views/loggedIn/Project/ProjectView.vue'
@@ -15,7 +15,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: LandingPageView
   },
   {
     path: '/about',

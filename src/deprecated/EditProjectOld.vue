@@ -42,7 +42,6 @@
 import { ref } from 'vue';
 import { useProjectStore } from '@/stores/project';
 
-// Define the events your component can emit
 const emit = defineEmits(['close']);
 
 const store = useProjectStore();
@@ -52,7 +51,6 @@ function updateProject() {
     store.updateProject(project.value);
     putUpdateProject(project.value);
     closeModal();
-    // console.log('Project updated:', project.value);
 };
 
 // update the projects
@@ -72,30 +70,12 @@ function putUpdateProject(updatedProjectData) {
         return response.json(); // Parse JSON response
     }).then(data => {
         console.log('Project updated:', data);
-        // Here you might want to update your local state or UI accordingly
     }).catch(error => {
         console.error('There was a problem with your fetch operation:', error);
     });
 }
 
-// Example function that emits the 'close' event
 function closeModal() {
     emit('close');
 }
 </script>
-
-<!-- <style scoped>
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-.modal-dialog {
-    animation: slideDown 0.5s ease-out;
-}
-</style> -->

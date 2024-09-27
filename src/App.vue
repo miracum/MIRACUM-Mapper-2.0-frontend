@@ -2,13 +2,17 @@
 import { useAuthStore } from './stores/auth';
 import LandingPageView from './views/LandingPageView.vue';
 import DashboardView from './views/loggedIn/DashboardView.vue';
+import LoginView from './views/LoginView.vue';
 
 const authStore = useAuthStore();
 </script>
 
 <template>
   <!-- <ThemeSwitcher /> -->
-  <LandingPageView v-if="!authStore.isAuthenticated" />
+  <RouterView v-if="!authStore.isAuthenticated" />
+  <!-- <LandingPageView v-if="!authStore.isAuthenticated" />
+  <RouterView v-else /> -->
+  <!-- <LoginView v-else-if="authStore.authenticationProcess" /> -->
   <DashboardView v-else />
 </template>
 

@@ -1,141 +1,200 @@
-<script setup lang="ts">
-import HelloWorld from '../components/HelloWorld.vue'
-import { RouterLink } from 'vue-router'
-
-
-// TODO: Temporary fix: mount styles form main.css to the body. This should be handled in the <style scoped> section.
-import { onMounted, onBeforeUnmount } from 'vue'
-
-onMounted(() => {
-  document.body.style.display = 'flex';
-  document.body.style.placeItems = 'center';
-
-  const app = document.getElementById('app');
-  if (app) {
-    app.style.maxWidth = '1280px';
-    app.style.margin = '0 auto';
-    app.style.padding = '2rem';
-    app.style.fontWeight = 'normal';
-    app.style.display = 'grid';
-    app.style.gridTemplateColumns = '1fr 1fr';
-    app.style.padding = '0 2rem';
-  }
-})
-
-onBeforeUnmount(() => {
-  document.body.style.display = '';
-  document.body.style.placeItems = '';
-
-  const app = document.getElementById('app');
-  if (app) {
-    app.style.maxWidth = '';
-    app.style.margin = '';
-    app.style.padding = '';
-    app.style.fontWeight = '';
-    app.style.display = '';
-    app.style.gridTemplateColumns = '';
-    app.style.padding = '';
-  }
-})
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.png" width="125" height="125" />
-    <div class="wrapper">
-      <HelloWorld msg="Miracum Mapper" />
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Get Started</RouterLink>
-      </nav>
-    </div>
-  </header>
-  <RouterView />
+  <Menubar :model="navigatorItems">
+    <template #start>
+      <div class="header-container">
+        <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
+        <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
+        <div class="divider mx-2"></div>
+        <!-- <Navigator /> -->
+      </div>
+    </template>
+    <template #item="{ item, props, root }">
+      <a class="flex items-center" v-bind="props.action" @click.prevent="scrollToSection(item.target)">
+        <span :class="item.icon" />
+        <span class="ml-2">{{ item.label }}</span>
+        <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
+        <span v-if="item.shortcut"
+          class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{
+            item.shortcut }}</span>
+      </a>
+    </template>
+    <template #end>
+      <div class="flex items-center space-x-2">
+        <p class="mr-2 font-bold">Get started</p>
+        <Button label="Log In" severity="secondary" @click="handleLoginClick" />
+      </div>
+    </template>
+  </Menubar>
 
+  <!-- Big Title Miracum Mapper centered in the middle and subtitle this is the subtitle-->
+  <!-- <Panel> -->
+  <div class="title-group text-center mt-10 mb-20">
+    <h1 class="title text-6xl font-bold mb-4">An Open Source <br> Mapping Tool</h1>
+    <p class="subtitle text-2xl text-gray-600">Miracum Mapper aids the mapping of <code class="font-mono">n:m</code>
+      codesystems <br> and makes the process easy and efficient</p>
+  </div>
+  <!-- </Panel> -->
+
+  <div d="overview" class="title-group text-center mt-10 mb-5">
+    <h2 class="title text-4xl font-bold">Overview</h2>
+    <p class="subtitle text-1xl text-gray-600">Get an Overview about the Miracum Mapper</p>
+  </div>
+
+  <div class="mb-20">
+    <FeaturesList :features="featureCardElements" />
+  </div>
+
+  <div id="features" class="title-group text-center mt-10 mb-5">
+    <h2 class="title text-4xl font-bold">Features</h2>
+    <p class="subtitle text-1xl text-gray-600">Discover the features of the Miracum Mapper</p>
+  </div>
+
+  <div class="mb-20">
+    <FeatureTimeline :value="featureTimelineElements" />
+  </div>
+
+  <div id="about" class="title-group text-center mt-10 mb-5">
+    <h2 class="title text-4xl font-bold">About</h2>
+    <p class="subtitle text-1xl text-gray-600">Learn more about the Miracum Mapper</p>
+  </div>
+
+  <div class="about-section text-center mt-10 max-w-4xl mx-auto mb-20">
+    <Fieldset legend="Miracum Mapper 2.0" :toggleable="true">
+      <p class="m-0">
+        This project is developed at the University of Erlangen-Nuremberg (FAU) as part of the MIRACUM (Medical
+        Informatics in Research and Care in University Medicine) project.
+      </p>
+    </Fieldset>
+  </div>
+
+  <Menubar>
+    <template #start>
+      <div class="header-container">
+        <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
+        <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
+        <div class="divider mx-2"></div>
+        <!-- <Navigator /> -->
+      </div>
+    </template>
+    <template #end>
+      <Button icon="pi pi-github" label="Source Code" text rounded aria-label="Github" @click="openGitHub" />
+    </template>
+  </Menubar>
 </template>
 
-<style scoped>
-/* @media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
+<script setup lang="ts">
+import { ref } from "vue";
+import FeatureTimeline from "./landingPage/FeatureTimeline.vue"
+import FeaturesList from "./landingPage/FeatureList.vue"
+import { useRouter } from 'vue-router';
+import createProjectImage from '@/assets/create_project.png';
+import projectOverviewImage from '@/assets/project_overview.png';
+import mappingTableImage from '@/assets/mapping_table.png';
+import createMappingImage from '@/assets/create_mapping.png';
+
+const router = useRouter();
+
+function handleLoginClick() {
+  router.push('/login');
+}
+
+function openGitHub() {
+  window.open('https://github.com/miracum/MIRACUM-Mapper-2.0-backend');
+}
+
+const navigatorItems = ref([
+  {
+    label: 'Overview',
+    icon: 'pi pi-globe',
+    target: 'overview'
+  },
+  {
+    label: 'Features',
+    icon: 'pi pi-star',
+    target: 'features'
+  },
+  {
+    label: 'About',
+    icon: 'pi pi-info-circle',
+    target: 'about'
   }
+]);
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+const scrollToSection = (target: string) => {
+  const element = document.getElementById(target);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-} */
+
+const featureTimelineElements = ref([
+  { title: 'Add Project', subtitle: 'easily create project and user different settings to adjust the project to your needs', icon: 'pi pi-plus', image: createProjectImage },
+  { title: 'View Projects', subtitle: 'Get an overview of all available project in the Dashboard View', icon: 'pi pi-eye', image: projectOverviewImage },
+  { title: 'Mappings', subtitle: 'View all Mappings of a project. Easily filter or sort them to find what you are looking for. Edit multiple mappings at once', icon: 'pi pi-table', image: mappingTableImage },
+  { title: 'Create Mappings', subtitle: 'When creating new Mappings, the Tool suggests relevant mappings for a CodeSystem while the user is typing to make it easy to find them', icon: 'pi pi-plus', image: createMappingImage }
+]);
+
+const featureCardElements = ref([
+  {
+    icon: 'pi pi-user',
+    title: 'User-Friendly Interface',
+    subtitle: 'Miracum Mapper offers an intuitive and easy-to-use interface, making it easily accessible for everyone',
+  },
+  {
+    icon: 'pi pi-sitemap',
+    title: 'Integration',
+    subtitle: 'Seamlessly integrate Miracum Mapper with your existing user management system using Keycloak for authentication and Postgres for data storage, ensuring secure and centralized user control and data storage.',
+  },
+  {
+    icon: 'pi pi-clock',
+    title: 'More to Come',
+    subtitle: 'Miracum Mapper is now in a stable state and will be improved with more features in the future.',
+  },
+  {
+    icon: 'pi pi-github',
+    title: 'Open Source',
+    subtitle: 'Miracum Mapper is developed as an open source project and licensed under the MIT license.',
+  },
+  {
+    icon: 'pi pi-server',
+    title: 'Self-Hosting',
+    subtitle: 'Easily deploy and host Miracum Mapper on your own servers, ensuring full control over your data and environment. Docker Images are available for easy deployment.',
+  },
+  {
+    icon: 'pi pi-code',
+    title: 'Contribution',
+    subtitle: 'Contributions are welcome and development is made easy by providing a DevContainer configuration as well as documentation on how to get started.',
+  },
+])
+
+</script>
 
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style lang="css" scoped>
+.p-menubar {
+  display: flex;
+  /* Ensure Menubar is a flex container */
+  justify-content: space-between;
+  /* Space between start and end templates */
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.header-container {
+  display: flex;
+  align-items: center;
+  /* Adjusts space between items, pushing them to start and end */
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
+
+.logo-margin {
+  margin-right: 10px;
+}
+
+.title-group {
   text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+  margin-top: 20px;
 }
 </style>
