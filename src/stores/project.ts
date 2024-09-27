@@ -4,6 +4,8 @@ import { defineStore } from 'pinia'
 import type { components } from '../client/types'
 // import { getProject } from '@/client/client-old'
 // import type { ComponentCustomProperties } from 'vue'
+import { useGetProjectDetailsQuery } from '@/composables/queries/project-query'
+import { watch } from 'vue'
 
 interface ProjectState {
   projects: Project[]
@@ -44,6 +46,22 @@ export const useProjectStore = defineStore('projects', {
       for (let i = 0; i < roles.length; i++) {
         this.currentLookupCodeSystemRoleIds[roles[i].id] = roles[i].system.id
       }
+    },
+    async fetchAndSetCurrentProjectDetails(projectId: number) {
+      const fetchProjectDetails = async () => {
+        const { state, isReady, isFetching, error, execute } = useGetProjectDetailsQuery(projectId);
+        execute();
+        await new Promise<void>((resolve) => {
+            watch(isFetching, (newVal) => {
+                if (!newVal && isReady.value) {
+                  //this.setCurrentProjectDetails(state.value)
+                  this.currentProjectDetails = state.value
+                  resolve();
+                }
+            });
+        })
+      }
+      await fetchProjectDetails();
     },
     updateProject(updatedProject: Project) {
       const index = this.projects.findIndex((p) => p.id === updatedProject.id)
