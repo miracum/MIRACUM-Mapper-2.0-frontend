@@ -15,6 +15,11 @@
                 <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success" />
             </div>
         </template>
+        <template #empty>
+            <Message severity="warn" :closable="false">Currently, there are no projects available. Create one by
+                clicking
+                on Add Project.</Message>
+        </template>
         <template #list="slotProps">
             <ScrollableCardList :items="slotProps.items" layout="list" :onEdit="props.onEdit" :onDelete="props.onDelete"
                 :navigateToProject="navigateToProject" />

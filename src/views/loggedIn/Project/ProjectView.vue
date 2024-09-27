@@ -32,14 +32,13 @@
         <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
 
         <!-- Data View -->
-        <ProjectListView v-else-if="projects != undefined && projects!.length > 0" :data="projects" :onEdit="onEdit"
-            :onDelete="onDelete" />
+        <ProjectListView :data="projects" :onEdit="onEdit" :onDelete="onDelete" />
 
         <!-- No Projects Found -->
         <!-- <Message v-else severity="error">Currently, there are no projects available.</Message> -->
-        <Message v-else severity="warn" :closable="false">Currently, there are no projects available. Create one by
+        <!-- <Message v-else severity="warn" :closable="false">Currently, there are no projects available. Create one by
             clicking
-            on Add Project.</Message>
+            on Add Project.</Message> -->
     </Panel>
 
 </template>
@@ -53,6 +52,10 @@ import { ref, watch } from "vue";
 import { useProjectQuery, useDeleteProjectQuery } from '@/composables/queries/project-query';
 import EditProjectDialog from "./EditProjectDialog.vue";
 import ProjectListView from "./ProjectListView.vue";
+
+// const addProject = () => {
+//     router.push('/dashboard/projects/add');
+// };
 
 const store = useProjectStore();
 
