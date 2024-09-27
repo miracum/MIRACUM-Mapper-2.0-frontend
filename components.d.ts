@@ -86,6 +86,7 @@ declare module 'vue' {
     Modal: typeof import('./src/components/shared/Modal.vue')['default']
     MultiSelect: typeof import('primevue/multiselect')['default']
     Navigator: typeof import('./src/components/shared/Navigator.vue')['default']
+    OldNavigator: typeof import('./src/components/shared/OldNavigator.vue')['default']
     Panel: typeof import('primevue/panel')['default']
     Password: typeof import('primevue/password')['default']
     ProjectList: typeof import('./src/components/shared/ProjectList.vue')['default']

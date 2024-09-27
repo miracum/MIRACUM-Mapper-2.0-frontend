@@ -7,9 +7,10 @@
                 <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
                 <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
                 <div class="divider mx-2"></div>
-                <Suspense>
+                <!-- <Suspense>
                     <Navigator />
-                </Suspense>
+                </Suspense> -->
+                <OldNavigator />
             </div>
         </template>
         <template #item="{ item, props, hasSubmenu, root }">
