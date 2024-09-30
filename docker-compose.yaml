@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  miracum-mapper-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: miracum-mapper-frontend
+    ports:
+      - '80:80'
