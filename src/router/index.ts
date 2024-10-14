@@ -70,15 +70,12 @@ const router = createRouter({
 router.beforeEach(
   (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
     const authStore = useAuthStore()
-    if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.isAuthenticated) {
+    if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.authenticated) {
       // && !keycloak.authenticated
       next('/login') // Redirect to login if not authenticated and trying to access a protected route
-    } else if (
-      to.matched.some((record) => !record.meta.requiresAuth) &&
-      authStore.isAuthenticated
-    ) {
+    } else if (to.matched.some((record) => !record.meta.requiresAuth) && authStore.authenticated) {
       next('/dashboard') // Redirect to dashboard if already authenticated and trying to access a non-protected route
-    } else if (to.path === '/login' && authStore.isAuthenticated) {
+    } else if (to.path === '/login' && authStore.authenticated) {
       // && keycloak.authenticated
       next('/dashboard') // Redirect to dashboard if already authenticated and trying to access login
     } else {

@@ -6,4 +6,10 @@ services:
       dockerfile: Dockerfile
     container_name: miracum-mapper-frontend
     ports:
-      - '80:80'
+      - '443:443'
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true

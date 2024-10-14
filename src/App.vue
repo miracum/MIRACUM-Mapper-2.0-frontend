@@ -9,8 +9,8 @@ const authStore = useAuthStore();
 
 <template>
   <!-- <ThemeSwitcher /> -->
-  <RouterView v-if="!authStore.isAuthenticated" />
-  <!-- <LandingPageView v-if="!authStore.isAuthenticated" />
+  <RouterView v-if="!authStore.authenticated" />
+  <!-- <LandingPageView v-if="!authStore.authenticated" />
   <RouterView v-else /> -->
   <!-- <LoginView v-else-if="authStore.authenticationProcess" /> -->
   <DashboardView v-else />

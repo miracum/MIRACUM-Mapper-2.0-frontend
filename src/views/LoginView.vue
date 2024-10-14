@@ -26,7 +26,7 @@
                     </div>
                     <div class="button-row mt-4">
                         <Button label="Back" class="p-button-secondary" @click="goBack" />
-                        <!-- <Button label="Sign in with SSO" class="p-button-secondary" @click="signInWithSSO" /> -->
+                        <Button label="Sign in with SSO" class="p-button-secondary" @click="signInWithSSO" />
                         <Button label="Login" type="submit" class="p-button-primary" />
                     </div>
                 </form>
@@ -39,21 +39,28 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import KeycloakService from '@/lib/keycloak';
 
 const username = ref('');
 const password = ref('');
 const authToken = ref('');
 const router = useRouter();
 
+const signInWithSSO = async () => {
+    // SSO Logic
+    KeycloakService.CallLogin(useAuthStore());
+    router.push('/dashboard');
+};
+
 const loginUser = async () => {
-    const loginSuccessful = true;
-    const authStore = useAuthStore();
-    if (loginSuccessful) {
-        authStore.authenticate(authToken.value);
-        router.push('/dashboard');
-    } else {
-        authStore.logout();
-    }
+    // const loginSuccessful = true;
+    // const authStore = useAuthStore();
+    // if (loginSuccessful) {
+    //     authStore.authenticate(authToken.value);
+    //     router.push('/dashboard');
+    // } else {
+    //     authStore.logout();
+    // }
 };
 
 // const signInWithSSO = () => {

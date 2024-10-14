@@ -37,3 +37,12 @@ npm run build
 ```sh
 npm run lint
 ```
+
+#
+
+- create docker network
+- run command to create cert for nginx and frontend
+
+# TODOS:
+
+- set URL of Backend with Build Argument
