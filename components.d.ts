@@ -121,6 +121,7 @@ declare module 'vue' {
     UserDropdown: typeof import('./src/components/selects/UserDropdown.vue')['default']
     UserPermissionDropdown: typeof import('./src/components/selects/UserPermissionDropdown.vue')['default']
     UserPermissionSelect: typeof import('./src/components/selects/UserPermissionSelect.vue')['default']
+    UserSelect: typeof import('./src/components/selects/UserSelect.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
   }
 }
