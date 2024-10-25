@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Prop, type PropType, defineEmits } from 'vue';
+import { type Prop, type PropType } from 'vue';
 
 
 const props = defineProps({
