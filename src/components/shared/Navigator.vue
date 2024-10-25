@@ -36,6 +36,17 @@ watchEffect(async () => {
     if (projectsIndex === -1 || !(projectsIndex + 1 < pathSegments.length)) {
         return;
     }
+
+    if (pathSegments[projectsIndex + 1] === 'add') {
+        computedNavItems.value = [
+            {
+                label: 'Add',
+                route: 'add'
+            }
+        ];
+        return;
+    }
+
     const projectId = pathSegments[projectsIndex + 1]
 
     // get project name
