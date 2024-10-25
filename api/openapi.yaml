@@ -14,11 +14,11 @@ info:
     # identifier: GPL-3.0-or-later
     url: "https://www.gnu.org/licenses/gpl-3.0.html"
   version: "0.1.0"
-servers:
-  - url: http://localhost:8080
-    description: Development server
-  - url: https://api.miracum.org
-    description: Production server
+# servers:
+#   - url: http://localhost:8080
+#     description: Development server
+#   - url: https://api.miracum.org
+#     description: Production server
 # externalDocs:
 #   description: Find out more about Swagger
 #   url: http://swagger.io
@@ -36,6 +36,8 @@ tags:
     description: Operations about the defined systems of a project
   - name: mapping
     description: Operations about mappings
+  - name: user
+    description: Operations about users
   - name: code-system
     description: Operations about code systems
   - name: concept
@@ -91,6 +93,8 @@ paths:
                   "$ref": "#/components/schemas/Project"
         "400":
           "$ref": "#/components/responses/BadRequestError"
+        "401":
+          "$ref": "#/components/responses/UnauthorizedError"
         "404":
           description: Page not found (e.g., page number too high)
           content:
@@ -673,6 +677,72 @@ paths:
                 "$ref": "#/components/schemas/ErrorResponse"
         "500":
           "$ref": "#/components/responses/InternalServerError"
+  /users:
+    get:
+      tags:
+        - user
+      summary: Get all users
+      description: Get all users.
+      operationId: getAllUsers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/User"
+        "400":
+          "$ref": "#/components/responses/BadRequestError"
+        "500":
+          "$ref": "#/components/responses/InternalServerError"
+  /users/{user_id}:
+    delete:
+      tags:
+        - user
+      summary: Delete a user
+      description: Delete a user by ID. This will also delete all the permissions, the user has for the project.
+      parameters:
+        - $ref: "#/components/parameters/user_id"
+      operationId: deleteUser
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/User"
+        "400":
+          "$ref": "#/components/responses/BadRequestError"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        "500":
+          "$ref": "#/components/responses/InternalServerError"
+      security:
+        - OAuth2: [admin]
+        - BearerAuth: [admin]
+  /users/login:
+    get:
+      tags:
+        - user
+      summary: Updates user-database with information from Access-Token
+      operationId: login
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/User"
+        "400":
+          "$ref": "#/components/responses/BadRequestError"
+        "500":
+          "$ref": "#/components/responses/InternalServerError"
   /codesystems:
     get:
       tags:
@@ -691,12 +761,6 @@ paths:
                   "$ref": "#/components/schemas/CodeSystem"
         "400":
           "$ref": "#/components/responses/BadRequestError"
-        "404":
-          description: Project or codesystem-role not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
         "500":
           "$ref": "#/components/responses/InternalServerError"
     post:
@@ -829,6 +893,47 @@ paths:
       security:
         - OAuth2: [admin]
         - BearerAuth: [admin]
+  /codesystems/{codesystem_id}/import:
+    post:
+      tags:
+        - code-system
+      summary: Import concepts for a code system by ID
+      description: Import concepts for a code system by ID. The concepts are imported from a CSV file. The format of the CSV must be "code,meaning"
+      parameters:
+        - $ref: "#/components/parameters/codesystem_id"
+      operationId: importCodeSystem
+      requestBody:
+        required: true
+        content:
+          text/csv:
+            schema:
+              type: string
+              # type: object
+              # properties:
+              #   file:
+              #     type: string
+              #     format: binary
+      responses:
+        "202":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "CSV is in the correct format. Start importing concepts now"
+        "400":
+          "$ref": "#/components/responses/BadRequestError"
+        "404":
+          description: CodeSystem not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        "500":
+          "$ref": "#/components/responses/InternalServerError"
+      security:
+        - OAuth2: [admin]
+        - BearerAuth: [admin]
   /codesystems/{codesystem_id}/concepts:
     get:
       tags:
@@ -941,9 +1046,8 @@ components:
       required: false
       schema:
         type: integer
-        default: 20
+        default: 100000
         minimum: 1
-        maximum: 100
     sortOrder:
       name: sortOrder
       in: query
@@ -1001,6 +1105,7 @@ components:
         - type: object
           required:
             - code_system_roles
+            - project_permissions
           properties:
             project_permissions:
               type: array
@@ -1095,9 +1200,7 @@ components:
                 name:
                   type: string
                 version:
-                  type: string
-
-#############################      
+                  type: string     
     CreateMapping:
       type: object
       # required:
@@ -1157,6 +1260,20 @@ components:
           properties:
             concept:
               $ref: "#/components/schemas/Concept"
+    User:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: string
+        fullname:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
     Concept:
       type: object
       required:
@@ -1221,13 +1338,19 @@ components:
         application/json:
           schema:
             type: string
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: string
   securitySchemes:
     OAuth2:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://<keycloak-url>/auth/realms/<realm-name>/protocol/openid-connect/auth
-          tokenUrl: https://<keycloak-url>/auth/realms/<realm-name>/protocol/openid-connect/token
+          authorizationUrl: http://localhost:8081/auth/realms/master/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8081/auth/realms/master/protocol/openid-connect/token
           scopes:
             admin: grants admin access
             member: grants normal access
@@ -1238,5 +1361,5 @@ components:
   links: {}
   callbacks: {}
 security:
-  - OAuth2: [normal, admin]
+  # - OAuth2: [normal, admin]
   - BearerAuth: [normal, admin]
