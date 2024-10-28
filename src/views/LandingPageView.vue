@@ -84,7 +84,7 @@
       <Button icon="pi pi-graduation-cap" label="Miracum Project" text rounded aria-label="PrimeVue"
         @click="openGitHub('https://www.miracum.org/en/')" />
       <Button icon="pi pi-prime" label="PrimeVue Component Library" text rounded aria-label="PrimeVue"
-        @click="openGitHub('https://www.primefaces.org/primevue')" />
+        @click="openGitHub('https://primevue.org/')" />
       <Button icon="pi pi-github" label="Source Code Frontend" text rounded aria-label="Github"
         @click="openGitHub('https://github.com/miracum/MIRACUM-Mapper-2.0-frontend')" />
       <Button icon="pi pi-github" label="Source Code Backend" text rounded aria-label="Github"
