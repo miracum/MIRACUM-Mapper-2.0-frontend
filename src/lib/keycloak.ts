@@ -69,7 +69,17 @@ function logout(url: string) {
  */
 async function refreshToken() {
   try {
-    await keycloak.updateToken(480)
+    await keycloak.updateToken(480).then((refreshed) => {
+      if (refreshed) {
+        console.debug('Token refreshed')
+      } else {
+        console.warn(
+          'Token not refreshed, valid for ' +
+            Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) +
+            ' seconds'
+        )
+      }
+    })
     return keycloak
   } catch (error) {
     console.error('Failed to refresh token')
