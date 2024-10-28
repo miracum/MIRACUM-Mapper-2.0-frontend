@@ -30,9 +30,9 @@
             <Column header="Name">
                 <template #body="slotProps">
                     <div>
-                        <InputText v-model=slotProps.data.name placeholder="Name"
-                            :invalid="submitted && !slotProps.data.name" />
-                        <small class="p-error" v-if="submitted && !slotProps.data.name">Name is required.</small>
+                        <InputText v-model=slotProps.data.name placeholder="Name" />
+                        <!-- :invalid="submitted && !slotProps.data.name"-->
+                        <!-- <small class="p-error" v-if="submitted && !slotProps.data.name">Name is required.</small> -->
                     </div>
                 </template>
             </Column>

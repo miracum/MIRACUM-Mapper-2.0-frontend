@@ -4,14 +4,14 @@
       <main role="main" class="pb-3">
         <Panel>
           <template #header>
-            <div class="header">
-              <h1 class="title">Mapping Table</h1>
-              <!-- <h2 class="subtitle">Create a new Mapping Project</h2> -->
+            <h1 class="text-2xl m-0">Mapping Table</h1>
+          </template>
+          <template #icons v-if="projectStore.currentProjectDetails && mappingStore.mappings">
+            <div class="flex space-x-2">
+              <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)" />
+              <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
             </div>
           </template>
-          <!-- <template #icons v-if="projectStore.currentProjectDetails && mappingStore.mappings">
-            <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
-          </template> -->
           <template v-if="isLoading">
             <div class="card">
               <DataTable :value="loadingMappingPlaceholder">
@@ -24,7 +24,8 @@
             </div>
           </template>
           <MappingList :mappings="mappingStore.mappings" :project="projectStore.currentProjectDetails"
-            v-else-if="projectStore.currentProjectDetails && mappingStore.mappings" ref="mappingList" />
+            v-else-if="projectStore.currentProjectDetails && mappingStore.mappings"
+            @set-datatable-ref="setDatatableRef" />
           <p v-else>The backend cannot be reached. Please make sure that it is available.</p>
         </Panel>
       </main>
@@ -34,20 +35,13 @@
 
 <script setup lang='ts'>
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, type Ref } from 'vue';
 import { useMappingStore } from '@/stores/mappings';
 import { useProjectStore } from '@/stores/project';
 import MappingList from '@/components/mappingList/MappingList.vue';
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
-
-// const mappingListRef = ref<InstanceType<typeof MappingList> | null>(null);
-
-// const exportCSV = () => {
-//   if (mappingListRef.value) {
-//     mappingListRef.value.exportCSV();
-//   }
-// };
+import router from '@/router';
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
@@ -91,6 +85,25 @@ onMounted(() => {
     console.error('Project ID is not a number');
   }
 });
+
+const mappingList = ref();
+
+const datatableRef = ref(null);
+
+const exportCSV = () => {
+  if (datatableRef.value) {
+    datatableRef.value.exportCSV();
+  }
+};
+
+const editProjectView = (projectId: string | string[]) => {
+  router.push(`/dashboard/projects/${projectId}/edit`);
+};
+
+const setDatatableRef = (ref) => {
+  datatableRef.value = ref;
+};
+
 </script>
 
 <style scoped>

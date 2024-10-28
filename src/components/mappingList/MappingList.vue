@@ -1,10 +1,11 @@
 <template>
     <!-- DataTable, see https://primevue.org/datatable/ - Can be widely customized and has many inbuilt features like sorting, filtering, pagination, etc.-->
     <!-- This defines general information about the DataTable. -->
-    <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
-        removableSort sortMode="multiple" filterDisplay="row" :globalFilterFields="globalFilterFields"
-        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" scrollable
-        scroll-height="calc(100vh - 400px)" v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
+    <DataTable v-model:filters="filters" :value="transformedMappings" stripedRows ref="dt" :size="size.value"
+        tableStyle="min-width: 50rem" removableSort sortMode="multiple" filterDisplay="row"
+        :globalFilterFields="globalFilterFields" responsiveLayout=" scroll" editMode="row" dataKey="id"
+        @row-edit-save="onRowEditSave" scrollable scroll-height="calc(100vh - 345px)" v-model:editingRows="editingRows"
+        v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {
                 bodycell: ({ state }) => ({
@@ -19,7 +20,7 @@
         <!-- Optionally the state of the table can be persisted (session, local) so the user doesn't has to select the filter over and over again when coming back to the table later.
          An option can be implemented to allow a user to save the state if he want to and then show a button to reset the view.-->
         <template #header> <!--  stateStorage="session" stateKey="`mappings-${props.project.id}`" -->
-            <div class="flex justify-content-between" style="margin-bottom: 20px;">
+            <!-- <div class="flex justify-content-between" style="margin-bottom: 20px;">
                 <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" />
                     <h2 class="m-0"></h2>
@@ -27,7 +28,7 @@
                 <div style="display: flex; gap: 10px;">
                     <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
                 </div>
-            </div>
+            </div> -->
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success"
@@ -36,6 +37,9 @@
                         :disabled="!selectedMappings || !selectedMappings.length" />
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
+                    <div>
+                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+                    </div>
                     <div style="text-align:left">
                         <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
                             @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
@@ -196,7 +200,7 @@
 <script setup lang='ts'>
 import type { ProjectDetails } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
@@ -228,9 +232,25 @@ const props = defineProps({
 // general elements needed
 
 const toast = useToast();
-const router = useRouter();
-const dt = ref();
+// const router = useRouter();
 
+// pass datatable content to parent component
+
+const emit = defineEmits(['set-datatable-ref']);
+const dt = ref(null);
+
+onMounted(() => {
+    emit('set-datatable-ref', dt.value);
+});
+
+
+// Size options
+const size = ref({ label: 'Normal', value: 'null' as 'small' | 'large' | undefined });
+const sizeOptions = ref([
+    { label: 'Small', value: 'small' },
+    { label: 'Normal', value: 'null' },
+    { label: 'Large', value: 'large' }
+]);
 
 // Code for filtering the data in the DataTable
 
@@ -376,14 +396,14 @@ const onDeleteMapping = (mappings: Object[]) => {
 
 // export mappings to CSV
 
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
+// const exportCSV = () => {
+//     dt.value.exportCSV();
+// };
 
 
-const editProjectView = (projectId: number) => {
-    router.push(`/dashboard/projects/${projectId}/edit`);
-}
+// const editProjectView = (projectId: number) => {
+//     router.push(`/dashboard/projects/${projectId}/edit`);
+// }
 
 // The mappings which are received from the backend need to be flattened in order to be displayed in the DataTable
 
