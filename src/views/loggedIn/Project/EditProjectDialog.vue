@@ -3,16 +3,16 @@
         <div class="dialog-content">
             <span class="p-text-secondary block mb-5">Update information about the project</span>
             <div class="flex-row">
-                <FloatLabel class="flex-item flex-item-name">
+                <FloatLabel variant="on" class="flex-item flex-item-name">
                     <InputText id="name" v-model="project.name" />
                     <label for="name">Name</label>
                 </FloatLabel>
-                <FloatLabel class="flex-item flex-item-version">
+                <FloatLabel variant="on" class="flex-item flex-item-version">
                     <InputText id="version" v-model="project.version" />
                     <label for="version">Version</label>
                 </FloatLabel>
             </div>
-            <FloatLabel class="full-width">
+            <FloatLabel variant="on" class="full-width">
                 <Textarea v-model="project.description" rows="6" cols="80" />
                 <label for="description">Description</label>
             </FloatLabel>

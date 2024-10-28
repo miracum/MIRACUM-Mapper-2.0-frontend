@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useAuthStore } from './stores/auth';
-import LandingPageView from './views/LandingPageView.vue';
+// import LandingPageView from './views/LandingPageView.vue';
 import DashboardView from './views/loggedIn/DashboardView.vue';
-import LoginView from './views/LoginView.vue';
+// import LoginView from './views/LoginView.vue';
 
 const authStore = useAuthStore();
 </script>

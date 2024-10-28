@@ -1,6 +1,6 @@
 <template>
     <Panel class="grid-item" header="Specification">
-        <div>This cannot be changed later.</div>
+        <div>Adjust general settings for the project. Note: This cannot be changed later</div>
         <div class="flex flex-col">
             <div class="flex mt-3">
                 <Checkbox v-model="project.equivalence_required" :binary="true" :disabled="disabled" />

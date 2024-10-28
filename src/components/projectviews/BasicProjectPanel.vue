@@ -3,23 +3,23 @@
         <div>{{ panel_description }}</div>
         <div class="flex gap-4 mt-4">
             <div style="flex:2">
-                <FloatLabel>
+                <FloatLabel variant="on">
                     <InputText id="name" v-model="project.name" class="w-full" :invalid="submitted && !project.name" />
                     <label for="name">Name</label>
                 </FloatLabel>
                 <small class="p-error" v-if="submitted && !project.name">Name is required.</small>
             </div>
             <div style="flex:1">
-                <FloatLabel>
+                <FloatLabel variant="on">
                     <InputText id="version" v-model="project.version" class="w-full"
                         :invalid="submitted && !project.version" />
                     <label for="version">Version</label>
-                </FloatLabel>
+                </FloatLabel variant="on">
                 <small class="p-error" v-if="submitted && !project.version">Version is required.</small>
             </div>
         </div>
         <div>
-            <FloatLabel class="mt-5">
+            <FloatLabel class="mt-5" variant="on">
                 <Textarea id="description" v-model="project.description" rows="5" class="w-full"
                     :invalid="submitted && !project.description" />
                 <label for="description">Description</label>
