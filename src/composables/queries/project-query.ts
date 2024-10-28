@@ -143,3 +143,13 @@ export const useDeleteProjectPermissionQuery = (userId: string, projectId: numbe
 
   return useQueryWithPathParam(state, fetchOptions, method, path);
 }
+
+type UserResponse = paths['/users']['get']['responses']['200']['content']['application/json']
+
+export const useGetUsersQuery = () => {
+  const state = ref<UserResponse>();
+  const path = '/users';
+  const method = Method.GET;
+
+  return useQueryWithPathParam(state, null, method, path);
+}

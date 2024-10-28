@@ -2,7 +2,7 @@
     <Breadcrumb :home="home" :model="computedNavItems">
         <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                <a :href="href" v-bind="props.action" @click="navigate(); computedNavItems = []">
+                <a :href="href" v-bind="props.action" @click="navigate; computedNavItems = []">
                     <span :class="[item.icon, 'text-color']" />
                     <span class="text-primary font-semibold">{{ item.label }}</span>
                 </a>
@@ -27,7 +27,6 @@ const home = ref({
 const store = useProjectStore();
 const route = useRoute();
 
-
 const computedNavItems = ref([]);
 
 watchEffect(async () => {
@@ -37,10 +36,23 @@ watchEffect(async () => {
     if (projectsIndex === -1 || !(projectsIndex + 1 < pathSegments.length)) {
         return;
     }
+
+    if (pathSegments[projectsIndex + 1] === 'add') {
+        computedNavItems.value = [
+            {
+                label: 'Add',
+                route: 'add'
+            }
+        ];
+        return;
+    }
+
     const projectId = pathSegments[projectsIndex + 1]
 
     // get project name
-    await store.fetchAndSetCurrentProjectDetails(projectId);
+    if (!store.currentProjectDetails) {
+        await store.fetchAndSetCurrentProjectDetails(projectId);
+    }
     const projectName = store.currentProjectDetails.name;
 
     let items = [];

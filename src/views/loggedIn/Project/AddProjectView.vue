@@ -27,23 +27,34 @@ const submitted = ref(false);
 const toast = useToast();
 
 /////////// user permissions
+// const userPermissions2 = ref([
+//     {
+//         user: {
+//             name: 'John Doe',
+//             email: 'john.doe@fau.de',
+//             id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+//         },
+//         role: ''
+//     },
+//     {
+//         user: {
+//             name: 'Jane Doe',
+//             email: 'jane.doe@fau.de',
+//             id: 'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a20'
+//         }
+//     }
+// ]);
+
+// TODO only id is enough?
 const userPermissions = ref([
     {
         user: {
-            name: 'John Doe',
-            email: 'john.doe@fau.de',
-            id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
-        },
-        role: ''
-    },
-    {
-        user: {
-            name: 'Jane Doe',
-            email: 'jane.doe@fau.de',
-            id: 'b1ffcd99-9c0b-4ef8-bb6d-6bb9bd380a20'
+            name: "",
+            email: "",
+            id: ""
         }
     }
-]);
+])
 
 // const updateUserPermissions = (newPermission) => {
 //     userPermissions.value = newPermissions;
@@ -81,11 +92,17 @@ const onCreateProject = () => {
         console.log("invalid: project name, version or description missing");
         return;
     }
+    const userMap = new Map<string, boolean>();
     for (const permission of userPermissions.value) {
         if (!permission.role) {
             console.log("invalid: each permission needs a role");
             return;
         }
+        if (userMap.has(permission.user.id)) {
+            console.log("invalid: each user can only have one permission");
+            return;
+        }
+        userMap.set(permission.user.id, true);
     }
     for (const role of codeSystemRoles.value) {
         if (!role.codeSystem || !role.role || !role.name) {
@@ -102,7 +119,8 @@ const onCreateProject = () => {
         status_required: project.value.status_required,
         project_permissions: userPermissions.value.map((permission) => {
             return {
-                user_id: permission.user.id,
+                user_id: permission.user.id.id,
+                //user_id: a,
                 role: permission.role
             }
         }),

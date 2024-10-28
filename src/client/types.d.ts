@@ -228,6 +228,63 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all users
+         * @description Get all users.
+         */
+        get: operations["getAllUsers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a user
+         * @description Delete a user by ID. This will also delete all the permissions, the user has for the project.
+         */
+        delete: operations["deleteUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Updates user-database with information from Access-Token */
+        get: operations["login"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/codesystems": {
         parameters: {
             query?: never;
@@ -280,6 +337,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/codesystems/{codesystem_id}/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a code system by ID
+         * @description Import concepts for a code system by ID. The concepts are imported from a CSV file. The format of the CSV must be "code,meaning"
+         */
+        post: operations["importCodeSystem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/codesystems/{codesystem_id}/concepts": {
         parameters: {
             query?: never;
@@ -320,7 +397,7 @@ export interface components {
             created: string;
         };
         CreateProjectDetails: components["schemas"]["BaseProject"] & {
-            project_permissions?: components["schemas"]["SendProjectPermission"][];
+            project_permissions: components["schemas"]["SendProjectPermission"][];
             code_system_roles: components["schemas"]["CreateCodeSystemRole"][];
         };
         ProjectDetails: components["schemas"]["Project"] & {
@@ -383,6 +460,12 @@ export interface components {
         FullElement: components["schemas"]["Element"] & {
             concept?: components["schemas"]["Concept"];
         };
+        User: {
+            id: string;
+            fullname?: string;
+            username: string;
+            email?: string;
+        };
         Concept: {
             /** Format: int64 */
             id: number;
@@ -415,6 +498,15 @@ export interface components {
         };
         /** @description Internal Server Error due to database or implementation errors */
         InternalServerError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": string;
+            };
+        };
+        /** @description Unauthorized */
+        UnauthorizedError: {
             headers: {
                 [name: string]: unknown;
             };
@@ -498,6 +590,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description Page not found (e.g., page number too high) */
             404: {
                 headers: {
@@ -1230,6 +1323,84 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
+    getAllUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"][];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    deleteUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the user */
+                user_id: components["parameters"]["user_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
     getAllCodeSystems: {
         parameters: {
             query?: never;
@@ -1249,15 +1420,6 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
-            /** @description Project or codesystem-role not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -1406,6 +1568,44 @@ export interface operations {
             };
             400: components["responses"]["BadRequestError"];
             /** @description Codesystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "text/csv": string;
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            /** @description CodeSystem not found */
             404: {
                 headers: {
                     [name: string]: unknown;

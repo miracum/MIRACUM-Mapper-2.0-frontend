@@ -7,10 +7,14 @@
             <Column header="User">
                 <template #body="slotProps">
                     <div class="inline-flex align-items-center gap-1 px-2 py-2">
-                        <Avatar icon="pi pi-user" class="mr-2" size="large"
-                            style="background-color: #ece9fc; color: #2a1261" shape="circle" />
+                        <!-- <Avatar icon="pi pi-user" class="mr-2" size="large"
+                            style="background-color: #ece9fc; color: #2a1261" shape="circle" /> -->
+                        <UserSelect v-model="slotProps.data.user.id" :users="users"
+                            :invalid="submitted && !slotProps.data.user.id || !checkUsers()" class="w-full" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.user.id">User is required.</small>
+                        <small class="p-error" v-if="!checkUsers()">Every user can only appear once.</small>
                         <span class="inline-flex flex-col items-start">
-                            <span class="font-bold">{{ slotProps.data.user.name }}</span>
+                            <span class="font-bold">{{ slotProps.data.user.fullname }}</span>
                             <span class="text-sm">{{ slotProps.data.user.email }}</span>
                         </span>
                     </div>
@@ -36,7 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import { type Prop, type PropType, defineEmits } from 'vue';
+import { type Prop, type PropType, ref, watch } from 'vue';
+import { useGetUsersQuery } from '@/composables/queries/project-query';
+import { useToast } from "primevue/usetoast";
+
+// for possible error messages
+const toast = useToast();
 
 
 const props = defineProps({
@@ -61,16 +70,54 @@ const props = defineProps({
 //     emit('update:userPermissions', event.value);
 // };
 
+const users = ref<Array<{ username: string; email: string | undefined; id: string; fullname: string | undefined }>>([]);
+const getUsers = () => {
+    const { state, isReady, isFetching, error, execute } = useGetUsersQuery();
+    watch(isFetching, (newVal) => {
+        if (!newVal) {
+            if (isReady.value) {
+                users.value = state.value;
+            } else {
+                toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch users due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+            }
+        }
+    });
+    execute();
+}
+getUsers();
+
+const checkUsers = () => {
+    // check that every user only appears once
+    const userMap = new Map<string, boolean>();
+    for (const permission of props.userPermissions) {
+
+        if (userMap.has(permission.user.id)) {
+            return false;
+        }
+        userMap.set(permission.user.id, true);
+    }
+    return true;
+}
+
+
 const onUserPermissionDelete = (index: number) => {
     props.userPermissions.splice(index, 1);
 };
 
 const addPermission = () => {
+    // props.userPermissions.push({
+    //     user: {
+    //         name: 'John Doe',
+    //         email: 'john.doe@fau.de',
+    //         id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+    //     },
+    //     role: ''
+    // });
     props.userPermissions.push({
         user: {
-            name: 'John Doe',
-            email: 'john.doe@fau.de',
-            id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+            name: '',
+            email: '',
+            id: ''
         },
         role: ''
     });
