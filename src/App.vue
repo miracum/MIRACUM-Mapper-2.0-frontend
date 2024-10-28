@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useAuthStore } from './stores/auth';
 // import LandingPageView from './views/LandingPageView.vue';
 import DashboardView from './views/loggedIn/DashboardView.vue';
+// import KeycloakService from './lib/keycloak';
 // import LoginView from './views/LoginView.vue';
 
 const authStore = useAuthStore();
+
+// onMounted(() => {
+//   if (authStore.authenticated && !isKeycloakInitialized) {
+//     KeycloakService.CallInit(() => { });
+//   }
+// });
 </script>
 
 <template>

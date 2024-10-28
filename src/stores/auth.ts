@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import keycloakService from '@/lib/keycloak'
-import Keycloak from 'keycloak-js'
+import Keycloak, { type KeycloakProfile } from 'keycloak-js'
+// import keycloak from '@/keycloak'
 
 interface User {
   username?: string
   token?: string
   refToken?: string
+  userInfo: KeycloakProfile
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -14,7 +16,8 @@ export const useAuthStore = defineStore('auth', {
     // Retrieve the bearer token from localStorage or set it to an empty string if not found
     // bearerToken: localStorage.getItem('bearerToken') || ''
     authenticated: undefined as boolean | undefined,
-    user: {} as User
+    user: {} as User,
+    userInfo: {} as KeycloakProfile
     // testString: '' as string
   }),
   persist: true,
@@ -64,12 +67,15 @@ export const useAuthStore = defineStore('auth', {
         const keycloak = await keycloakService.CallTokenRefresh()
         this.initOauth(keycloak, false)
       } catch (error) {
+        // login sso
         console.error(error)
+        // keycloakService.CallLogin(this)
       }
     },
     clearUserData() {
       this.authenticated = false
-      this.user = {}
+      this.user = {} as User
+      this.userInfo = {} as KeycloakProfile
     }
   }
 })

@@ -21,7 +21,7 @@
             </Column>
             <Column header="Role">
                 <template #body="slotProps">
-                    <div>
+                    <div style="flex:1">
                         <RoleSelect v-model="slotProps.data.role" :invalid="submitted && !slotProps.data.role" />
                         <small class="p-error" v-if="submitted && !slotProps.data.role">Role is required.</small>
                     </div>

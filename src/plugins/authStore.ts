@@ -1,13 +1,15 @@
-import keycloakService from '@/lib/keycloak'
+// import keycloakService from '@/lib/keycloak'
 import { useAuthStore } from '@/stores/auth'
 
 const authStorePlugin = {
-  install(app: any, option: any) {
+  async install(app: any, option: any) {
     const store = useAuthStore(option.pinia)
 
     app.config.globalProperties.$store = store
 
-    keycloakService.CallInitStore(store)
+    // await keycloakService.CallInit(store)
+
+    // await keycloakService.CallInitStore(store)
   }
 }
 

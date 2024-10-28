@@ -15,9 +15,29 @@ let authenticated: boolean
  *
  * @param onAuthenticatedCallback
  */
-async function init(onInitCallback: any) {
+async function init(storeInstance: any, onInitCallback: any) {
   try {
-    authenticated = await keycloak.init({}) // { onLoad: 'login-required' }
+    if (storeInstance.authenticated) {
+      authenticated = await keycloak.init({
+        refreshToken: storeInstance.user.refToken,
+        token: storeInstance.user.token
+      })
+    } else {
+      authenticated = await keycloak.init()
+    }
+    if (authenticated) {
+      if (keycloak.isTokenExpired()) {
+        // { onLoad: 'login-required' }
+        await storeInstance.refreshUserToken()
+      }
+      keycloak.onTokenExpired = function () {
+        storeInstance.refreshUserToken()
+      }
+      keycloak.loadUserProfile().then((userInfo) => {
+        storeInstance.userInfo = userInfo
+      })
+    }
+    await initStore(storeInstance)
     // alert(authenticated)
     // initStore(storeInstance)
     // store.CallInitStore(keycloak)
@@ -28,7 +48,7 @@ async function init(onInitCallback: any) {
   }
 }
 
-async function login(storeInstance: any) {
+async function login() {
   try {
     await keycloak.login()
     // initStore(storeInstance)
@@ -68,23 +88,19 @@ function logout(url: string) {
  * Refreshes token
  */
 async function refreshToken() {
-  try {
-    await keycloak.updateToken(480).then((refreshed) => {
-      if (refreshed) {
-        console.debug('Token refreshed')
-      } else {
-        console.warn(
-          'Token not refreshed, valid for ' +
-            Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) +
-            ' seconds'
-        )
-      }
-    })
-    return keycloak
-  } catch (error) {
-    console.error('Failed to refresh token')
-    console.error(error)
-  }
+  await keycloak.updateToken()
+  //   .then((refreshed) => {
+  //   if (refreshed) {
+  //     console.debug('Token refreshed')
+  //   } else {
+  //     console.warn(
+  //       'Token not refreshed, valid for ' +
+  //         Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) +
+  //         ' seconds'
+  //     )
+  //   }
+  // })
+  return keycloak
 }
 
 const KeycloakService = {

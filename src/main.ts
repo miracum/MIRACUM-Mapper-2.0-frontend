@@ -23,7 +23,10 @@ import Noir from './presets/Noir.js'
 import authStorePlugin from './plugins/authStore'
 import mappingStorePlugin from './plugins/mappingStore'
 import projectStorePlugin from './plugins/projectStore'
+import { useAuthStore } from './stores/auth'
 import KeycloakService from './lib/keycloak'
+// import KeycloakService from './lib/keycloak'
+// import { useAuthStore } from './stores/auth'
 // import Noir from './presets/Noir.js'
 
 const app = createApp(App)
@@ -36,7 +39,11 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 
+app.use(authStorePlugin, { pinia })
+const authStore = useAuthStore()
+
 function renderApp() {
+  // KeycloakService.CallInitStore(authStore)
   app.use(PrimeVue, {
     theme: {
       preset: Noir,
@@ -48,7 +55,6 @@ function renderApp() {
     }
   })
 
-  app.use(authStorePlugin, { pinia })
   app.use(mappingStorePlugin, { pinia })
   app.use(projectStorePlugin, { pinia })
 
@@ -65,4 +71,6 @@ function renderApp() {
   app.mount('#app')
 }
 
-KeycloakService.CallInit(renderApp)
+// renderApp()
+
+KeycloakService.CallInit(authStore, renderApp)

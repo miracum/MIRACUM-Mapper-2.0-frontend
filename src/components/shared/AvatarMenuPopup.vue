@@ -29,8 +29,8 @@
                 <Avatar icon="pi pi-user" class="mr-2" size="large" style="background-color: #ece9fc; color: #2a1261"
                     shape="circle" />
                 <span class="inline-flex flex-col items-start">
-                    <span class="font-bold">Test User</span>
-                    <span class="text-sm">Admin</span>
+                    <span class="font-bold">{{ displayName }}</span>
+                    <span class="text-sm">{{ displayEmail }}</span>
                 </span>
             </div>
         </template>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import KeycloakService from "@/lib/keycloak";
@@ -103,6 +103,11 @@ const items = ref([
         icon: 'pi pi-cog',
         items: [
             {
+                label: 'Copy Auth Token',
+                icon: 'pi pi-copy',
+                command: copyAuthToken
+            },
+            {
                 label: 'Sign Out',
                 icon: 'pi pi-sign-out ',
                 command: logoutAndNavigate
@@ -113,6 +118,24 @@ const items = ref([
         separator: true
     }
 ]);
+
+const displayName = computed(() => {
+    const { firstName, lastName, username } = authStore.userInfo;
+    return firstName && lastName ? `${firstName} ${lastName}` : username;
+});
+
+const displayEmail = computed(() => {
+    return authStore.userInfo.email || "no email provided";
+});
+
+function copyAuthToken() {
+    const authToken = authStore.user.token ?? '';
+    navigator.clipboard.writeText(authToken).then(() => {
+        console.log('Auth token copied to clipboard');
+    }).catch(err => {
+        console.error('Failed to copy auth token: ', err);
+    });
+}
 
 function logoutAndNavigate() {
     authStore.logout();
