@@ -81,7 +81,14 @@
       </div>
     </template>
     <template #end>
-      <Button icon="pi pi-github" label="Source Code" text rounded aria-label="Github" @click="openGitHub" />
+      <Button icon="pi pi-graduation-cap" label="Miracum Project" text rounded aria-label="PrimeVue"
+        @click="openGitHub('https://www.miracum.org/en/')" />
+      <Button icon="pi pi-prime" label="PrimeVue Component Library" text rounded aria-label="PrimeVue"
+        @click="openGitHub('https://www.primefaces.org/primevue')" />
+      <Button icon="pi pi-github" label="Source Code Frontend" text rounded aria-label="Github"
+        @click="openGitHub('https://github.com/miracum/MIRACUM-Mapper-2.0-frontend')" />
+      <Button icon="pi pi-github" label="Source Code Backend" text rounded aria-label="Github"
+        @click="openGitHub('https://github.com/miracum/MIRACUM-Mapper-2.0-backend')" />
     </template>
   </Menubar>
 </template>
@@ -102,8 +109,8 @@ function handleLoginClick() {
   router.push('/login');
 }
 
-function openGitHub() {
-  window.open('https://github.com/miracum/MIRACUM-Mapper-2.0-backend');
+function openGitHub(url: string) {
+  window.open(url);
 }
 
 const navigatorItems = ref([
