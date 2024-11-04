@@ -4,7 +4,7 @@
     <DataTable v-model:filters="filters" :value="transformedMappings" stripedRows ref="dt" :size="size.value"
         tableStyle="min-width: 50rem" removableSort sortMode="multiple" filterDisplay="row"
         :globalFilterFields="globalFilterFields" responsiveLayout=" scroll" editMode="row" dataKey="id"
-        @row-edit-save="onRowEditSave" scrollable scroll-height="calc(100vh - 345px)" v-model:editingRows="editingRows"
+        @row-edit-save="onRowEditSave" scrollable scroll-height="calc(100vh - 230px)" v-model:editingRows="editingRows"
         v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {

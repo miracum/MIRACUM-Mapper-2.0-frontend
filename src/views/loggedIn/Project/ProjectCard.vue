@@ -5,13 +5,13 @@
         </template>
         <template #subtitle>
             <div class="card-content">
-                <Tag :value="project.version" severity="contrast" class="m-0 truncate" />
-                <div class="card-actions">
-                    <Button label="Edit" icon="pi pi-pencil" @click.stop="onEdit && onEdit(project.id)"
-                        outlined></Button>
+                <Tag :value="props.project.version" severity="contrast" class="m-0 truncate" />
+                <div v-if="authStore.isAdmin" class="card-actions">
+                    <Button label="Edit" icon="pi pi-pencil"
+                        @click.stop="props.onEdit && props.onEdit(props.project.id)" outlined></Button>
                     <Button label="Delete" icon="pi pi-trash"
-                        @click.stop="onDelete && onDelete(project.id, project.name)" severity="danger"
-                        outlined></Button>
+                        @click.stop="props.onDelete && props.onDelete(props.project.id, props.project.name)"
+                        severity="danger" outlined></Button>
                 </div>
             </div>
         </template>
@@ -21,7 +21,10 @@
     </Card>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore()
 
 const props = defineProps({
     project: {

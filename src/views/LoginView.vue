@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-// import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '../stores/auth';
 import KeycloakService from '@/lib/keycloak';
 
 const username = ref('');
@@ -48,9 +48,9 @@ const router = useRouter();
 
 const signInWithSSO = async () => {
     // SSO Logic
-    // const authStore = useAuthStore();
+    const authStore = useAuthStore();
     // KeycloakService.CallInit(authStore, () => { });
-    KeycloakService.CallLogin();
+    KeycloakService.CallLogin(authStore);
     router.push('/dashboard');
 };
 

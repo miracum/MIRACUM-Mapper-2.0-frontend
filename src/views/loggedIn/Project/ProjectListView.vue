@@ -12,7 +12,8 @@
                         <i :class="[option === 'list' ? 'pi pi-bars' : 'pi pi-table']" />
                     </template>
                 </SelectButton>
-                <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success" />
+                <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success"
+                    :disabled="!authStore.isAdmin" />
             </div>
         </template>
         <template #empty>
@@ -38,6 +39,11 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Select from 'primevue/select';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore()
+
+
 
 const props = defineProps({
     data: {

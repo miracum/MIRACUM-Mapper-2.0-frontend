@@ -27,6 +27,7 @@
             v-else-if="projectStore.currentProjectDetails && mappingStore.mappings"
             @set-datatable-ref="setDatatableRef" />
           <p v-else>The backend cannot be reached. Please make sure that it is available.</p>
+          <!-- wrong error message, if user doesn't has the right permissions, this should be shown here as well-->
         </Panel>
       </main>
     </div>

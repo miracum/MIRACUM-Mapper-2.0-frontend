@@ -6,6 +6,7 @@ import LoginView from '../views/LoginView.vue'
 import ProjectList from '../views/loggedIn/Project/ProjectView.vue'
 import MappingView from '../views/loggedIn/MappingView.vue'
 import EditProjectView from '../views/loggedIn/Project/EditProjectView.vue'
+import { watch } from 'vue'
 
 // import keycloak from '../keycloak'; // Adjust the path as necessary
 import { useAuthStore } from '../stores/auth'
@@ -70,16 +71,49 @@ const router = createRouter({
 router.beforeEach(
   (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
     const authStore = useAuthStore()
-    if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.authenticated) {
-      // && !keycloak.authenticated
-      next('/login') // Redirect to login if not authenticated and trying to access a protected route
-    } else if (to.matched.some((record) => !record.meta.requiresAuth) && authStore.authenticated) {
-      next('/dashboard') // Redirect to dashboard if already authenticated and trying to access a non-protected route
-    } else if (to.path === '/login' && authStore.authenticated) {
-      // && keycloak.authenticated
-      next('/dashboard') // Redirect to dashboard if already authenticated and trying to access login
-    } else {
-      next() // Proceed as normal if none of the above conditions are met
+
+    // let lastNavigation: string
+
+    const checkAuthentication = () => {
+      if (to.matched.some((record) => record.meta.requiresAuth) && !authStore.authenticated) {
+        next('/login') // Redirect to login if not authenticated and trying to access a protected route
+      } else if (
+        to.matched.some((record) => !record.meta.requiresAuth) &&
+        authStore.authenticated
+      ) {
+        next('/dashboard') // Redirect to dashboard if already authenticated and trying to access a non-protected route
+      } else if (to.path.includes('/login') && authStore.authenticated) {
+        next('/dashboard') // Redirect to dashboard if already authenticated and trying to access login
+      } else {
+        next() // Proceed as normal if none of the above conditions are met
+      }
+    }
+
+    // const navigate = (route: string) => {
+    //   if (lastNavigation != route) {
+    //     lastNavigation = route
+    //     next(route)
+    //   }
+    // }
+
+    // logout is treated as a special case, is it is only a temporary route to log the user out and redirect to the start page
+    if (!to.matched.some((record) => record.name === '/logout')) {
+      const authenticated = authStore.authenticated
+      if (!to.path.includes('/login') || authenticated || authStore.initialized === true) {
+        checkAuthentication()
+      }
+      if (authStore.initialized === false) {
+        const unwatch = watch(
+          () => authStore.initialized,
+          (newValue) => {
+            if (newValue !== false) {
+              unwatch()
+              if (authenticated != authStore.authenticated || to.path.includes('/login'))
+                checkAuthentication()
+            }
+          }
+        )
+      }
     }
   }
 )

@@ -17,6 +17,7 @@ let authenticated: boolean
  */
 async function init(storeInstance: any, onInitCallback: any) {
   try {
+    let newLogin = false
     if (storeInstance.authenticated) {
       authenticated = await keycloak.init({
         refreshToken: storeInstance.user.refToken,
@@ -24,32 +25,34 @@ async function init(storeInstance: any, onInitCallback: any) {
       })
     } else {
       authenticated = await keycloak.init()
+      newLogin = true
     }
     if (authenticated) {
-      if (keycloak.isTokenExpired()) {
-        // { onLoad: 'login-required' }
-        await storeInstance.refreshUserToken()
-      }
+      // if (keycloak.isTokenExpired()) {
+      //   // { onLoad: 'login-required' }
+      //   await storeInstance.refreshUserToken()
+      // }
       keycloak.onTokenExpired = function () {
         storeInstance.refreshUserToken()
       }
-      keycloak.loadUserProfile().then((userInfo) => {
-        storeInstance.userInfo = userInfo
-      })
+      if (newLogin) {
+        // send login request to backend
+      }
     }
     await initStore(storeInstance)
     // alert(authenticated)
     // initStore(storeInstance)
     // store.CallInitStore(keycloak)
-    onInitCallback()
   } catch (error) {
     console.error('Keycloak init failed')
     console.error(error)
   }
+  onInitCallback()
 }
 
-async function login() {
+async function login(storeInstance) {
   try {
+    storeInstance.clearUserData()
     await keycloak.login()
     // initStore(storeInstance)
   } catch (error) {
@@ -68,9 +71,9 @@ async function initStore(storeInstance: any) {
     storeInstance.initOauth(keycloak, false)
 
     // Show alert if user is not authenticated
-    if (!authenticated) {
-      // alert('not authenticated')
-    }
+    // if (!authenticated) {
+    // alert('not authenticated')
+    // }
   } catch (error) {
     console.error('Keycloak init failed')
     console.error(error)

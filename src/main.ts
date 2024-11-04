@@ -69,8 +69,10 @@ function renderApp() {
   // app.component('ThemeSwitcher', ThemeSwitcher)
 
   app.mount('#app')
+
+  KeycloakService.CallInit(authStore, () => {})
 }
 
-// renderApp()
+renderApp()
 
-KeycloakService.CallInit(authStore, renderApp)
+// KeycloakService.CallInit(authStore, renderApp)

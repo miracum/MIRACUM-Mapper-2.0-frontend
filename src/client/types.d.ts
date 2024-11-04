@@ -505,8 +505,17 @@ export interface components {
                 "application/json": string;
             };
         };
-        /** @description Unauthorized */
+        /** @description Unauthorized (missing or invalid credentials) */
         UnauthorizedError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": string;
+            };
+        };
+        /** @description Forbidden (insufficient permissions) */
+        ForbiddenError: {
             headers: {
                 [name: string]: unknown;
             };
@@ -626,6 +635,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project not found */
             404: {
                 headers: {
@@ -670,6 +681,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description Validation Exception */
             422: {
                 headers: {
@@ -704,6 +716,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project not found */
             404: {
                 headers: {
@@ -738,6 +752,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description Project not found */
             404: {
                 headers: {

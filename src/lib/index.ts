@@ -31,7 +31,7 @@ const authMiddleware: Middleware = {
         }
 
         // refresh token
-        await authStore.refreshUserToken()
+        await authStore.refreshUserToken() //instead of this, wait until a new token is received (refresh token is executed in the background automatically. If the token is expired, the refresh token is executed and the new token is stored in the store)
         const accessToken: string | undefined = authStore?.user?.token
 
         if (!accessToken) {

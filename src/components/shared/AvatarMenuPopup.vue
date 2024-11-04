@@ -12,7 +12,10 @@
             <!-- <ThemeSwitcher /> -->
         </template>
         <template #submenuheader="{ item }">
-            <span class="text-primary font-bold">{{ item.label }}</span>
+            <div class="flex flex-col">
+                <span class="text-primary font-bold">{{ item.label }}</span>
+                <span class="text-xs">{{ item.subtitle }}</span>
+            </div>
         </template>
         <template #item="{ item, props }">
             <a class="flex align-items-center" v-bind="props.action">
@@ -41,7 +44,6 @@
 import { ref, computed } from "vue";
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import KeycloakService from "@/lib/keycloak";
 const router = useRouter();
 const authStore = useAuthStore();
 
@@ -101,6 +103,7 @@ const items = ref([
     {
         label: 'Profile',
         icon: 'pi pi-cog',
+        subtitle: `Role: ${authStore.isAdmin ? 'Admin' : 'Normal User'}`,
         items: [
             {
                 label: 'Copy Auth Token',
