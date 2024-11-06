@@ -10,7 +10,6 @@ interface User {
   refToken?: string
   userInfo: KeycloakProfile
   isAdmin: boolean
-  initialized: boolean
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -22,11 +21,12 @@ export const useAuthStore = defineStore('auth', {
     user: {} as User,
     userInfo: {} as KeycloakProfile,
     isAdmin: false,
-    initialized: false
+    initialized: false,
+    sessionExpiredNotified: false
     // testString: '' as string
   }),
   persist: {
-    omit: ['initialized']
+    omit: ['initialized', 'sessionExpiredNotified']
   },
   actions: {
     // authenticate(token: string): void {
@@ -86,6 +86,10 @@ export const useAuthStore = defineStore('auth', {
     },
     async refreshUserToken() {
       // tries to refresh the user token
+      if(this.sessionExpiredNotified) {
+        return
+      }
+
       try {
         // wait until initialized is true
         while (!this.initialized) {
@@ -95,6 +99,7 @@ export const useAuthStore = defineStore('auth', {
         this.initOauth(keycloak, false)
       } catch (error) {
         // if an error occured, the login is not possible (possibly, the session expired) so the user gets notified, authentication data gets cleared the user has to login again
+        this.sessionExpiredNotified = true;
         alert('Session expired. Please login again.')
         this.clearUserData()
         window.location.href = '/login'
