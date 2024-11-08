@@ -62,12 +62,13 @@ export const useAuthStore = defineStore('auth', {
       })
       if (keycloak.hasResourceRole('admin')) {
         this.isAdmin = true
-      } else if (keycloak.hasResourceRole('user')) {
+      } else if (keycloak.hasResourceRole('normal')) {
         this.isAdmin = false
       } else {
         alert('You do not have the correct role to access this application') /// TODO Dialog
         this.clearUserData()
         keycloak.logout()
+        window.location.href = '/login'
       }
 
       this.user.username = keycloak.idTokenParsed?.preferred_username
@@ -86,7 +87,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async refreshUserToken() {
       // tries to refresh the user token
-      if(this.sessionExpiredNotified) {
+      if (this.sessionExpiredNotified) {
         return
       }
 
@@ -99,7 +100,7 @@ export const useAuthStore = defineStore('auth', {
         this.initOauth(keycloak, false)
       } catch (error) {
         // if an error occured, the login is not possible (possibly, the session expired) so the user gets notified, authentication data gets cleared the user has to login again
-        this.sessionExpiredNotified = true;
+        this.sessionExpiredNotified = true
         alert('Session expired. Please login again.')
         this.clearUserData()
         window.location.href = '/login'
