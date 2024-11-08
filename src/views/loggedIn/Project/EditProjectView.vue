@@ -103,15 +103,15 @@ const getProjectDetails = async () => {
 }
 
 // copy old project information
-var oldProject = {
+let oldProject = {
     name: '',
     version: '',
     description: '',
     equivalence_required: true,
     status_required: true
 };
-var oldUserPermissions = [] as { user: { name: string, email: string, id: string }, role: string }[];
-var oldCodeSystemRoles = [] as { codeSystem: { codeSystemName: string, id: number, name: string }, role: string, name: string, id: number }[];
+let oldUserPermissions = [] as { user: { name: string, email: string, id: string }, role: string }[];
+let oldCodeSystemRoles = [] as { codeSystem: { codeSystemName: string, id: number, name: string }, role: string, name: string, id: number }[];
 const copyOldProjectDetails = () => {
     oldProject = JSON.parse(JSON.stringify(project.value));
     oldUserPermissions = JSON.parse(JSON.stringify(userPermissions.value));

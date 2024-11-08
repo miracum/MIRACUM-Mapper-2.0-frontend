@@ -43,8 +43,8 @@ const props = defineProps({
 
 const search = (event: AutoCompleteCompleteEvent) => {
     const text = event.query.toLowerCase()
-    var code = null;
-    var meaning = null;
+    let code = null;
+    let meaning = null;
 };
 
 

@@ -38,7 +38,7 @@ const props = defineProps({
     },
 });
 
-const optionLabel = computed(()=> {
+const optionLabel = computed(() => {
     return props.field === 'code' ? 'code' : 'meaning';
 });
 
@@ -52,8 +52,8 @@ const projectStore = useProjectStore();
 const filteredConcepts = ref();
 const searchConcept = (event: AutoCompleteCompleteEvent) => {
     const text = event.query.toLowerCase()
-    var code = null;
-    var meaning = null;
+    let code = null;
+    let meaning = null;
     if (props.field === 'code') {
         code = text;
     } else if (props.field === 'meaning') {
