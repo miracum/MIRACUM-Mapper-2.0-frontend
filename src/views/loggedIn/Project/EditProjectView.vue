@@ -47,7 +47,7 @@ const project = ref({
     status_required: true
 });
 
-const userPermissions = ref([] as { user: { name: string, email: string, id: string }, role: string }[]);
+const userPermissions = ref([] as { user: { fullname: string, email: string, id: string, username: string }, role: string }[]);
 
 const codeSystemRoles = ref([] as { codeSystem: { codeSystemName: string, id: number, name: string }, role: string, name: string, id: number }[]);
 
@@ -75,9 +75,10 @@ const getProjectDetails = async () => {
         permissions.forEach(permission => {
             userPermissions.value.push({
                 user: {
-                    name: permission.user_name,
-                    id: permission.user_id,
-                    email: "platzhalter@email.com"
+                    fullname: permission.user.fullname ? permission.user.fullname : '',
+                    username: permission.user.username,
+                    id: permission.user.id,
+                    email: permission.user.email ? permission.user.email : ''
                 },
                 role: permission.role
             });
@@ -139,7 +140,7 @@ const onProjectDone = () => {
         }
     }
     for (const role of codeSystemRoles.value) {
-        if (!role.codeSystem || !role.role || !role.name) {
+        if (!role.codeSystem || !role.role) {
             console.log("invalid: each code system role needs a code system, role and name");
             return;
         }

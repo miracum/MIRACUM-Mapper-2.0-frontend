@@ -3,7 +3,7 @@
     <Select :options="props.users" filter optionLabel="fullname" :filterFields="['fullname', 'username', 'email']"
         placeholder="Select a User">
         <template #value="slotProps">
-            <div v-if="slotProps.value" class="flex items-center">
+            <div v-if="slotProps.value.id" class="flex items-center">
                 <Avatar :label="getLabel(slotProps.value)" :icon="getIcon(slotProps.value)" class="mr-2" size="large"
                     style="background-color: #ece9fc; color: #2a1261" shape="circle" />
                 <!-- <Avatar v-else icon="pi pi-user" class="mr-2" size="large"

@@ -9,14 +9,14 @@
                     <div class="inline-flex align-items-center gap-1 px-2 py-2">
                         <!-- <Avatar icon="pi pi-user" class="mr-2" size="large"
                             style="background-color: #ece9fc; color: #2a1261" shape="circle" /> -->
-                        <UserSelect v-model="slotProps.data.user.id" :users="users"
+                        <UserSelect v-model="slotProps.data.user" :users="users"
                             :invalid="submitted && !slotProps.data.user.id || !checkUsers()" class="w-full" />
                         <small class="p-error" v-if="submitted && !slotProps.data.user.id">User is required.</small>
                         <small class="p-error" v-if="!checkUsers()">Every user can only appear once.</small>
-                        <span class="inline-flex flex-col items-start">
+                        <!-- <span class="inline-flex flex-col items-start">
                             <span class="font-bold">{{ slotProps.data.user.fullname }}</span>
                             <span class="text-sm">{{ slotProps.data.user.email }}</span>
-                        </span>
+                        </span> -->
                     </div>
                 </template>
             </Column>

@@ -1234,6 +1234,7 @@ components:
       type: object
       required:
         - user
+        - role
       properties:
         user:
           $ref: "#/components/schemas/User"

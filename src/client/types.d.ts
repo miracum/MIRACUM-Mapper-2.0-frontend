@@ -412,7 +412,7 @@ export interface components {
         };
         ProjectPermission: {
             user: components["schemas"]["User"];
-            role?: components["schemas"]["Role"];
+            role: components["schemas"]["Role"];
         };
         CreateCodeSystemRole: {
             name: string;
