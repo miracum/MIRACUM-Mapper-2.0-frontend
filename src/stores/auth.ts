@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
         alert('You do not have the correct role to access this application') /// TODO Dialog
         this.clearUserData()
         keycloak.logout()
-        window.location.href = '/login'
+        window.location.href = '/logout'
       }
 
       this.user.username = keycloak.idTokenParsed?.preferred_username
