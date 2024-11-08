@@ -34,6 +34,9 @@ const submitted = ref(false);
 const disabled = true;
 const rowReorderPossible = false;
 
+// for possible error messages
+const toast = useToast();
+
 const projectStore = useProjectStore();
 
 const project = ref({
@@ -83,6 +86,9 @@ const getProjectDetails = async () => {
 
     const roles = projectDetails.code_system_roles
     roles.forEach(codeSystemRole => {
+        if (!codeSystemRole.name) {
+            codeSystemRole.name = '';
+        }
         codeSystemRoles.value.push({
             codeSystem: {
                 id: codeSystemRole.system.id,
@@ -111,10 +117,6 @@ const copyOldProjectDetails = () => {
     oldUserPermissions = JSON.parse(JSON.stringify(userPermissions.value));
     oldCodeSystemRoles = JSON.parse(JSON.stringify(codeSystemRoles.value));
 }
-
-
-// for possible error messages
-const toast = useToast();
 
 
 // const updateCodeSystemRoleOrder = (newCodeSystemRolesOrder: Array<{ codeSystem: number; role: string, name: string }>) => {

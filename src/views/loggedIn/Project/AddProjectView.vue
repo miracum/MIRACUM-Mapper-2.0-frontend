@@ -105,8 +105,8 @@ const onCreateProject = () => {
         userMap.set(permission.user.id, true);
     }
     for (const role of codeSystemRoles.value) {
-        if (!role.codeSystem || !role.role || !role.name) {
-            console.log("invalid: each code system role needs a code system, role and name");
+        if (!role.codeSystem || !role.role) {
+            console.log("invalid: each code system role needs a code system, role");
             return;
         }
     }
