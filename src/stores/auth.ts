@@ -12,8 +12,16 @@ interface User {
   isAdmin: boolean
 }
 
+export interface AuthState {
+  authenticated: boolean | undefined
+  user: User
+  userInfo: KeycloakProfile
+  isAdmin: boolean
+  initialized: boolean
+}
+
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
+  state: (): AuthState => ({
     // isAuthenticated: !!localStorage.getItem('bearerToken'),
     // Retrieve the bearer token from localStorage or set it to an empty string if not found
     // bearerToken: localStorage.getItem('bearerToken') || ''

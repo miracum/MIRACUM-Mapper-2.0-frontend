@@ -7,11 +7,12 @@ import type { components } from '../client/types'
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query'
 import { watch } from 'vue'
 
-interface ProjectState {
+export interface ProjectState {
   projects: Project[]
   currentProject: Project | null
   currentProjectDetails: ProjectDetails | null
   currentLookupCodeSystemRoleIds: { [key: number]: number } | null
+  projectRole: ProjectRole | null
 }
 
 export type Project = components['schemas']['Project']
@@ -22,13 +23,15 @@ export type CodeSystemRole = components['schemas']['CodeSystemRole']
 export type UpdateCodeSystemRole = components['schemas']['UpdateCodeSystemRole']
 export type ProjectPermission = components['schemas']['SendProjectPermission']
 export type CodeSystem = components['schemas']['CodeSystem']
+export type ProjectRole = components['schemas']['Role']
 
 export const useProjectStore = defineStore('projects', {
   state: (): ProjectState => ({
     projects: [],
     currentProject: null,
     currentProjectDetails: null,
-    currentLookupCodeSystemRoleIds: null
+    currentLookupCodeSystemRoleIds: null,
+    projectRole: null
   }),
   actions: {
     setProjects(projects: Project[]) {
@@ -49,19 +52,19 @@ export const useProjectStore = defineStore('projects', {
     },
     async fetchAndSetCurrentProjectDetails(projectId: number) {
       const fetchProjectDetails = async () => {
-        const { state, isReady, isFetching, error, execute } = useGetProjectDetailsQuery(projectId);
-        execute();
+        const { state, isReady, isFetching, error, execute } = useGetProjectDetailsQuery(projectId)
+        execute()
         await new Promise<void>((resolve) => {
-            watch(isFetching, (newVal) => {
-                if (!newVal && isReady.value) {
-                  //this.setCurrentProjectDetails(state.value)
-                  this.currentProjectDetails = state.value
-                  resolve();
-                }
-            });
+          watch(isFetching, (newVal) => {
+            if (!newVal && isReady.value) {
+              //this.setCurrentProjectDetails(state.value)
+              this.currentProjectDetails = state.value
+              resolve()
+            }
+          })
         })
       }
-      await fetchProjectDetails();
+      await fetchProjectDetails()
     },
     updateProject(updatedProject: Project) {
       const index = this.projects.findIndex((p) => p.id === updatedProject.id)
@@ -74,6 +77,9 @@ export const useProjectStore = defineStore('projects', {
     },
     getProject(projectId: number) {
       return this.projects.find((p) => p.id === projectId)
+    },
+    setProjectRole(role: ProjectRole) {
+      this.projectRole = role
     }
   }
 })

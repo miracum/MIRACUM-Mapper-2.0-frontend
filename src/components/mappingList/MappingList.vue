@@ -32,9 +32,10 @@
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success"
-                        @click="showCreateMappingDialog = true" />
+                        @click="showCreateMappingDialog = true"
+                        :disabled="!userHasPermission(MappingCreatePermission, projectStore, authStore)" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
-                        :disabled="!selectedMappings || !selectedMappings.length" />
+                        :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore) || !selectedMappings || !selectedMappings.length" />
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <div>
@@ -176,13 +177,15 @@
                 <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
             </template>
         </Column>
-        <Column :rowEditor="true" style="width: auto; margin:0; padding:0%" bodyStyle="text-align:center">
+        <Column :rowEditor="userHasPermission(MappingUpdatePermission, projectStore, authStore)"
+            style="width: auto; margin:0; padding:0%" bodyStyle="text-align:center">
         </Column>
         <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
             <template #body="slotProps">
-                <Button icon="pi pi-pen-to-square" text rounded @click="openEditMapping(slotProps.data)" />
-                <Button icon="pi pi-trash" text rounded severity="danger"
-                    @click="confirmDeleteMapping(slotProps.data)" />
+                <Button icon="pi pi-pen-to-square" text rounded @click="openEditMapping(slotProps.data)"
+                    :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)" />
+                <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)"
+                    :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore)" />
             </template>
         </Column>
     </DataTable>
@@ -198,7 +201,7 @@
 
 
 <script setup lang='ts'>
-import type { ProjectDetails } from '@/stores/project';
+import { useProjectStore, type ProjectDetails } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings';
 import { onMounted, ref, watch } from 'vue';
 import Column from 'primevue/column';
@@ -215,7 +218,12 @@ import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
-import { useRouter } from 'vue-router';
+import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission } from '@/lib/permissions';
+import { useAuthStore } from '@/stores/auth';
+
+const projectStore = useProjectStore();
+const authStore = useAuthStore();
+
 
 const props = defineProps({
     mappings: {

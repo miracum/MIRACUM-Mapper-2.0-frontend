@@ -89,6 +89,7 @@ declare module 'vue' {
     OldNavigator: typeof import('./src/components/shared/OldNavigator.vue')['default']
     Panel: typeof import('primevue/panel')['default']
     Password: typeof import('primevue/password')['default']
+    PermissionTag: typeof import('./src/components/tags/PermissionTag.vue')['default']
     ProjectList: typeof import('./src/components/shared/ProjectList.vue')['default']
     ProjectPermissions: typeof import('./src/components/projectviews/ProjectPermissions.vue')['default']
     ProjectPermissionsPanel: typeof import('./src/components/projectviews/ProjectPermissionsPanel.vue')['default']

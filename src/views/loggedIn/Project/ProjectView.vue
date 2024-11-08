@@ -8,7 +8,7 @@
             </div>
         </template> -->
         <!-- Loading State TODO Better align skeletons -->
-        <div v-if="isFetching" v-for="i in 4" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
+        <div v-if="isFetching" v-for="i in 1" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
             <Card class="card">
                 <template #title>
                     <Skeleton class="w-10rem border-round h-2rem" />

@@ -8,7 +8,11 @@
           </template>
           <template #icons v-if="projectStore.currentProjectDetails && mappingStore.mappings">
             <div class="flex space-x-2">
-              <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)" />
+              <Button text @click="permissionRoleDialog = true">
+                <PermissionTag :value="projectStore.projectRole" v-if="projectStore.projectRole" />
+              </Button>
+              <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)"
+                :disabled="!userHasPermission(ProjectUpdatePermission, projectStore, authStore)" />
               <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
             </div>
           </template>
@@ -28,6 +32,7 @@
             @set-datatable-ref="setDatatableRef" />
           <p v-else>The backend cannot be reached. Please make sure that it is available.</p>
           <!-- wrong error message, if user doesn't has the right permissions, this should be shown here as well-->
+          <PermissionRoleDialog v-model:visible="permissionRoleDialog" :role="projectStore.projectRole" />
         </Panel>
       </main>
     </div>
@@ -35,7 +40,7 @@
 </template>
 
 <script setup lang='ts'>
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { ref, onMounted, watch, type Ref } from 'vue';
 import { useMappingStore } from '@/stores/mappings';
 import { useProjectStore } from '@/stores/project';
@@ -43,13 +48,21 @@ import MappingList from '@/components/mappingList/MappingList.vue';
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 import router from '@/router';
+import { useAuthStore } from '@/stores/auth';
+import { userHasPermission, ProjectUpdatePermission } from '@/lib/permissions';
+import PermissionTag from '@/components/tags/PermissionTag.vue';
+import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
+
+const permissionRoleDialog = ref(false);
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
 const projectId = ref(route.params.projectId);
 const projectStore = useProjectStore();
 const mappingStore = useMappingStore();
+const authStore = useAuthStore();
 const isLoading = ref(true);
+
 
 onMounted(() => {
   if (!Array.isArray(projectId.value) && !isNaN(Number(projectId.value))) {
@@ -78,6 +91,15 @@ onMounted(() => {
         if (projectDetailsState.value && mappingsState.value) {
           projectStore.setCurrentProjectDetails(projectDetailsState.value);
           mappingStore.setMappings(mappingsState.value);
+          if (projectDetailsState.value.project_permissions) {
+            for (const role of projectDetailsState.value.project_permissions) {
+              if (role.user_id === authStore.userInfo?.id) {
+                projectStore.setProjectRole(role.role);
+                break;
+              }
+            }
+          }
+
         }
       }
     }
