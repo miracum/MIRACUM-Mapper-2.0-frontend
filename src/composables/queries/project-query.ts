@@ -153,3 +153,13 @@ export const useGetUsersQuery = () => {
 
   return useQueryWithPathParam(state, null, method, path);
 }
+
+type LoginResponse = paths['/users/login']['post']['responses']['200']['content']['application/json']
+
+export const useLoginQuery = () => {
+  const state = ref<LoginResponse>();
+  const path = '/users/login';
+  const method = Method.POST;
+
+  return useQueryWithPathParam(state, null, method, path);
+}

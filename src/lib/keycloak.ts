@@ -1,4 +1,6 @@
 import Keycloak from 'keycloak-js'
+import { useLoginQuery } from '@/composables/queries/project-query';
+
 
 const options = {
   url: import.meta.env.VITE_KEYCLOAK_URL,
@@ -24,7 +26,9 @@ async function init(storeInstance: any, onInitCallback: any) {
         token: storeInstance.user.token
       })
     } else {
-      authenticated = await keycloak.init()
+      authenticated = await keycloak.init({
+        checkLoginIframe: false
+      })
       newLogin = true
     }
     if (authenticated) {
@@ -35,11 +39,12 @@ async function init(storeInstance: any, onInitCallback: any) {
       keycloak.onTokenExpired = function () {
         storeInstance.refreshUserToken()
       }
-      if (newLogin) {
-        // send login request to backend
-      }
     }
     await initStore(storeInstance)
+    if (authenticated && newLogin) {
+      const { state, isReady, isFetching, error, execute } = useLoginQuery();
+      execute();
+    }
     // alert(authenticated)
     // initStore(storeInstance)
     // store.CallInitStore(keycloak)
@@ -68,7 +73,7 @@ async function login(storeInstance) {
 async function initStore(storeInstance: any) {
   try {
     // store = storeInstance
-    storeInstance.initOauth(keycloak, false)
+    await storeInstance.initOauth(keycloak, false)
 
     // Show alert if user is not authenticated
     // if (!authenticated) {

@@ -275,10 +275,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Updates user-database with information from Access-Token */
-        get: operations["login"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Updates user-database with information from Access-Token */
+        post: operations["login"];
         delete?: never;
         options?: never;
         head?: never;
@@ -404,13 +404,15 @@ export interface components {
             project_permissions?: components["schemas"]["ProjectPermission"][];
             code_system_roles: components["schemas"]["CodeSystemRole"][];
         };
+        /** @enum {string} */
+        Role: "reviewer" | "project_owner" | "editor";
         SendProjectPermission: {
             user_id: string;
-            /** @enum {string} */
-            role: "reviewer" | "project_owner" | "editor";
+            role: components["schemas"]["Role"];
         };
-        ProjectPermission: components["schemas"]["SendProjectPermission"] & {
-            user_name: string;
+        ProjectPermission: {
+            user: components["schemas"]["User"];
+            role?: components["schemas"]["Role"];
         };
         CreateCodeSystemRole: {
             name: string;
@@ -787,6 +789,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project not found */
             404: {
                 headers: {
@@ -825,6 +829,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or user not found */
             404: {
                 headers: {
@@ -872,6 +878,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or user not found */
             404: {
                 headers: {
@@ -917,6 +925,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or user not found */
             404: {
                 headers: {
@@ -953,6 +963,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or user not found */
             404: {
                 headers: {
@@ -987,6 +999,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project not found */
             404: {
                 headers: {
@@ -1025,6 +1039,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or codesystem-role not found */
             404: {
                 headers: {
@@ -1070,6 +1086,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or codesystem-role not found */
             404: {
                 headers: {
@@ -1113,6 +1131,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Page not found (e.g., page number too high) */
             404: {
                 headers: {
@@ -1151,6 +1171,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or Mapping not found */
             404: {
                 headers: {
@@ -1198,6 +1220,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project not found */
             404: {
                 headers: {
@@ -1245,6 +1269,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or Mapping not found */
             404: {
                 headers: {
@@ -1290,6 +1316,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or Mapping not found */
             404: {
                 headers: {
@@ -1326,6 +1354,8 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
             /** @description Project or Mapping not found */
             404: {
                 headers: {
@@ -1357,6 +1387,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -1382,6 +1413,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description User not found */
             404: {
                 headers: {
@@ -1413,6 +1445,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -1435,6 +1468,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             500: components["responses"]["InternalServerError"];
         };
     };
@@ -1461,6 +1495,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description Codesystem not found */
             404: {
                 headers: {
@@ -1505,6 +1540,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description CodeSystem not found */
             404: {
                 headers: {
@@ -1548,6 +1584,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description CodeSystem not found */
             404: {
                 headers: {
@@ -1582,6 +1619,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description Codesystem not found */
             404: {
                 headers: {
@@ -1620,6 +1658,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description CodeSystem not found */
             404: {
                 headers: {
@@ -1667,6 +1706,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
             /** @description CodeSystem not found */
             404: {
                 headers: {

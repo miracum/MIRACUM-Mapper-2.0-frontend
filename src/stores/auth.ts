@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
 
       // redirect url after keycloak logout. If the user is on the logout page, the user data gets cleared and the user gets redirected to the home page
       if (window.location.pathname === '/logout') {
-        await this.clearUserData()
+        this.clearUserData()
         // navigate to home page
         window.location.href = '/'
         return
