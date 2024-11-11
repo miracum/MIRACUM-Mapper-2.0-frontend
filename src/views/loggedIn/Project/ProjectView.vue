@@ -8,31 +8,12 @@
             </div>
         </template> -->
         <!-- Loading State TODO Better align skeletons -->
-        <div v-if="isFetching" v-for="i in 1" :key="i" class="card-spacing" style="margin-bottom: 1rem;">
-            <Card class="card">
-                <template #title>
-                    <Skeleton class="w-10rem border-round h-2rem" />
-                </template>
-                <template #subtitle>
-                    <Skeleton class="w-8rem border-round h-1rem" />
-                </template>
-                <template #content>
-                    <div class="card-content">
-                        <Skeleton class="w-8rem border-round h-1rem" />
-                        <div class="card-actions">
-                            <Skeleton class="w-4rem border-round h-2rem" />
-                            <Skeleton class="w-4rem border-round h-2rem" />
-                        </div>
-                    </div>
-                </template>
-            </Card>
-        </div>
 
         <!-- Error State -->
         <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
 
         <!-- Data View -->
-        <ProjectListView :data="projects" :onEdit="onEdit" :onDelete="onDelete" />
+        <ProjectListView :loading="isFetching" :data="projects" :onEdit="onEdit" :onDelete="onDelete" />
 
         <!-- No Projects Found -->
         <!-- <Message v-else severity="error">Currently, there are no projects available.</Message> -->
@@ -102,7 +83,7 @@ const onDelete = (id: number, name: string) => {
                     } else {
                         // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
                         toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
-                        console.log(error.value?.message.toString());
+                        // console.log(error.value?.message.toString());
                     }
                 }
             });

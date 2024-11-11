@@ -14,42 +14,65 @@
             }
         }" :paginator="transformedMappings && transformedMappings.length > 0" :rows="10"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rowsPerPageOptions="[5, 10, 20, 50]"
+        :rowsPerPageOptions="[10, 20, 50, 100, 500, 1000, 5000]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
         <!-- Elements which are displayed at the top of the table can be defined here. It is used to provide elements like an export button, add or delete elements, apply filtering etc. -->
         <!-- Optionally the state of the table can be persisted (session, local) so the user doesn't has to select the filter over and over again when coming back to the table later.
          An option can be implemented to allow a user to save the state if he want to and then show a button to reset the view.-->
         <template #header> <!--  stateStorage="session" stateKey="`mappings-${props.project.id}`" -->
-            <!-- <div class="flex justify-content-between" style="margin-bottom: 20px;">
-                <div style="display: flex; gap: 10px;">
-                    <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" />
-                    <h2 class="m-0"></h2>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
-                </div>
-            </div> -->
             <div class="flex justify-content-between">
                 <div style="display: flex; gap: 10px;"> <!-- TODO gap: 5px; in styles -->
                     <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success"
                         @click="showCreateMappingDialog = true"
-                        :disabled="!userHasPermission(MappingCreatePermission, projectStore, authStore)" />
+                        :disabled="!userHasPermission(MappingCreatePermission, projectStore, authStore)"
+                        v-tooltip.top="addButtonTooltip(MappingCreatePermission)" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
-                        :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore) || !selectedMappings || !selectedMappings.length" />
+                        :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore) || !selectedMappings || !selectedMappings.length"
+                        v-tooltip.top="addButtonTooltip(MappingDeletePermission)" />
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div>
-                        <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
-                    </div>
-                    <div style="text-align:left">
-                        <MultiSelect :modelValue="selectedColumns" :options="toggleColumns" optionLabel="header"
-                            @update:modelValue="onToggle" display="chip" placeholder="Hidden Columns" />
-                    </div>
-                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined @click="clearFilter()" />
+                    <!-- <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" /> -->
                     <IconField iconPosition="left">
                         <InputIcon class="pi pi-search"></InputIcon>
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
                     </IconField>
+                    <Button type="button" icon="pi pi-sliders-h" label="Table Options" @click="onPopUpToggle" />
+                    <Popover ref="popUp">
+                        <div class="flex flex-col gap-4 w-full">
+                            <div>
+                                <span class="font-medium block mb-2">Table style</span>
+                                <SelectButton v-model="size" :options="sizeOptions" optionLabel="label"
+                                    dataKey="label" />
+                            </div>
+                            <div>
+                                <span class="font-medium block mb-2">Project Role</span>
+                                <Button text @click="permissionRoleDialog = true">
+                                    <PermissionTag :value="projectStore.projectRole" v-if="projectStore.projectRole" />
+                                </Button>
+                            </div>
+                            <div>
+                                <span class="font-medium block mb-2">Adjust Columns</span>
+                                <div style="text-align:left">
+                                    <MultiSelect :modelValue="selectedColumns" :options="toggleColumns"
+                                        optionLabel="header" @update:modelValue="onToggle" display="chip"
+                                        placeholder="Hidden Columns" />
+                                </div>
+                            </div>
+                            <div>
+                                <span class="font-medium block mb-2">Clear All Filters</span>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined
+                                        @click="clearFilter()" />
+                                </div>
+                            </div>
+                            <div>
+                                <span class="font-medium block mb-2">Export Project Mappings</span>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" />
+                                </div>
+                            </div>
+                        </div>
+                    </Popover>
                 </div>
             </div>
         </template>
@@ -111,7 +134,7 @@
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by code" />
+                        placeholder="Search by code" class="filter-width-code" />
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
@@ -135,7 +158,7 @@
                 <StatusSelect v-model="data[field]" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" />
+                <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" filterField="equivalence" sortable
@@ -147,7 +170,8 @@
                 <EquivalenceSelect v-model="data[field]" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()" />
+                <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()"
+                    class="filter-width-enum" />
             </template>
         </Column>
         <Column field="comment" filterField="comment" sortable class="grid-column-right">
@@ -165,7 +189,8 @@
                 <DateFormat :value="data.created" />
             </template>
             <template #filter="{ filterModel }">
-                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
+                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
+                    class="filter-width-date" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" filterField="modified"
@@ -174,7 +199,8 @@
                 <DateFormat :value="data.modified" />
             </template>
             <template #filter="{ filterModel }">
-                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
+                <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
+                    class="filter-width-date" />
             </template>
         </Column>
         <Column :rowEditor="userHasPermission(MappingUpdatePermission, projectStore, authStore)"
@@ -183,9 +209,11 @@
         <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
             <template #body="slotProps">
                 <Button icon="pi pi-pen-to-square" text rounded @click="openEditMapping(slotProps.data)"
-                    :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)" />
+                    :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)"
+                    v-tooltip.top="addButtonTooltip(MappingUpdatePermission)" />
                 <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)"
-                    :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore)" />
+                    :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore)"
+                    v-tooltip.top="addButtonTooltip(MappingDeletePermission)" />
             </template>
         </Column>
     </DataTable>
@@ -197,11 +225,13 @@
 
     <!-- This message is shown if there are no mappings to show. -->
     <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
+
+    <PermissionRoleDialog v-model:visible="permissionRoleDialog" :role="projectStore.projectRole" />
 </template>
 
 
 <script setup lang='ts'>
-import { useProjectStore, type ProjectDetails } from '@/stores/project';
+import { useProjectStore, type ProjectDetails, type ProjectRole } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings';
 import { onMounted, ref, watch } from 'vue';
 import Column from 'primevue/column';
@@ -218,8 +248,24 @@ import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
-import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission } from '@/lib/permissions';
+import Popover from 'primevue/popover';
+import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission, getButtonTooltip } from '@/lib/permissions';
 import { useAuthStore } from '@/stores/auth';
+import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
+import { useRouter } from 'vue-router';
+
+const permissionRoleDialog = ref(false);
+
+const addButtonTooltip = (permission: ProjectRole[]) => {
+    return getButtonTooltip(permission, projectStore, authStore);
+};
+
+// popup
+const popUp = ref();
+const onPopUpToggle = (event) => {
+    popUp.value.toggle(event);
+}
+
 
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
@@ -240,7 +286,7 @@ const props = defineProps({
 // general elements needed
 
 const toast = useToast();
-// const router = useRouter();
+const router = useRouter();
 
 // pass datatable content to parent component
 
@@ -404,14 +450,14 @@ const onDeleteMapping = (mappings: Object[]) => {
 
 // export mappings to CSV
 
-// const exportCSV = () => {
-//     dt.value.exportCSV();
-// };
+const exportCSV = () => {
+    dt.value.exportCSV();
+};
 
 
-// const editProjectView = (projectId: number) => {
-//     router.push(`/dashboard/projects/${projectId}/edit`);
-// }
+const editProjectView = (projectId: number) => {
+    router.push(`/dashboard/projects/${projectId}/edit`);
+}
 
 // The mappings which are received from the backend need to be flattened in order to be displayed in the DataTable
 
@@ -451,11 +497,6 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
 </script>
 
 <style scoped>
-/* CSS to show the row editor column only on row hover */
-/* .data-table-row:hover .show-on-row-hover {
-    display: block;
-} */
-
 .flex {
     display: flex;
     flex-direction: row;
@@ -472,22 +513,29 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     border-right: 1px solid #bebebe;
 }
 
-.flex-column {
+.flex-col {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* .flex-column {
     display: flex;
     flex-direction: column;
-}
+} */
 
 .align-left {
     align-items: flex-start;
 }
 
-/* .datatable-container {
-    height: calc(100vh - 250px);
-    display: flex;
-    flex-direction: column;
+.filter-width-date {
+    min-width: 110px;
+}
+
+/* .filter-width-enum {
+    min-width: 40px;
 } */
 
-/* .datatable-container .p-datatable {
-    flex: 1;
-} */
+.filter-width-code {
+    width: 130px;
+}
 </style>

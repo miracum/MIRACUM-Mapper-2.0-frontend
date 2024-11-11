@@ -1,16 +1,17 @@
 <template>
-    <MultiSelect :options="equivalenceValues" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="0">
+    <MultiSelect :options="equivalenceElements" placeholder="Any" optionLabel="label" optionValue="value"
+        :maxSelectedLabels="3" display="chip">
         <template #option="slotProps">
-            <Tag :value="getEquivalenceLabel(slotProps.option)" :severity="getEquivalenceSeverity(slotProps.option)" />
+            <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
         </template>
-    </MultiSelect> <!-- :options="props.options" -->
+    </MultiSelect>
 </template>
 
 <script setup lang="ts">
 // import CustomMultiSelect from '@/components/multiselects/CustomMultiSelect.vue';
-import { equivalenceElements, getEquivalenceLabel, getEquivalenceSeverity } from '../../utils/selectElement';
+import { equivalenceElements } from '../../utils/selectElement';
 
 // Map the equivalenceElements to get their values
-const equivalenceValues = equivalenceElements.map(element => element.value);
+// const equivalenceValues = equivalenceElements// .map(element => element.value);
 
 </script>

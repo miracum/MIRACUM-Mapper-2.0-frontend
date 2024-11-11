@@ -96,7 +96,7 @@ const secondElement = (slotProps: SlotProps) => {
 };
 const error = () => {
     if (props.field !== 'meaning' && props.field !== 'code') {
-        console.log('error no first or second field')
+        // console.log('error no first or second field')
         return 'Invalid field value';
     }
     return null;

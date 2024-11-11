@@ -1,5 +1,6 @@
 <template>
-    <Dialog v-model:visible="localVisible" @update:visible="updateVisible" modal header="Permission Information">
+    <Dialog v-model:visible="localVisible" @update:visible="updateVisible" modal header="Permission Information"
+        :style="{ width: '450px' }">
         <p>{{ roleMessage }}</p>
         <template #footer>
             <Button label="Ok" icon="pi pi-check" text @click="closeModal" />
@@ -48,3 +49,9 @@ const roleMessage = computed(() => {
 });
 
 </script>
+
+<style scoped>
+.custom-dialog {
+    max-width: 100px;
+}
+</style>

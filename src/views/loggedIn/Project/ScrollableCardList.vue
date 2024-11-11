@@ -5,10 +5,18 @@
         }
     }">
         <div :class="containerClass">
-            <div v-for="(project, index) in items" :key="project.id" :class="itemClass">
-                <ProjectCard :project="project" :onEdit="onEdit" :onDelete="onDelete"
-                    :navigateToProject="navigateToProject" />
-            </div>
+            <template v-if="loading">
+                <div v-for="index in 9" :key="index" :class="itemClass">
+                    <ProjectCard :loading="true" :project="project" :onEdit="onEdit" :onDelete="onDelete"
+                        :navigateToProject="navigateToProject" />
+                </div>
+            </template>
+            <template v-else>
+                <div v-for="(project, index) in items" :key="project.id" :class="itemClass">
+                    <ProjectCard :loading="false" :project="project" :onEdit="onEdit" :onDelete="onDelete"
+                        :navigateToProject="navigateToProject" />
+                </div>
+            </template>
         </div>
     </ScrollPanel>
 </template>
@@ -28,7 +36,8 @@ const props = defineProps({
     },
     onEdit: Function,
     onDelete: Function,
-    navigateToProject: Function
+    navigateToProject: Function,
+    loading: Boolean
 });
 
 const containerClass = computed(() => {

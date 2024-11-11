@@ -28,6 +28,7 @@ import KeycloakService from './lib/keycloak'
 // import KeycloakService from './lib/keycloak'
 // import { useAuthStore } from './stores/auth'
 // import Noir from './presets/Noir.js'
+import Tooltip from 'primevue/tooltip'
 
 const app = createApp(App)
 
@@ -54,6 +55,8 @@ function renderApp() {
       }
     }
   })
+
+  app.directive('tooltip', Tooltip)
 
   app.use(mappingStorePlugin, { pinia })
   app.use(projectStorePlugin, { pinia })

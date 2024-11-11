@@ -1,16 +1,16 @@
 <template>
-    <MultiSelect :options="statusValues" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="0">
+    <MultiSelect :options="statusElements" placeholder="Any" optionLabel="label" optionValue="value"
+        :maxSelectedLabels="3" display="chip">
         <template #option="slotProps">
-            <Tag :value="getStatusLabel(slotProps.option)" :severity="getStatusSeverity(slotProps.option)" />
+            <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
         </template>
     </MultiSelect> <!-- :options="props.options" -->
-    <!-- <CustomMultiSelect :options="statusElements" /> -->
 </template>
 
 <script setup lang="ts">
 // import CustomMultiSelect from '@/components/multiselects/CustomMultiSelect.vue';
-import { statusElements, getStatusLabel, getStatusSeverity } from '../../utils/selectElement';
+import { statusElements } from '../../utils/selectElement';
 
 // Map the statusElements to get their values
-const statusValues = statusElements.map(element => element.value);
+// const statusValues = statusElements.map(element => element.value);
 </script>

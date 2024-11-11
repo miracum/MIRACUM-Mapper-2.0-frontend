@@ -89,24 +89,24 @@ const router = useRouter();
 const onCreateProject = () => {
     submitted.value = true;
     if (!project.value.name || !project.value.version || !project.value.description) {
-        console.log("invalid: project name, version or description missing");
+        // console.log("invalid: project name, version or description missing");
         return;
     }
     const userMap = new Map<string, boolean>();
     for (const permission of userPermissions.value) {
         if (!permission.role) {
-            console.log("invalid: each permission needs a role");
+            // console.log("invalid: each permission needs a role");
             return;
         }
         if (userMap.has(permission.user.id)) {
-            console.log("invalid: each user can only have one permission");
+            // console.log("invalid: each user can only have one permission");
             return;
         }
         userMap.set(permission.user.id, true);
     }
     for (const role of codeSystemRoles.value) {
         if (!role.codeSystem || !role.role) {
-            console.log("invalid: each code system role needs a code system, role");
+            // console.log("invalid: each code system role needs a code system, role");
             return;
         }
     }

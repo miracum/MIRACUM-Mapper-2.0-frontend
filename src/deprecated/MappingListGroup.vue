@@ -2,7 +2,7 @@
     <!-- <div class="datatable-container"> -->
     <DataTable v-model:filters="filters" :value="transformedMappings" ref="dt" tableStyle="min-width: 50rem"
         removableSort sortMode="multiple" filterDisplay="menu" :globalFilterFields="globalFilterFields"
-        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="session"
+        responsiveLayout=" scroll" editMode="row" dataKey="id" @row-edit-save="onRowEditSave" stateStorage="local"
         scrollable scroll-height="calc(100vh - 430px)" stateKey="`mappings-${props.project.id}`"
         v-model:editingRows="editingRows" v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' }, // TODO what does this do?

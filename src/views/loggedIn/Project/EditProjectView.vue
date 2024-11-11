@@ -130,18 +130,18 @@ const onProjectDone = () => {
     // validate that no required data is missing
     submitted.value = true;
     if (!project.value.name || !project.value.version || !project.value.description) {
-        console.log("invalid: project name, version or description missing");
+        // console.log("invalid: project name, version or description missing");
         return;
     }
     for (const permission of userPermissions.value) {
         if (!permission.role) {
-            console.log("invalid: each permission needs a role");
+            // console.log("invalid: each permission needs a role");
             return;
         }
     }
     for (const role of codeSystemRoles.value) {
         if (!role.codeSystem || !role.role) {
-            console.log("invalid: each code system role needs a code system, role and name");
+            // console.log("invalid: each code system role needs a code system, role and name");
             return;
         }
     }

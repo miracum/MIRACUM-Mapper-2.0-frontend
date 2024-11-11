@@ -33,3 +33,19 @@ export function userHasPermission(
   if (!projectStore.projectRole) return false
   return checkUserHasPermissions(permission, [projectStore.projectRole])
 }
+
+export const getButtonTooltip = (
+  permission: ProjectRole[],
+  projectStore: Store<'projects', ProjectState>,
+  authStore: Store<'auth', AuthState>
+) => {
+  if (userHasPermission(permission, projectStore, authStore)) {
+    return ''
+  } else {
+    return getMissingPermissionString()
+  }
+}
+
+export const getMissingPermissionString = () => {
+  return 'missing permission'
+}
