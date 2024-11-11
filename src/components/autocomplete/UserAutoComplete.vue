@@ -21,13 +21,8 @@ import type { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 
 const value = ref("");
 
-// input of the component
 const props = defineProps({
-    // mapping: {
-    //     type: Object as PropType<{ [key: string]: string }>,
-    //     required: true
-    // },
-    field: {            // meaning or code
+    field: {
         type: String,
         required: true
     },

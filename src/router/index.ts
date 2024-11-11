@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import LandingPageView from '../views/LandingPageView.vue'
-import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
 import ProjectList from '../views/loggedIn/Project/ProjectView.vue'
 import MappingView from '../views/loggedIn/MappingView.vue'
@@ -17,11 +16,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: LandingPageView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: AboutView
   },
   {
     path: '/login',
@@ -88,13 +82,6 @@ router.beforeEach(
         next() // Proceed as normal if none of the above conditions are met
       }
     }
-
-    // const navigate = (route: string) => {
-    //   if (lastNavigation != route) {
-    //     lastNavigation = route
-    //     next(route)
-    //   }
-    // }
 
     // logout is treated as a special case, is it is only a temporary route to log the user out and redirect to the start page
     if (!to.matched.some((record) => record.name === '/logout')) {

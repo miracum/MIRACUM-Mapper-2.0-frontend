@@ -22,12 +22,12 @@
                     <Divider />
                     <div class="flex flex-col gap-2">
                         <label for="authToken">Authentication Token</label>
-                        <InputText id="authToken" v-model="authToken" class="full-width" required />
+                        <InputText id="authToken" v-model="authToken" class="full-width" disabled required />
                     </div>
                     <div class="button-row mt-4">
                         <Button label="Back" class="p-button-secondary" @click="goBack" />
                         <Button label="Sign in with SSO" class="p-button-secondary" @click="signInWithSSO" />
-                        <Button label="Login" type="submit" class="p-button-primary" />
+                        <Button label="Login" type="submit" disabled class="p-button-primary" />
                     </div>
                 </form>
             </template>
@@ -47,9 +47,7 @@ const authToken = ref('');
 const router = useRouter();
 
 const signInWithSSO = async () => {
-    // SSO Logic
     const authStore = useAuthStore();
-    // KeycloakService.CallInit(authStore, () => { });
     KeycloakService.CallLogin(authStore);
     router.push('/dashboard');
 };
@@ -64,10 +62,6 @@ const loginUser = async () => {
     //     authStore.logout();
     // }
 };
-
-// const signInWithSSO = () => {
-//     // SSO Logic
-// };
 
 const goBack = () => {
     router.push('/');

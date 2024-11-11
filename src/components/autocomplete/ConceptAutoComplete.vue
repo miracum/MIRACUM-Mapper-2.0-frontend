@@ -1,5 +1,4 @@
 <template>
-    <!-- v-model="localMappingValue[props.field + '_' + props.roleId]"  -->
     <AutoComplete :suggestions="filteredConcepts" :field="field" :optionLabel="optionLabel" forceSelection
         @complete="(event) => searchConcept(event)" style="width: 100%">
         <template #option="slotProps">
@@ -20,15 +19,13 @@ import type { AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 import { useGetConceptsQuery } from '@/composables/queries/mapping-query';
 import { useProjectStore } from '@/stores/project';
 
-// to specify the type of slotProps (copied from the primevue documentation)
 interface SlotProps {
     option: any;
     index: number;
 }
 
-// input of the component
 const props = defineProps({
-    field: {            // meaning or code
+    field: {
         type: String,
         required: true
     },
@@ -42,13 +39,10 @@ const optionLabel = computed(() => {
     return props.field === 'code' ? 'code' : 'meaning';
 });
 
-// for possible error messages
 const toast = useToast();
 
-// to access the lookup for codesystemroleids
 const projectStore = useProjectStore();
 
-// compute suggestions for code or meaning (request to backend)
 const filteredConcepts = ref();
 const searchConcept = (event: AutoCompleteCompleteEvent) => {
     const text = event.query.toLowerCase()
@@ -75,7 +69,6 @@ const searchConcept = (event: AutoCompleteCompleteEvent) => {
     execute();
 }
 
-// to display code or meaning first, depending on the field (code or meaning field) in which is being typed
 const firstElement = (slotProps: SlotProps) => {
     if (props.field === 'meaning') {
         return slotProps.option.meaning;
@@ -96,23 +89,10 @@ const secondElement = (slotProps: SlotProps) => {
 };
 const error = () => {
     if (props.field !== 'meaning' && props.field !== 'code') {
-        // console.log('error no first or second field')
         return 'Invalid field value';
     }
     return null;
 };
 
-// to use v-model on the mapping prop
-// const emit = defineEmits(['update:mapping']);
-// const localMappingValue = ref<{ [key: string]: string; }>(props.mapping);
-// watch(localMappingValue, (newValue) => {
-//     emit('update:mapping', newValue);
-// });
-
-// const handleItemSelect = (event: any) => {
-//     localMappingValue.value[`meaning_${props.roleId}`] = event.value.meaning;
-//     localMappingValue.value[`code_${props.roleId}`] = event.value.code;
-//     localMappingValue.value[`id_${props.roleId}`] = event.value.id;
-// };
 
 </script>

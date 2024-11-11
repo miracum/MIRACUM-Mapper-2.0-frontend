@@ -47,10 +47,6 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Select from 'primevue/select';
-import { useAuthStore } from '@/stores/auth';
-import { getMissingPermissionString } from '@/lib/permissions';
-import InputText from 'primevue/inputtext';
-const authStore = useAuthStore()
 
 
 
@@ -66,13 +62,12 @@ const props = defineProps({
 const router = useRouter();
 
 const navigateToProject = (projectId: number) => {
-    // console.log('Navigating to project', projectId);
     router.push(`/dashboard/projects/${projectId}/mappings`);
 };
 
-const addProject = () => {
-    router.push('/dashboard/projects/add');
-};
+// const addProject = () => {
+//     router.push('/dashboard/projects/add');
+// };
 
 const sortKey = ref();
 const sortOrder = ref();

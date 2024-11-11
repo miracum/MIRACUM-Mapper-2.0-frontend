@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useProjectStore } from "@/stores/project";
 
@@ -30,7 +30,6 @@ const route = useRoute();
 const computedNavItems = ref([]);
 
 watchEffect(async () => {
-    // get projectId out of the path
     const pathSegments = route.path.split('/').filter(Boolean);
     const projectsIndex = pathSegments.indexOf("projects");
     if (projectsIndex === -1 || !(projectsIndex + 1 < pathSegments.length)) {
@@ -57,11 +56,8 @@ watchEffect(async () => {
 
     let items = [];
     const routeToLabelMap = {
-        // '/dashboard': 'Project',
-        // '/projects/:projectId/mappings': 'Mappings',
         'mappings': 'Project',
         'edit': 'Edit',
-        // 'add': 'Add',
     };
 
     let currentPath = '';

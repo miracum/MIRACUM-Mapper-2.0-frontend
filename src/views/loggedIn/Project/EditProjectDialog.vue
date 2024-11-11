@@ -103,12 +103,10 @@ function updateVisible(value: boolean) {
 
 .flex-item {
     width: 100%;
-    /* Ensure flex items take up the full width of their container */
 }
 
 .flex-item input {
     width: 100%;
-    /* Ensure input fields within flex items take up the full width */
 }
 
 .buttons {
@@ -125,21 +123,17 @@ function updateVisible(value: boolean) {
 
 .full-width {
     width: 100%;
-    /* Make the container take up the full width */
 }
 
 .full-width>Textarea {
     width: 100%;
-    /* Ensure the Textarea expands to fill its container */
 }
 
 .flex-item-name {
     flex: 3;
-    /* Takes up 2/3rds of the space */
 }
 
 .flex-item-version {
     flex: 1;
-    /* Takes up 1/3rd of the space */
 }
 </style>

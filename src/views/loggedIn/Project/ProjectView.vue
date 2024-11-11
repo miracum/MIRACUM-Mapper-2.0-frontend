@@ -2,24 +2,11 @@
     <EditProjectDialog v-model:visible="visible" />
 
     <Panel header="Project Overview">
-        <!-- <template #header>
-            <div class="header">
-                <h1 class="title">Project Overview</h1>
-            </div>
-        </template> -->
-        <!-- Loading State TODO Better align skeletons -->
-
         <!-- Error State -->
         <Message v-if="error" severity="danger" :closable="false">{{ error.message }}</Message>
 
         <!-- Data View -->
         <ProjectListView :loading="isFetching" :data="projects" :onEdit="onEdit" :onDelete="onDelete" />
-
-        <!-- No Projects Found -->
-        <!-- <Message v-else severity="error">Currently, there are no projects available.</Message> -->
-        <!-- <Message v-else severity="warn" :closable="false">Currently, there are no projects available. Create one by
-            clicking
-            on Add Project.</Message> -->
     </Panel>
 
 </template>
@@ -83,7 +70,6 @@ const onDelete = (id: number, name: string) => {
                     } else {
                         // TODO this is a bad error message. Define error codes in the backend and translate them to meaningful ui errors. E.g. if the user isnt in the right scope, provide a unsufficient user permissions error instead of the current api error
                         toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Project due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
-                        // console.log(error.value?.message.toString());
                     }
                 }
             });
@@ -102,14 +88,12 @@ const onEdit = (id: number) => {
 <style scoped>
 .card {
     background-color: #eff0f1;
-    /* Blue Grey background color */
 }
 
 .card-spacing {
     margin-bottom: 1rem;
     margin-top: 1rem;
     position: relative;
-    /* Ensure the hover effect is contained within the card */
 }
 
 .card-content {
@@ -122,14 +106,11 @@ const onEdit = (id: number) => {
     display: flex;
     gap: 10px;
     opacity: 0;
-    /* Initially hide the buttons */
     transition: opacity 0.3s ease;
-    /* Smooth transition for the opacity change */
 }
 
 .card-spacing:hover .card-actions {
     opacity: 1;
-    /* Show the buttons when the card is hovered */
 }
 
 .confirm-button-group {

@@ -11,7 +11,6 @@
 <script setup lang="ts">
 
 import { computed, ref, watch } from "vue";
-import { type ProjectRole } from '@/stores/project';
 const emit = defineEmits(['update:visible']);
 
 const props = defineProps({

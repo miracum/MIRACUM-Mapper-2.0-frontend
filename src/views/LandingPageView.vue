@@ -5,7 +5,6 @@
         <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
         <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
         <div class="divider mx-2"></div>
-        <!-- <Navigator /> -->
       </div>
     </template>
     <template #item="{ item, props, root }">
@@ -26,8 +25,6 @@
     </template>
   </Menubar>
 
-  <!-- Big Title Miracum Mapper centered in the middle and subtitle this is the subtitle-->
-  <!-- <Panel> -->
   <div class="title-group text-center mt-10 max-w-4xl mx-auto mb-20">
     <h1 class="title text-6xl font-bold mb-4">Miracum Mapper <br> An Open Source Mapping Tool</h1>
     <p class="subtitle text-2xl text-gray-600">Miracum Mapper is a mapping tool to allow mappings from different
@@ -35,7 +32,6 @@
       associated in <code class="font-mono">n:m</code>
       relationships with each other </p>
   </div>
-  <!-- </Panel> -->
 
   <div d="overview" class="title-group text-center mt-10 mb-5">
     <h2 class="title text-4xl font-bold">Overview</h2>

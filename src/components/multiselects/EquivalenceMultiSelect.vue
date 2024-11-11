@@ -8,10 +8,6 @@
 </template>
 
 <script setup lang="ts">
-// import CustomMultiSelect from '@/components/multiselects/CustomMultiSelect.vue';
 import { equivalenceElements } from '../../utils/selectElement';
-
-// Map the equivalenceElements to get their values
-// const equivalenceValues = equivalenceElements// .map(element => element.value);
 
 </script>

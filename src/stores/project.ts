@@ -1,9 +1,5 @@
-// import { deleteProject } from '@/client/client-old'
-// import type { Project } from '@/client/client-old/types.gen'
 import { defineStore } from 'pinia'
 import type { components } from '../client/types'
-// import { getProject } from '@/client/client-old'
-// import type { ComponentCustomProperties } from 'vue'
 import { useGetProjectDetailsQuery } from '@/composables/queries/project-query'
 import { watch } from 'vue'
 
@@ -57,7 +53,6 @@ export const useProjectStore = defineStore('projects', {
         await new Promise<void>((resolve) => {
           watch(isFetching, (newVal) => {
             if (!newVal && isReady.value) {
-              //this.setCurrentProjectDetails(state.value)
               this.currentProjectDetails = state.value
               resolve()
             }

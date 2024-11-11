@@ -74,7 +74,6 @@ const props = defineProps({
 <style scoped>
 .card {
     background-color: #eff0f1;
-    /* Blue Grey background color */
     margin-bottom: 0;
 }
 

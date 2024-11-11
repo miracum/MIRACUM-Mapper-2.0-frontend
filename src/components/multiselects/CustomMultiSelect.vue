@@ -3,19 +3,10 @@
         <template #option="slotProps">
             <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
         </template>
-    </MultiSelect> <!-- :options="props.options" -->
+    </MultiSelect>
 </template>
 
 
 <script setup lang="ts">
-// import type { SelectElement } from '../../utils/selectElement';
-// import type { PropType } from 'vue';
-
-// const props = defineProps({
-// options: {
-//     type: Array as PropType<SelectElement[]>,
-//     required: true
-// },
-// });
 
 </script>
