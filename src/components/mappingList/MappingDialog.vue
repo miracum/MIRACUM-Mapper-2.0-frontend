@@ -10,7 +10,8 @@
                             <FloatLabel variant="on" style="margin-top: 15px;">
                                 <ConceptAutoComplete v-model="currentMapping['code_' + role.id]" :roleId="role.id"
                                     field="code" :inputStyle="{ width: '100%' }"
-                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
+                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)"
+                                    @blur="validateFields(currentMapping, role.id)" />
                                 <label :for="`code_${role.id}`">Code</label>
                             </FloatLabel>
                         </div>
@@ -18,7 +19,8 @@
                             <FloatLabel variant="on" style="margin-top: 15px;">
                                 <ConceptAutoComplete v-model="currentMapping['meaning_' + role.id]" :roleId="role.id"
                                     field="meaning" :inputStyle="{ width: '100%' }"
-                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)" />
+                                    @item-select="(event) => on_item_select_autocomplete(event.value, currentMapping, role.id)"
+                                    @blur="validateFields(role.id)" />
                                 <label :for="`meaning_${role.id}`">Meaning</label>
                             </FloatLabel>
                         </div>
@@ -69,7 +71,7 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from 'vue';
 import { useProjectStore } from '@/stores/project';
-import { on_item_select_autocomplete } from '@/utils/autocomplete';
+import { on_item_select_autocomplete, validateFields } from '@/utils/autocomplete';
 
 // input of the component
 const props = defineProps({

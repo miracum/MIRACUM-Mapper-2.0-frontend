@@ -130,7 +130,7 @@
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="code"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
-                        v-model="data[field]" />
+                        v-model="data[field]" @blur="validateFields(data, role.id)" />
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
@@ -141,7 +141,7 @@
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="meaning"
                         @item-select="(event) => on_item_select_autocomplete(event.value, data, role.id)"
-                        v-model="data[field]" />
+                        v-model="data[field]" @blur="validateFields(data, role.id)" />
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
@@ -241,7 +241,7 @@ import StatusTag from '../tags/StatusTag.vue';
 import EquivalenceTag from '../tags/EquivalenceTag.vue';
 import DateFormat from '../DateFormat.vue';
 import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.vue';
-import { on_item_select_autocomplete } from '@/utils/autocomplete';
+import { on_item_select_autocomplete, validateFields } from '@/utils/autocomplete';
 import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
