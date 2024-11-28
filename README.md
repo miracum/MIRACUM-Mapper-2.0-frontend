@@ -85,7 +85,7 @@ openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -sh
 Afterwards, a network between the frontend and the backend has to be created by running
 
 ```sh
-docker network public_network
+docker network create public_network
 ```
 
 The network is used for the services to communicate with each other. In the backend repository, the `external: true` in the public_network section of the ``docker-compose.yaml` has to be commented in. Also in the [.env](./.env) file in this repository the section with the docker environment variables has to be commented in and the development variables have to be commented out. Then start the frontend with the following command:
