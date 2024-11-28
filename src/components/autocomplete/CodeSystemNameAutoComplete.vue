@@ -33,14 +33,12 @@ const props = defineProps({
 });
 
 const search = (event: AutoCompleteCompleteEvent) => {
-    // console.log(event);
     // filteredCodeSystemNames.value = codeSystemNames.value.filter((codeSystemName) => {
     //     return codeSystemName.toLowerCase().includes(event.query.toLowerCase());
     // });
     codeSystems.value = codeSystems.filter((codeSystem) => {
         return codeSystem.name.toLowerCase().includes(event.query.toLowerCase());
     });
-    console.log(codeSystems.value);
 };
 
 const codeSystems = [

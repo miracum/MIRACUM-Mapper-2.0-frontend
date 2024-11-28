@@ -51,7 +51,6 @@ function closeDialog() {
 }
 
 function deleteMappings() {
-    // const successfullyDeleted: Array<Object> = [];
     props.mappings.forEach(mapping => {
         if (!projectStore.currentProjectDetails) {
             return;
@@ -61,8 +60,6 @@ function deleteMappings() {
             if (!newVal) {
                 if (isReady.value) {
                     toast.add({ severity: 'success', summary: 'Success', detail: 'Mapping successfully deleted', life: 10000 });
-                    // projectStore.deleteProject(mapping.id);
-                    // successfullyDeleted.push(mapping);
                     const deleted_mappings = Array<Object>();
                     deleted_mappings.push(mapping);
                     if (props.onDelete) {
@@ -75,20 +72,6 @@ function deleteMappings() {
         });
         execute();
     });
-    // because asynchronous, for some reason the length is 0 ???????
-    // const a = successfullyDeleted.length;
-    // console.log(a);
-    // console.log( ...successfullyDeleted);
-    // console.log(successfullyDeleted.length>0 && props.onDelete);
-    // console.log(successfullyDeleted.length);
-    // console.log(successfullyDeleted.length>0);
-    // console.log(1>0)
-    // console.log(1 > 0 && props.onDelete);
-    // console.log(successfullyDeleted);
-    // if (successfullyDeleted.length > 0 && props.onDelete) {
-    //     console.log("ondelete is called")
-    //     props.onDelete(successfullyDeleted);
-    // }
     closeDialog();
 }
 </script>
