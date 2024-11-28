@@ -13,7 +13,7 @@
     "format": "prettier --write src/",
     "openapi-ts": "openapi-ts",
     "test:ts": "tsc --noEmit",
-    "generate": "openapi-typescript ./api/openapi.yaml -o ./src/client/types.d.ts",
+    "generate": "openapi-typescript https://raw.githubusercontent.com/miracum/MIRACUM-Mapper-2.0-backend/refs/heads/master/api/openapi.yaml -o ./src/client/types.d.ts",
     "dockerized": "docker compose up --build -d"
   },
   "dependencies": {
