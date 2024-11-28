@@ -8,8 +8,7 @@ services:
     ports:
       - '443:443'
     networks:
-      - shared_network
-
+      - public_network
 networks:
-  shared_network:
+  public_network:
     external: true

@@ -57,6 +57,8 @@ After installing the dependencies, you can run the following commands to run and
 npm run dev
 ```
 
+The frontend is then available under `http://localhost:5173`.
+
 ### Type-Check, Compile and Minify for Production
 
 ```sh
@@ -70,6 +72,29 @@ The Dockerfile runs this command to build the project and serve it with Nginx.
 ```sh
 npm run lint
 ```
+
+## Container Setup
+
+To run the frontend in a Docker Container for Deployment, Nginx is used which serves the compiled frontend and also provides certificates for `https`. First of all, you have to create certificates. For local development, Self Signed Certificates can be created with the following command:
+
+```
+mkdir certs
+openssl req -x509 -newkey rsa:4096 -keyout certs/key.pem -out certs/cert.pem -sha256 -days 3650 -nodes -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=CompanySectionName/CN=CommonNameOrHostname"
+```
+
+Afterwards, a network between the frontend and the backend has to be created by running
+
+```sh
+docker network public_network
+```
+
+The network is used for the services to communicate with each other. In the backend repository, the `external: true` in the public_network section of the ``docker-compose.yaml` has to be commented in. Also in the [.env](./.env) file in this repository the section with the docker environment variables has to be commented in and the development variables have to be commented out. Then start the frontend with the following command:
+
+```sh
+docker compose up --build
+```
+
+The frontend is then available under `https://localhost`. Communication with the backend and keycloak is done through the nginx server.
 
 ### Dev Container
 
