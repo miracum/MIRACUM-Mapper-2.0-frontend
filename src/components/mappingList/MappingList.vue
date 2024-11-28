@@ -2,9 +2,10 @@
     <!-- DataTable, see https://primevue.org/datatable/ - Can be widely customized and has many inbuilt features like sorting, filtering, pagination, etc.-->
     <!-- This defines general information about the DataTable. -->
     <DataTable v-model:filters="filters" :value="transformedMappings" stripedRows ref="dt" :size="size.value"
-        tableStyle="min-width: 50rem" removableSort sortMode="multiple" filterDisplay="row"
-        :globalFilterFields="globalFilterFields" responsiveLayout=" scroll" editMode="row" dataKey="id"
-        @row-edit-save="onRowEditSave" scrollable scroll-height="calc(100vh - 230px)" v-model:editingRows="editingRows"
+        tableStyle="min-width: 50rem" removableSort :sortMode="disableFiltersAndSorting ? null : 'multiple'"
+        filterDisplay="row" :globalFilterFields="globalFilterFields" responsiveLayout=" scroll"
+        :editMode="canEditRows ? 'row' : undefined" dataKey="id" @row-edit-save="onRowEditSave"
+        @row-edit-init="onRowEditInit" @row-edit-cancel="onRowEditCancel" v-model:editingRows="editingRows"
         v-model:selection="selectedMappings" :pt="{
             table: { style: 'min-width: 10' },
             column: {
@@ -15,7 +16,7 @@
         }" :paginator="transformedMappings && transformedMappings.length > 0" :rows="10"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         :rowsPerPageOptions="[10, 20, 50, 100, 500, 1000, 5000]"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings">
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} mappings" @sort="onSort">
         <!-- Elements which are displayed at the top of the table can be defined here. It is used to provide elements like an export button, add or delete elements, apply filtering etc. -->
         <!-- Optionally the state of the table can be persisted (session, local) so the user doesn't has to select the filter over and over again when coming back to the table later.
          An option can be implemented to allow a user to save the state if he want to and then show a button to reset the view.-->
@@ -133,8 +134,8 @@
                         v-model="data[field]" @blur="validateFields(data, role.id)" />
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by code" class="filter-width-code" />
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
+                        class="filter-width-code" :disabled="disableFiltersAndSorting" />
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
@@ -144,8 +145,8 @@
                         v-model="data[field]" @blur="validateFields(data, role.id)" />
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                        placeholder="Search by meaning" />
+                    <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
+                        class="filter-width-meaning" :disabled="disableFiltersAndSorting" />
                 </template>
             </Column>
         </template>
@@ -158,7 +159,8 @@
                 <StatusSelect v-model="data[field]" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum" />
+                <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum"
+                    :disabled="disableFiltersAndSorting" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" filterField="equivalence" sortable
@@ -170,8 +172,8 @@
                 <EquivalenceSelect v-model="data[field]" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()"
-                    class="filter-width-enum" />
+                <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum"
+                    :disabled="disableFiltersAndSorting" />
             </template>
         </Column>
         <Column field="comment" filterField="comment" sortable class="grid-column-right">
@@ -179,8 +181,8 @@
                 <InputText v-model="data[field]" />
             </template>
             <template #filter="{ filterModel, filterCallback }">
-                <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
-                    placeholder="Search by comment" />
+                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
+                    :disabled="disableFiltersAndSorting" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'created')" field="created" filterField="created"
@@ -190,7 +192,7 @@
             </template>
             <template #filter="{ filterModel }">
                 <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
-                    class="filter-width-date" />
+                    class="filter-width-date" :disabled="disableFiltersAndSorting" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" filterField="modified"
@@ -200,7 +202,7 @@
             </template>
             <template #filter="{ filterModel }">
                 <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
-                    class="filter-width-date" />
+                    class="filter-width-date" :disabled="disableFiltersAndSorting" />
             </template>
         </Column>
         <Column :rowEditor="userHasPermission(MappingUpdatePermission, projectStore, authStore)"
@@ -212,7 +214,7 @@
                     :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)"
                     v-tooltip.top="addButtonTooltip(MappingUpdatePermission)" />
                 <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)"
-                    :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore)"
+                    :disabled="disableDeleteButton || !userHasPermission(MappingDeletePermission, projectStore, authStore)"
                     v-tooltip.top="addButtonTooltip(MappingDeletePermission)" />
             </template>
         </Column>
@@ -224,7 +226,7 @@
     <EditMappingDialog v-model:visible="showEditMappingDialog" :mapping="editedMapping" :onSubmit="onEditSubmit" />
 
     <!-- This message is shown if there are no mappings to show. -->
-    <Message v-if="props.mappings.length === 0" severity="warn" :closable="false">No data to show yet</Message>
+    <Message v-if="!hasMappings" severity="warn" :closable="false">No data to show yet</Message>
 
     <PermissionRoleDialog v-model:visible="permissionRoleDialog" :role="projectStore.projectRole" />
 </template>
@@ -233,7 +235,7 @@
 <script setup lang='ts'>
 import { useProjectStore, type ProjectDetails, type ProjectRole } from '@/stores/project';
 import type { Mapping, UpdateMapping } from '@/stores/mappings';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import Column from 'primevue/column';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { useToast } from "primevue/usetoast";
@@ -287,6 +289,7 @@ const props = defineProps({
 
 const toast = useToast();
 const router = useRouter();
+const hasMappings = computed(() => transformedMappings.value.length > 0);
 
 // pass datatable content to parent component
 
@@ -372,11 +375,44 @@ const onEditSubmit = (mapping: any) => {
     updateMapping(mapping, index);
 };
 
+
+// stuff to disable row edit if filters or sorting are active
+
+const isFiltering = ref(false);
+const isSorting = ref(false);
+// Watch for changes in filters and sorting
+const isEmptyFilter = (filter) => {
+    if (filter === null || filter === undefined || filter === "") return true;
+    if (Array.isArray(filter) && filter.length === 0) return true;
+    if (typeof filter === 'object' && Object.keys(filter).length === 0) return true;
+    return false;
+};
+watch(filters, () => {
+    isFiltering.value = Object.values(filters.value).some(filter => !isEmptyFilter(filter.value));
+});
+const onSort = (event) => {
+    isSorting.value = event.multiSortMeta && event.multiSortMeta.length > 0;
+};
+// Disable row editing if filtering or sorting is active
+const canEditRows = computed(() => !isFiltering.value && !isSorting.value);
+
+const isRowEditing = ref([]);
+// Disable filters and sorting if any row is in edit mode
+const disableFiltersAndSorting = computed(() => isRowEditing.value.length > 0);
+const disableDeleteButton = computed(() => isRowEditing.value.length > 0);
+
 // row editing
 const editingRows = ref([]);
 const onRowEditSave = (event: any) => {
     let { newData, index } = event;
     updateMapping(newData, index);
+    isRowEditing.value = isRowEditing.value.filter(row => row !== index);
+}
+const onRowEditInit = (event: any) => {
+    isRowEditing.value.push(event.index);
+}
+const onRowEditCancel = (event: any) => {
+    isRowEditing.value = isRowEditing.value.filter(row => row !== event.index);
 }
 
 // used for row editing and for edit-dialog
@@ -497,8 +533,7 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
 </script>
 
 <style scoped>
-.flex {
-    display: flex;
+.flex {  display: flex;
     flex-direction: row;
     /* Ensure flex items are in a row */
     justify-content: space-between;
@@ -535,7 +570,11 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
     min-width: 40px;
 } */
 
-.filter-width-code {
+.filter-width-meaning {
     width: 130px;
+}
+
+.filter-width-code {
+    width: 100px;
 }
 </style>

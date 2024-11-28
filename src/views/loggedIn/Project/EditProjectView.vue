@@ -111,7 +111,7 @@ let oldProject = {
     equivalence_required: true,
     status_required: true
 };
-let oldUserPermissions = [] as { user: { name: string, email: string, id: string }, role: string }[];
+let oldUserPermissions = [] as { user: { fullname: string, email: string, id: string, username: string }, role: string }[];
 let oldCodeSystemRoles = [] as { codeSystem: { codeSystemName: string, id: number, name: string }, role: string, name: string, id: number }[];
 const copyOldProjectDetails = () => {
     oldProject = JSON.parse(JSON.stringify(project.value));
@@ -133,11 +133,17 @@ const onProjectDone = () => {
         // console.log("invalid: project name, version or description missing");
         return;
     }
+    const userMap = new Map<string, boolean>();
     for (const permission of userPermissions.value) {
         if (!permission.role) {
             // console.log("invalid: each permission needs a role");
             return;
         }
+        if (userMap.has(permission.user.id)) {
+            // console.log("invalid: each user can only have one permission");
+            return;
+        }
+        userMap.set(permission.user.id, true);
     }
     for (const role of codeSystemRoles.value) {
         if (!role.codeSystem || !role.role) {
@@ -216,6 +222,9 @@ const onProjectDone = () => {
         });
 
         userPermissions.value.forEach(permission => {
+            if (permission.user.fullname == "") {
+                permission.user.fullname = permission.user.username;
+            }
             const oldPermission = oldPermissionsMap.get(permission.user.id);
             if (oldPermission) {    // permission already existed
                 // Check if the permission has changed
@@ -228,9 +237,9 @@ const onProjectDone = () => {
                     watch(isFetching, (newVal) => {
                         if (!newVal) {
                             if (isReady.value) {
-                                toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.name} updated successfully`, life: 10000 });
+                                toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.fullname} updated successfully`, life: 10000 });
                             } else {
-                                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Permission for ${permission.user.name} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+                                toast.add({ severity: 'error', summary: 'Error', detail: `Could not update Permission for ${permission.user.fullname} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
                             }
                         }
                     });
@@ -246,9 +255,9 @@ const onProjectDone = () => {
                 watch(isFetching, (newVal) => {
                     if (!newVal) {
                         if (isReady.value) {
-                            toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.name} created successfully`, life: 10000 });
+                            toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.fullname} created successfully`, life: 10000 });
                         } else {
-                            toast.add({ severity: 'error', summary: 'Error', detail: `Could not create Permission for ${permission.user.name} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+                            toast.add({ severity: 'error', summary: 'Error', detail: `Could not create Permission for ${permission.user.fullname} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
                         }
                     }
                 });
@@ -262,10 +271,13 @@ const onProjectDone = () => {
                 const { error, isFetching, isReady, state, execute } = useDeleteProjectPermissionQuery(permission.user.id, projectId);
                 watch(isFetching, (newVal) => {
                     if (!newVal) {
+                        if (permission.user.fullname == "") {
+                            permission.user.fullname = permission.user.username;
+                        }
                         if (isReady.value) {
-                            toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.name} deleted successfully`, life: 10000 });
+                            toast.add({ severity: 'success', summary: 'Success', detail: `Permission for ${permission.user.fullname} deleted successfully`, life: 10000 });
                         } else {
-                            toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Permission for ${permission.user.name} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+                            toast.add({ severity: 'error', summary: 'Error', detail: `Could not delete Permission for ${permission.user.fullname} due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
                         }
                     }
                 });

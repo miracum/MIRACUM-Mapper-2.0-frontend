@@ -119,7 +119,7 @@ const onCreateProject = () => {
         status_required: project.value.status_required,
         project_permissions: userPermissions.value.map((permission) => {
             return {
-                user_id: permission.user.id.id,
+                user_id: permission.user.id,
                 //user_id: a,
                 role: permission.role
             }

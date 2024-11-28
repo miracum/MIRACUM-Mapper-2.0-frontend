@@ -18,11 +18,9 @@
                         <i :class="[option === 'list' ? 'pi pi-bars' : 'pi pi-table']" />
                     </template>
                 </SelectButton>
-                <!-- <div style="display: flex; align-items: center;"> -->
-                <div style="width: 250px;"></div>
-                <!-- <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success"
-                        :disabled="!authStore.isAdmin" getMissingPermissionString
-                        v-tooltip.top="authStore.isAdmin ? '' : getMissingPermissionString()" /> -->
+                <Button label="Add Project" icon="pi pi-plus" @click="addProject" class="p-button-success"
+                    :disabled="!authStore.isAdmin" getMissingPermissionString
+                    v-tooltip.top="authStore.isAdmin ? '' : getMissingPermissionString()" />
                 <!-- </div> -->
             </div>
         </template>
@@ -47,7 +45,9 @@ import type { PropType } from 'vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Select from 'primevue/select';
-
+import { useAuthStore } from '@/stores/auth';
+import { getMissingPermissionString } from '@/lib/permissions';
+const authStore = useAuthStore()
 
 
 const props = defineProps({
@@ -65,9 +65,9 @@ const navigateToProject = (projectId: number) => {
     router.push(`/dashboard/projects/${projectId}/mappings`);
 };
 
-// const addProject = () => {
-//     router.push('/dashboard/projects/add');
-// };
+const addProject = () => {
+    router.push('/dashboard/projects/add');
+};
 
 const sortKey = ref();
 const sortOrder = ref();
