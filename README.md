@@ -75,6 +75,8 @@ npm run lint
 
 ## Container Setup
 
+This setup is intended to be used in a production environment and not for development. It includes creating certificates and shared docker networks which is not necessary to get the project running quickly for development.
+
 To run the frontend in a Docker Container for Deployment, Nginx is used which serves the compiled frontend and also provides certificates for `https`. First of all, you have to create certificates. For local development, Self Signed Certificates can be created with the following command:
 
 ```
@@ -88,7 +90,7 @@ Afterwards, a network between the frontend and the backend has to be created by 
 docker network create public_network
 ```
 
-The network is used for the services to communicate with each other. In the backend repository, the `external: true` in the public_network section of the ``docker-compose.yaml` has to be commented in. Also in the [.env](./.env) file in this repository the section with the docker environment variables has to be commented in and the development variables have to be commented out. Then start the frontend with the following command:
+The network is used for the services to communicate with each other. In the backend repository, the `driver: bridge` has to be replaced with `external: true` in the public_network section of the `docker-compose.yaml`. The `KC_HOSTNAME` variable has to be adjusted to `https://localhost/keycloak`. Afterwards, `docker compose down` and then `docker compose up` has to be run in the backend to restart the services. Also in the [.env](./.env) file in this frontend repository the section with the docker environment variables has to be commented in and the development variables have to be commented out. Then start the frontend with the following command:
 
 ```sh
 docker compose up --build
