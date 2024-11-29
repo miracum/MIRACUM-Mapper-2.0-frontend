@@ -97,7 +97,7 @@ onMounted(() => {
           mappingStore.setMappings(mappingsState.value);
           if (projectDetailsState.value.project_permissions) {
             for (const role of projectDetailsState.value.project_permissions) {
-              if (role.user_id === authStore.userInfo?.id) {
+              if (role.user.id === authStore.userInfo?.id) {
                 projectStore.setProjectRole(role.role);
                 break;
               }

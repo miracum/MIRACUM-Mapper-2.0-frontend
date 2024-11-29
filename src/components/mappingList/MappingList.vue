@@ -29,7 +29,7 @@
                         v-tooltip.top="addDisablePermissionTooltip(MappingCreatePermission)" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                         :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore) || !selectedMappings || !selectedMappings.length"
-                        v-tooltip.top="addDisablePermissionTooltip(MappingDeletePermission)" />
+                        v-tooltip.top="getDeleteButtonTooltip()" />
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <!-- <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" /> -->
@@ -153,7 +153,7 @@
             </Column>
         </template>
         <Column v-if="props.project.status_required" field="status" filterField="status" sortable
-            :showFilterMenu="false">
+            :showFilterMenu="false" v-tooltip.top="addDisabledRowEditTooltip()">
             <template #body="{ data }">
                 <StatusTag :value="data.status" />
             </template>
@@ -219,7 +219,7 @@
                     v-tooltip.top="addDisablePermissionTooltip(MappingUpdatePermission)" />
                 <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)"
                     :disabled="disableDeleteButton || !userHasPermission(MappingDeletePermission, projectStore, authStore)"
-                    v-tooltip.top="addDisablePermissionTooltip(MappingDeletePermission)" />
+                    v-tooltip.top="addDisablePermissionTooltip(MappingDeletePermission) + addDisabledRowEditTooltip()" />
             </template>
         </Column>
     </DataTable>
@@ -269,6 +269,17 @@ const addDisablePermissionTooltip = (permission: ProjectRole[]) => {
 const addDisabledRowEditTooltip = () => {
     return disableFiltersAndSorting.value ? 'Please disable row edit' : '';
 };
+
+const getDeleteButtonTooltip = () => {
+    const disabled = addDisablePermissionTooltip(MappingDeletePermission)
+    if (disabled != '') {
+        return disabled
+    } else if (selectedMappings.value && selectedMappings.value.length) {
+        return ''
+    } else {
+        return 'Please select a row to delete'
+    }
+}
 
 // popup
 const popUp = ref();
@@ -580,7 +591,7 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
 } */
 
 .filter-width-meaning {
-    width: 130px;
+    width: 150px;
 }
 
 .filter-width-code {
