@@ -13,7 +13,7 @@
               </Button> -->
               <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)"
                 :disabled="!userHasPermission(ProjectUpdatePermission, projectStore, authStore)"
-                v-tooltip.top="addButtonTooltip(ProjectUpdatePermission)" />
+                v-tooltip.top="addDisablePermissionTooltip(ProjectUpdatePermission)" />
               <!-- <Button icon="pi pi-external-link" label="Export" @click="exportCSV()" /> -->
             </div>
           </template>
@@ -50,7 +50,7 @@ import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
-import { userHasPermission, ProjectUpdatePermission, getButtonTooltip } from '@/lib/permissions';
+import { userHasPermission, ProjectUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
 import PermissionTag from '@/components/tags/PermissionTag.vue';
 // import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
 
@@ -64,8 +64,8 @@ const mappingStore = useMappingStore();
 const authStore = useAuthStore();
 const isLoading = ref(true);
 
-const addButtonTooltip = (permission: ProjectRole[]) => {
-  return getButtonTooltip(permission, projectStore, authStore);
+const addDisablePermissionTooltip = (permission: ProjectRole[]) => {
+  return getPermissionTooltip(permission, projectStore, authStore);
 };
 
 onMounted(() => {

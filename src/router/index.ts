@@ -84,7 +84,7 @@ router.beforeEach(
     }
 
     // logout is treated as a special case, is it is only a temporary route to log the user out and redirect to the start page
-    if (!to.matched.some((record) => record.name === '/logout')) {
+    if (!to.path.includes('/logout')) {
       const authenticated = authStore.authenticated
       if (!to.path.includes('/login') || authenticated || authStore.initialized === true) {
         checkAuthentication()

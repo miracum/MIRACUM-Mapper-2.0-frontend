@@ -26,10 +26,10 @@
                     <Button label="Add" icon="pi pi-plus" class="mr-2" severity="success"
                         @click="showCreateMappingDialog = true"
                         :disabled="!userHasPermission(MappingCreatePermission, projectStore, authStore)"
-                        v-tooltip.top="addButtonTooltip(MappingCreatePermission)" />
+                        v-tooltip.top="addDisablePermissionTooltip(MappingCreatePermission)" />
                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="confirmDeleteSelected"
                         :disabled="!userHasPermission(MappingDeletePermission, projectStore, authStore) || !selectedMappings || !selectedMappings.length"
-                        v-tooltip.top="addButtonTooltip(MappingDeletePermission)" />
+                        v-tooltip.top="addDisablePermissionTooltip(MappingDeletePermission)" />
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <!-- <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(props.project.id)" /> -->
@@ -45,7 +45,7 @@
                                 <SelectButton v-model="size" :options="sizeOptions" optionLabel="label"
                                     dataKey="label" />
                             </div>
-                            <div>
+                            <div v-if="!authStore.isAdmin">
                                 <span class="font-medium block mb-2">Project Role</span>
                                 <Button text @click="permissionRoleDialog = true">
                                     <PermissionTag :value="projectStore.projectRole" v-if="projectStore.projectRole" />
@@ -135,7 +135,8 @@
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
-                        class="filter-width-code" :disabled="disableFiltersAndSorting" />
+                        class="filter-width-code" :disabled="disableFiltersAndSorting"
+                        v-tooltip.top="addDisabledRowEditTooltip()" />
                 </template>
             </Column>
             <Column :field="`meaning_${role.id}`" sortable style="border-right: 1px solid #e3e8f0">
@@ -146,7 +147,8 @@
                 </template>
                 <template #filter="{ filterModel, filterCallback }">
                     <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
-                        class="filter-width-meaning" :disabled="disableFiltersAndSorting" />
+                        class="filter-width-meaning" :disabled="disableFiltersAndSorting"
+                        v-tooltip.top="addDisabledRowEditTooltip()" />
                 </template>
             </Column>
         </template>
@@ -160,7 +162,7 @@
             </template>
             <template #filter="{ filterModel, filterCallback }">
                 <StatusMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum"
-                    :disabled="disableFiltersAndSorting" />
+                    :disabled="disableFiltersAndSorting" v-tooltip.top="addDisabledRowEditTooltip()" />
             </template>
         </Column>
         <Column v-if="props.project.equivalence_required" field="equivalence" filterField="equivalence" sortable
@@ -173,7 +175,7 @@
             </template>
             <template #filter="{ filterModel, filterCallback }">
                 <EquivalenceMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum"
-                    :disabled="disableFiltersAndSorting" />
+                    :disabled="disableFiltersAndSorting" v-tooltip.top="addDisabledRowEditTooltip()" />
             </template>
         </Column>
         <Column field="comment" filterField="comment" sortable class="grid-column-right">
@@ -182,7 +184,7 @@
             </template>
             <template #filter="{ filterModel, filterCallback }">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search"
-                    :disabled="disableFiltersAndSorting" />
+                    :disabled="disableFiltersAndSorting" v-tooltip.top="addDisabledRowEditTooltip()" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'created')" field="created" filterField="created"
@@ -192,7 +194,8 @@
             </template>
             <template #filter="{ filterModel }">
                 <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
-                    class="filter-width-date" :disabled="disableFiltersAndSorting" />
+                    class="filter-width-date" :disabled="disableFiltersAndSorting"
+                    v-tooltip.top="addDisabledRowEditTooltip()" />
             </template>
         </Column>
         <Column v-if="selectedColumns.some(col => col.field === 'modified')" field="modified" filterField="modified"
@@ -202,7 +205,8 @@
             </template>
             <template #filter="{ filterModel }">
                 <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy"
-                    class="filter-width-date" :disabled="disableFiltersAndSorting" />
+                    class="filter-width-date" :disabled="disableFiltersAndSorting"
+                    v-tooltip.top="addDisabledRowEditTooltip()" />
             </template>
         </Column>
         <Column :rowEditor="userHasPermission(MappingUpdatePermission, projectStore, authStore)"
@@ -212,10 +216,10 @@
             <template #body="slotProps">
                 <Button icon="pi pi-pen-to-square" text rounded @click="openEditMapping(slotProps.data)"
                     :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)"
-                    v-tooltip.top="addButtonTooltip(MappingUpdatePermission)" />
+                    v-tooltip.top="addDisablePermissionTooltip(MappingUpdatePermission)" />
                 <Button icon="pi pi-trash" text rounded severity="danger" @click="confirmDeleteMapping(slotProps.data)"
                     :disabled="disableDeleteButton || !userHasPermission(MappingDeletePermission, projectStore, authStore)"
-                    v-tooltip.top="addButtonTooltip(MappingDeletePermission)" />
+                    v-tooltip.top="addDisablePermissionTooltip(MappingDeletePermission)" />
             </template>
         </Column>
     </DataTable>
@@ -251,15 +255,19 @@ import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSe
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
 import Popover from 'primevue/popover';
-import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission, getButtonTooltip } from '@/lib/permissions';
+import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
 import { useAuthStore } from '@/stores/auth';
 import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
 import { useRouter } from 'vue-router';
 
 const permissionRoleDialog = ref(false);
 
-const addButtonTooltip = (permission: ProjectRole[]) => {
-    return getButtonTooltip(permission, projectStore, authStore);
+const addDisablePermissionTooltip = (permission: ProjectRole[]) => {
+    return getPermissionTooltip(permission, projectStore, authStore);
+};
+
+const addDisabledRowEditTooltip = () => {
+    return disableFiltersAndSorting.value ? 'Please disable row edit' : '';
 };
 
 // popup
@@ -533,7 +541,8 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
 </script>
 
 <style scoped>
-.flex {  display: flex;
+.flex {
+    display: flex;
     flex-direction: row;
     /* Ensure flex items are in a row */
     justify-content: space-between;
