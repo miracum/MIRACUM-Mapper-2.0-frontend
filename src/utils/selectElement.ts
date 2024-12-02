@@ -64,7 +64,7 @@ export const getRoleSeverity = (value: string): string => {
   return getSeverity(roleElements, value)
 }
 
-/* 
+/*
 utils for user permissions
 */
 

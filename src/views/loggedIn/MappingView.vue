@@ -51,10 +51,6 @@ import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
 import { userHasPermission, ProjectUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
-import PermissionTag from '@/components/tags/PermissionTag.vue';
-// import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
-
-// const permissionRoleDialog = ref(false);
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
@@ -113,23 +109,9 @@ onMounted(() => {
   }
 });
 
-// const mappingList = ref();
-
-// const datatableRef = ref(null);
-
-// const exportCSV = () => {
-//   if (datatableRef.value) {
-//     datatableRef.value.exportCSV();
-//   }
-// };
-
 const editProjectView = (projectId: string | string[]) => {
   router.push(`/dashboard/projects/${projectId}/edit`);
 };
-
-// const setDatatableRef = (ref) => {
-//   datatableRef.value = ref;
-// };
 
 </script>
 

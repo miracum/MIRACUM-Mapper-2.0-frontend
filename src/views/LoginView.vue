@@ -53,14 +53,7 @@ const signInWithSSO = async () => {
 };
 
 const loginUser = async () => {
-    // const loginSuccessful = true;
-    // const authStore = useAuthStore();
-    // if (loginSuccessful) {
-    //     authStore.authenticate(authToken.value);
-    //     router.push('/dashboard');
-    // } else {
-    //     authStore.logout();
-    // }
+    // TODO When implementing a local form of authentication, the login logic can be handled here
 };
 
 const goBack = () => {

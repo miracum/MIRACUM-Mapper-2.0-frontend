@@ -1,3 +1,4 @@
+<!-- Copied form the PrimeVue docu, currently not functioning. Could be implemented in the future-->
 <template>
     <div class="card flex justify-end p-2 mb-4">
         <ul class="flex list-none m-0 p-0 gap-2 items-center">
