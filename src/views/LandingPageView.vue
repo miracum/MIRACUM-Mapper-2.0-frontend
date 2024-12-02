@@ -161,12 +161,12 @@ const featureCardElements = ref([
   {
     icon: 'pi pi-server',
     title: 'Self-Hosting',
-    subtitle: ' Docker Images are available to easily host Miracum Mapper on an own server, ensuring full control over the data',
+    subtitle: 'Docker Images are available to easily host Miracum Mapper on an own server, ensuring full control over the data',
   },
   {
     icon: 'pi pi-github',
     title: 'Open Source',
-    subtitle: 'Miracum Mapper is developed as an open source project and is licensed under the TODO license.',
+    subtitle: 'Miracum Mapper is developed as an open source project and is licensed under the Apache-2.0 license.',
   },
   {
     icon: 'pi pi-code',
