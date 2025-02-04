@@ -12,13 +12,12 @@
             "extensions": [
                 "dbaeumer.vscode-eslint",
                 "esbenp.prettier-vscode",
-                "octref.vetur",
+                "vue.volar",
                 "ms-azuretools.vscode-docker",
                 "shardulm94.trailing-spaces"
             ]
         }
     },
 
-    "postCreateCommand": "npm install",
-    "forwardPorts": [8080]
+    "postCreateCommand": "npm install"
 }
