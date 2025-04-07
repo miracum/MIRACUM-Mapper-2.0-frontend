@@ -133,7 +133,7 @@ const deleteSelectedVersion = () => {
 
 const importSelectedVersion = () => {
   if (selectedVersion.value) {
-    router.push(`/codesystems/${codeSystemId}/versions/${selectedVersion.value.id}/import`);
+    router.push(`/codesystems/${codeSystemId}/import/${selectedVersion.value.id}`);
   }
 };
 

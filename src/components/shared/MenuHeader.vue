@@ -1,11 +1,10 @@
 <template>
-    <Menubar :model="items" styleClass="centeredMenuBar">
+    <Menubar :model="items" styleClass="centeredMenuBar" breakpoint="620px">
         <template #start>
             <div class="header-container">
                 <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
                 <span class="text-primary text-xl">Miracum</span><span class="text-xl font-semibold">Mapper</span>
                 <div class="divider mx-2"></div>
-                <Navigator />
             </div>
         </template>
         <template #item="{ item, props }">
@@ -51,14 +50,6 @@ const items = ref([
 </script>
 
 <style scoped>
-.p-menubar {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
 .header-container {
     display: flex;
     align-items: center;

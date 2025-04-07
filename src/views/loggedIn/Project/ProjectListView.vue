@@ -62,7 +62,7 @@ const props = defineProps({
 const router = useRouter();
 
 const navigateToProject = (projectId: number) => {
-    router.push(`/projects/${projectId}/mappings`);
+    router.push(`/projects/${projectId}`);
 };
 
 const addProject = () => {

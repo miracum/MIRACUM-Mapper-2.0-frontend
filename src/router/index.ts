@@ -55,7 +55,7 @@ const routes = [
     props: true
   },
   {
-    path: '/codesystems/:codeSystemId/versions/:versionId/import',
+    path: '/codesystems/:codeSystemId/import/:versionId',
     name: 'ImportCodeSystemVersionView',
     component: ImportVersionView,
     meta: { requiresAuth: true },
@@ -74,7 +74,7 @@ const routes = [
     // ]
   },
   {
-    path: '/projects/:projectId/mappings',
+    path: '/projects/:projectId',
     name: 'MappingView',
     component: MappingView,
     meta: { requiresAuth: true },

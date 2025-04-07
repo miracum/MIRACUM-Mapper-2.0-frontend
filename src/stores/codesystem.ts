@@ -85,6 +85,13 @@ export const useCodeSystemStore = defineStore('codesystems', {
             execute();
             return { isFetching, error }
         },
+        getVersion(codeSystemId: number, versionId: number) {
+            const codeSystem = this.codeSystems.find((cs) => cs.id === codeSystemId)
+            if (!codeSystem) {
+                return undefined
+            }
+            return codeSystem.versions.find((v) => v.id === versionId)
+        },
         getVersions(codeSystemId: number) {
             return computed(() => {
                 const codeSystem = this.codeSystems.find((cs) => cs.id === codeSystemId)

@@ -29,6 +29,7 @@ export const useProjectStore = defineStore('projects', {
     currentLookupCodeSystemRoleIds: null,
     projectRole: null
   }),
+  persist: true,
   actions: {
     setProjects(projects: Project[]) {
       this.projects = projects

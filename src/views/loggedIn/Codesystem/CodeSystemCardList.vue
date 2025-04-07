@@ -1,5 +1,5 @@
 <template>
-    <ScrollPanel style="width: 100%; height: calc(100vh - 320px)">
+    <ScrollPanel style="width: 100%; height: calc(100vh - 360px)">
         <div :class="containerClass">
             <template v-if="loading">
                 <div v-for="index in 9" :key="index" :class="itemClass">
