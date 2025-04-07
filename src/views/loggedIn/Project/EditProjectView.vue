@@ -286,7 +286,7 @@ const onProjectDone = () => {
         });
     }
 
-    router.push(`/dashboard/projects/${projectId}/mappings`);
+    router.push(`/projects/${projectId}/mappings`);
 }
 
 

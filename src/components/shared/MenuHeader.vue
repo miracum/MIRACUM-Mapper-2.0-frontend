@@ -1,5 +1,5 @@
 <template>
-    <Menubar :model="props.items">
+    <Menubar :model="items" styleClass="centeredMenuBar">
         <template #start>
             <div class="header-container">
                 <img src="@/assets/logo.png" alt="Logo" width="50" class="logo-margin" />
@@ -8,17 +8,13 @@
                 <Navigator />
             </div>
         </template>
-        <template #item="{ item, props, hasSubmenu, root }">
-            <a class="flex items-center" v-bind="props.action">
-                <span :class="item.icon" />
-                <span class="ml-2">{{ item.label }}</span>
-                <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
-                <span v-if="item.shortcut"
-                    class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{
-                        item.shortcut }}</span>
-                <i v-if="hasSubmenu"
-                    :class="['pi pi-angle-down', { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root }]"></i>
-            </a>
+        <template #item="{ item, props }">
+            <router-link v-if="!item.admin || authStore.isAdmin" v-slot="{ href, navigate }" :to="item.route" custom>
+                <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+                    <span :class="item.icon" />
+                    <span>{{ item.label }}</span>
+                </a>
+            </router-link>
         </template>
         <template #end>
             <div class="avatar-container">
@@ -28,13 +24,29 @@
     </Menubar>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import 'primeicons/primeicons.css';
 import AvatarMenuPopup from '@/components/shared/AvatarMenuPopup.vue';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-const props = defineProps({
-    items: Array
-});
+const authStore = useAuthStore()
+
+const items = ref([
+    {
+        label: 'Projects',
+        icon: authStore.isAdmin ? 'pi pi-folder' : 'pi pi-home',
+        route: '/projects',
+        admin: false,
+    },
+    {
+        label: 'Codesystems',
+        icon: 'pi pi-book',
+        route: '/codesystems',
+        admin: true,
+    }
+])
+
 
 </script>
 

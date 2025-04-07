@@ -110,7 +110,7 @@ onMounted(() => {
 });
 
 const editProjectView = (projectId: string | string[]) => {
-  router.push(`/dashboard/projects/${projectId}/edit`);
+  router.push(`/projects/${projectId}/edit`);
 };
 
 </script>

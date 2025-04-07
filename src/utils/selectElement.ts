@@ -81,3 +81,21 @@ export const getUserPermissionsLabel = (value: string): string => {
 export const getUserPermissionsSeverity = (value: string): string => {
   return getSeverity(userPermissionsElements, value)
 }
+
+/*
+utils for codesystem type
+*/
+
+export const codesystemTypeElements: SelectElement[] = [
+  { label: 'GENERIC', value: 'GENERIC', severity: 'info' },
+  { label: 'LOINC', value: 'LOINC', severity: 'info' },
+  { label: 'ICD_10_GM', value: 'ICD_10_GM', severity: 'info' },
+]
+
+export const getCodesystemTypeLabel = (value: string): string => {
+  return getLabel(codesystemTypeElements, value)
+}
+
+export const getCodesystemTypeSeverity = (value: string): string => {
+  return getSeverity(codesystemTypeElements, value)
+}

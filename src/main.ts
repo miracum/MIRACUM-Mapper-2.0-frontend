@@ -16,6 +16,7 @@ import Noir from './presets/Noir.js'
 import authStorePlugin from './plugins/authStore'
 import mappingStorePlugin from './plugins/mappingStore'
 import projectStorePlugin from './plugins/projectStore'
+import codesystemStorePlugin from './plugins/codesystemStore'
 import { useAuthStore } from './stores/auth'
 import KeycloakService from './lib/keycloak'
 import Tooltip from 'primevue/tooltip'
@@ -48,6 +49,7 @@ app.directive('tooltip', Tooltip)
 
 app.use(mappingStorePlugin, { pinia })
 app.use(projectStorePlugin, { pinia })
+app.use(codesystemStorePlugin, { pinia })
 
 app.use(router)
 

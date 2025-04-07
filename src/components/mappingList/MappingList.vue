@@ -511,7 +511,7 @@ const exportCSV = () => {
 
 
 const editProjectView = (projectId: number) => {
-    router.push(`/dashboard/projects/${projectId}/edit`);
+    router.push(`/projects/${projectId}/edit`);
 }
 
 // The mappings which are received from the backend need to be flattened in order to be displayed in the DataTable

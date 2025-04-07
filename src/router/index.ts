@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import LandingPageView from '../views/LandingPageView.vue'
 import LoginView from '../views/LoginView.vue'
-import ProjectList from '../views/loggedIn/Project/ProjectView.vue'
 import MappingView from '../views/loggedIn/MappingView.vue'
 import EditProjectView from '../views/loggedIn/Project/EditProjectView.vue'
 import { watch } from 'vue'
@@ -10,6 +9,12 @@ import { watch } from 'vue'
 // import keycloak from '../keycloak'; // Adjust the path as necessary
 import { useAuthStore } from '../stores/auth'
 import AddProjectView from '@/views/loggedIn/Project/AddProjectView.vue'
+import AddCodeSystemView from '@/views/loggedIn/Codesystem/AddCodeSystemView.vue'
+import EditCodeSystemView from '@/views/loggedIn/Codesystem/EditCodeSystemView.vue'
+import CodeSystemVersionsView from '@/views/loggedIn/CodeSystemVersion/CodeSystemVersionsView.vue'
+import ImportVersionView from '@/views/loggedIn/CodeSystemVersion/ImportVersionView.vue'
+import ProjectView from '@/views/loggedIn/Project/ProjectView.vue'
+import CodeSystemView from '@/views/loggedIn/Codesystem/CodeSystemView.vue'
 
 const routes = [
   {
@@ -24,8 +29,41 @@ const routes = [
     // meta: { requiresAuth: true },
   },
   {
-    path: '/dashboard',
-    component: ProjectList,
+    path: '/codesystems',
+    name: 'CodeSystemView',
+    component: CodeSystemView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/codesystems/add',
+    name: 'AddCodeSystemView',
+    component: AddCodeSystemView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/codesystems/:codeSystemId',
+    name: 'CodeSystemVersionsView',
+    component: CodeSystemVersionsView,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  {
+    path: '/codesystems/:codeSystemId/edit',
+    name: 'EditCodeSystemView',
+    component: EditCodeSystemView,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  {
+    path: '/codesystems/:codeSystemId/versions/:versionId/import',
+    name: 'ImportCodeSystemVersionView',
+    component: ImportVersionView,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  {
+    path: '/projects',
+    component: ProjectView,
     meta: { requiresAuth: true }
     // children: [
     //   {
@@ -36,21 +74,21 @@ const routes = [
     // ]
   },
   {
-    path: '/dashboard/projects/:projectId/mappings',
+    path: '/projects/:projectId/mappings',
     name: 'MappingView',
     component: MappingView,
     meta: { requiresAuth: true },
     props: true
   },
   {
-    path: '/dashboard/projects/:projectId/edit',
+    path: '/projects/:projectId/edit',
     name: 'EditProjectView',
     component: EditProjectView,
     meta: { requiresAuth: true },
     props: true
   },
   {
-    path: '/dashboard/projects/add',
+    path: '/projects/add',
     name: 'AddProjectView',
     component: AddProjectView,
     meta: { requiresAuth: true }
@@ -75,9 +113,9 @@ router.beforeEach(
         to.matched.some((record) => !record.meta.requiresAuth) &&
         authStore.authenticated
       ) {
-        next('/dashboard') // Redirect to dashboard if already authenticated and trying to access a non-protected route
+        next('/projects') // Redirect to dashboard if already authenticated and trying to access a non-protected route
       } else if (to.path.includes('/login') && authStore.authenticated) {
-        next('/dashboard') // Redirect to dashboard if already authenticated and trying to access login
+        next('/projects') // Redirect to dashboard if already authenticated and trying to access login
       } else {
         next() // Proceed as normal if none of the above conditions are met
       }

@@ -49,7 +49,7 @@ const router = useRouter();
 const signInWithSSO = async () => {
     const authStore = useAuthStore();
     KeycloakService.CallLogin(authStore);
-    router.push('/dashboard');
+    router.push('/projects');
 };
 
 const loginUser = async () => {

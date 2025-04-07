@@ -1,5 +1,5 @@
 <template>
-  <MenuHeader :items="menuItems" />
+  <MenuHeader />
   <Toast />
   <ConfirmDialog></ConfirmDialog>
   <div class="padding-all">
@@ -7,7 +7,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Toast from 'primevue/toast';
 import MenuHeader from '@/components/shared/MenuHeader.vue';
 import ConfirmDialog from 'primevue/confirmdialog';

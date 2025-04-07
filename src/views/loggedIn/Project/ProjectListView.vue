@@ -62,11 +62,11 @@ const props = defineProps({
 const router = useRouter();
 
 const navigateToProject = (projectId: number) => {
-    router.push(`/dashboard/projects/${projectId}/mappings`);
+    router.push(`/projects/${projectId}/mappings`);
 };
 
 const addProject = () => {
-    router.push('/dashboard/projects/add');
+    router.push('/projects/add');
 };
 
 const sortKey = ref();
