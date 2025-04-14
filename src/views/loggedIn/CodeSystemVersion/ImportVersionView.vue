@@ -16,7 +16,7 @@ import CodeSystemForm from '@/components/codesystemviews/CodeSystemForm.vue';
 import ImportVersionPanel from '@/components/codesystemviews/ImportVersionPanel.vue';
 import ImportVersionLockedPanel from '@/components/codesystemviews/ImportVersionLockedPanel.vue';
 import ImportVersionStatusPanel from '@/components/codesystemviews/ImportVersionStatusPanel.vue';
-import { useGetImportStatusQuery, useImportCodeSystemVersionQuery } from '@/composables/queries/codesystem-query';
+import { useGetImportStatusQuery, useImportCodeSystemVersionJsonQuery, useImportCodeSystemVersionQuery } from '@/composables/queries/codesystem-query';
 import { type ImportStatus, useCodeSystemStore } from '@/stores/codesystem';
 
 const props = defineProps({
@@ -120,21 +120,40 @@ function getImportStatus() {
 
 
 
-const onUpload = (main_file: File) => {
+const onUpload = async (main_file: File) => {
     uploading.value = true;
     getImportStatus();
-    const {error, isFetching, isReady, execute} = useImportCodeSystemVersionQuery(codeSystemId, versionId, main_file);
-    watch(isFetching, (newVal) => {
-        if (!newVal) {
-            if (isReady.value) {
-                toast.add({ severity: 'success', summary: 'Success', detail: 'File uploaded successfully', life: 10000 });
-            } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not import Codesystem version due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
-                router.push(`/codesystems/${codeSystemId}`);
-            }
+    switch (cs!.type) {
+        case 'ICD_10_GM': {
+            const {error, isFetching, isReady, execute} = await useImportCodeSystemVersionJsonQuery(codeSystemId, versionId, main_file);
+            watch(isFetching, (newVal) => {
+                if (!newVal) {
+                    if (isReady.value) {
+                        toast.add({ severity: 'success', summary: 'Success', detail: 'File uploaded successfully', life: 10000 });
+                    } else {
+                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not import Codesystem version due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+                        router.push(`/codesystems/${codeSystemId}`);
+                    }
+                }
+            });
+            execute();
+            break;
         }
-    });
-    execute();
+        default: {
+            const {error, isFetching, isReady, execute} = useImportCodeSystemVersionQuery(codeSystemId, versionId, main_file);
+            watch(isFetching, (newVal) => {
+                if (!newVal) {
+                    if (isReady.value) {
+                        toast.add({ severity: 'success', summary: 'Success', detail: 'File uploaded successfully', life: 10000 });
+                    } else {
+                        toast.add({ severity: 'error', summary: 'Error', detail: `Could not import Codesystem version due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
+                        router.push(`/codesystems/${codeSystemId}`);
+                    }
+                }
+            });
+            execute();
+        }
+    }
 }
 
 const onDone = () => {

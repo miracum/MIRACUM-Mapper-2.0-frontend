@@ -129,6 +129,25 @@ export const useImportCodeSystemVersionQuery = (codesystemId: number, codesystem
   return useQueryWithPathParam(state, fetchOptions, method, path)
 }
 
+type ImportCodeSystemVersionJsonResponse =
+  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json']['post']['responses']['202']['content']['application/json']
+
+export const useImportCodeSystemVersionJsonQuery = async (codesystemId: number, codesystemVersionId: number, main_file: File) => {
+  const state = ref<ImportCodeSystemVersionJsonResponse>()
+  const jsonBody = await main_file.text().then(text => JSON.parse(text) as Record<string, never>)
+
+  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json']['post']> = {
+    params: {
+      path: { 'codesystem_id': codesystemId, 'codesystem-version_id': codesystemVersionId }
+    },
+    body: jsonBody
+  }
+  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json'
+  const method = Method.POST
+
+  return useQueryWithPathParam(state, fetchOptions, method, path)
+}
+
 type ImportCodeSystemVersionStatusResponse =
   paths['/import-status']['get']['responses']['200']['content']['application/json']
 
