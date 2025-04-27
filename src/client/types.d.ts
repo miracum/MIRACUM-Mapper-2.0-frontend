@@ -337,7 +337,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/codesystems/{codesystem_id}/import": {
+    "/codesystems/{codesystem_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update a code system version by ID
+         * @description Update a code system version by ID. Only admins can update code system versions.
+         */
+        put: operations["updateCodeSystemVersion"];
+        /**
+         * Create a new version for a code system by ID
+         * @description Create a new version for a code system by ID. Only admins can create code system versions.
+         */
+        post: operations["createCodeSystemVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a code system version by ID
+         * @description Delete a code system version by ID. Only admins can delete code system versions.
+         */
+        delete: operations["deleteCodeSystemVersion"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import": {
         parameters: {
             query?: never;
             header?: never;
@@ -347,10 +391,50 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Import concepts for a code system by ID
-         * @description Import concepts for a code system by ID. The concepts are imported from a CSV file. The format of the CSV must be "code,meaning"
+         * Import concepts for a code system version by ID
+         * @description Import concepts for a code system version by ID. The concepts for GENERIC and LOINC Codesystems are imported from a CSV file. For the import of a FHIR/JSON file please use the endpoint /import-json
          */
-        post: operations["importCodeSystem"];
+        post: operations["importCodeSystemVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a code system version by ID
+         * @description Import concepts for a code system version by ID. The concepts are imported from a FHIR/JSON file.
+         */
+        post: operations["importCodeSystemVersionJson"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/import-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the status of the running or last import
+         * @description Get the status of the currently running or the last import.
+         */
+        get: operations["getImportStatus"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -369,6 +453,26 @@ export interface paths {
          * @description Get all concepts for a code system by ID. Paging and sorting can be specified by query parameters.
          */
         get: operations["getAllConcepts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/concepts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all concepts for a code system version by ID
+         * @description Get all concepts for a code system version by ID. Paging and sorting can be specified by query parameters.
+         */
+        get: operations["getAllConceptsByVersion"];
         put?: never;
         post?: never;
         delete?: never;
@@ -418,6 +522,8 @@ export interface components {
             name: string;
             /** Format: int32 */
             system: number;
+            /** Format: int32 */
+            version: number;
             /** @enum {string} */
             type: "source" | "target";
         };
@@ -433,7 +539,8 @@ export interface components {
                 /** Format: int32 */
                 id: number;
                 name: string;
-                version: string;
+                version: components["schemas"]["CodeSystemVersion"];
+                nextVersion?: components["schemas"]["CodeSystemVersion"];
             };
         };
         CreateMapping: {
@@ -445,7 +552,7 @@ export interface components {
             elements?: components["schemas"]["Element"][];
         };
         UpdateMapping: components["schemas"]["CreateMapping"] & {
-            /** Format: int64 */
+            /** Format: int32 */
             id: number;
         };
         Mapping: components["schemas"]["UpdateMapping"] & {
@@ -456,11 +563,12 @@ export interface components {
         Element: {
             /** Format: int32 */
             codeSystemRole?: number;
-            /** Format: int64 */
+            /** Format: int32 */
             concept?: number;
         };
         FullElement: components["schemas"]["Element"] & {
             concept?: components["schemas"]["Concept"];
+            nextConcept?: components["schemas"]["Concept"];
         };
         User: {
             id: string;
@@ -469,22 +577,50 @@ export interface components {
             email?: string;
         };
         Concept: {
-            /** Format: int64 */
+            /** Format: int32 */
             id: number;
             code: string;
             meaning: string;
+            description?: string;
+            /** @enum {string} */
+            status: "active" | "trial" | "deprecated" | "discouraged";
         };
-        CreateCodeSystem: {
+        BaseCodeSystem: {
             uri: string;
-            version: string;
             name: string;
+            /** @enum {string} */
+            type: "GENERIC" | "LOINC" | "ICD_10_GM";
             title?: string;
             description?: string;
             author?: string;
         };
+        CreateCodeSystem: components["schemas"]["BaseCodeSystem"];
         CodeSystem: components["schemas"]["CreateCodeSystem"] & {
             /** Format: int32 */
             id: number;
+        };
+        GetCodeSystem: components["schemas"]["CodeSystem"] & {
+            versions: components["schemas"]["CodeSystemVersion"][];
+        };
+        BaseCodeSystemVersion: {
+            version_name: string;
+            /** Format: date */
+            release_date: string;
+        };
+        UpdateCodeSystemVersion: {
+            version_name: string;
+            /** Format: int32 */
+            id: number;
+        };
+        CodeSystemVersion: components["schemas"]["BaseCodeSystemVersion"] & {
+            /** Format: int32 */
+            id: number;
+            imported: boolean;
+        };
+        ImportStatus: {
+            progress: number;
+            running: boolean;
+            error: string | null;
         };
         ErrorResponse: string;
     };
@@ -537,9 +673,11 @@ export interface components {
         mapping_id: number;
         /** @description The ID of the Codesystem */
         codesystem_id: number;
+        /** @description The ID of the Codesystem Version */
+        "codesystem-version_id": number;
         /** @description Page number (must be a positive integer) */
         page: number;
-        /** @description Number of items per page (minimum 1, maximum 100) */
+        /** @description Number of items per page (must be a positive integer) */
         pageSize: number;
         /** @description Order of sorting (asc or desc) */
         sortOrder: "asc" | "desc";
@@ -578,7 +716,7 @@ export interface operations {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort sortBy */
                 sortBy?: "name" | "dateCreated" | "id";
@@ -1105,7 +1243,7 @@ export interface operations {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort by */
                 sortBy?: "id" | "equivalence" | "status" | "comment" | "created" | "modified";
@@ -1464,7 +1602,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CodeSystem"][];
+                    "application/json": components["schemas"]["GetCodeSystem"][];
                 };
             };
             400: components["responses"]["BadRequestError"];
@@ -1580,7 +1718,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CodeSystem"];
+                    "application/json": components["schemas"]["GetCodeSystem"];
                 };
             };
             400: components["responses"]["BadRequestError"];
@@ -1632,7 +1770,7 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
-    importCodeSystem: {
+    updateCodeSystemVersion: {
         parameters: {
             query?: never;
             header?: never;
@@ -1644,7 +1782,148 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "text/csv": string;
+                "application/json": components["schemas"]["UpdateCodeSystemVersion"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    createCodeSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseCodeSystemVersion"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Exception */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    deleteCodeSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem or CodeSystemVersion not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The main file with the concepts to import. For LOINC use the file LoincTable/Loinc.csv. For GENERIC use a CSV file that has the columns "code", "display" and "status" and an optional column "description".
+                     */
+                    main: string;
+                };
             };
         };
         responses: {
@@ -1671,12 +1950,75 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
+    importCodeSystemVersionJson: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getImportStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportStatus"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
     getAllConcepts: {
         parameters: {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort sortBy */
                 sortBy?: "code" | "meaning";
@@ -1691,6 +2033,56 @@ export interface operations {
             path: {
                 /** @description The ID of the Codesystem */
                 codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Concept"][];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getAllConceptsByVersion: {
+        parameters: {
+            query?: {
+                /** @description Page number (must be a positive integer) */
+                page?: components["parameters"]["page"];
+                /** @description Number of items per page (must be a positive integer) */
+                pageSize?: components["parameters"]["pageSize"];
+                /** @description Field to sort sortBy */
+                sortBy?: "code" | "meaning";
+                /** @description Order of sorting (asc or desc) */
+                sortOrder?: components["parameters"]["sortOrder"];
+                /** @description search for the code */
+                codeSearch?: string;
+                /** @description search for meaning */
+                meaningSearch?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
             };
             cookie?: never;
         };

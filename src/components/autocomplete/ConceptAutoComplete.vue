@@ -56,7 +56,8 @@ const searchConcept = (event: AutoCompleteCompleteEvent) => {
     if (!projectStore.currentLookupCodeSystemRoleIds) {
         return;
     }
-    const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(projectStore.currentLookupCodeSystemRoleIds[props.roleId], code, meaning, 10);
+    const currentCodeSystemRoleIds = projectStore.currentLookupCodeSystemRoleIds[props.roleId];
+    const { state, isReady, isFetching, error, execute } = useGetConceptsQuery(currentCodeSystemRoleIds.codeSystemId, currentCodeSystemRoleIds.codeSystemVersionId, code, meaning, 10);
     watch(isFetching, (newVal) => {
         if (!newVal) {
             if (isReady.value) {

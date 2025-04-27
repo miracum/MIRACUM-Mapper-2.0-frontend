@@ -7,7 +7,7 @@ export interface ProjectState {
   projects: Project[]
   currentProject: Project | null
   currentProjectDetails: ProjectDetails | null
-  currentLookupCodeSystemRoleIds: { [key: number]: number } | null
+  currentLookupCodeSystemRoleIds: { [key: number]: { codeSystemId: number; codeSystemVersionId: number } } | null
   projectRole: ProjectRole | null
 }
 
@@ -44,7 +44,7 @@ export const useProjectStore = defineStore('projects', {
       this.currentLookupCodeSystemRoleIds = {}
       const roles = projectDetails.code_system_roles
       for (let i = 0; i < roles.length; i++) {
-        this.currentLookupCodeSystemRoleIds[roles[i].id] = roles[i].system.id
+        this.currentLookupCodeSystemRoleIds[roles[i].id] = {codeSystemId: roles[i].system.id, codeSystemVersionId: roles[i].system.version.id}
       }
     },
     async fetchAndSetCurrentProjectDetails(projectId: number) {

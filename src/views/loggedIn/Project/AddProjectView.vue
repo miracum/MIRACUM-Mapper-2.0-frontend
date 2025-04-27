@@ -64,6 +64,7 @@ const userPermissions = ref([
 const codeSystemRoles = ref([
     {
         codeSystem: 0,
+        version: 0,
         role: '',
         name: ''
     }
@@ -127,6 +128,7 @@ const onCreateProject = () => {
         code_system_roles: codeSystemRoles.value.map((role) => {
             return {
                 system: role.codeSystem.id,
+                version: role.version.id,
                 type: role.role,
                 name: role.name
             }

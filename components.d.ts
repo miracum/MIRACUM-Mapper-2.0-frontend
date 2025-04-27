@@ -32,6 +32,7 @@ declare module 'vue' {
     CodeSystemRolesPanel: typeof import('./src/components/projectviews/CodeSystemRolesPanel.vue')['default']
     CodeSystemSelect: typeof import('./src/components/selects/CodeSystemSelect.vue')['default']
     CodeSystemTypeSelect: typeof import('./src/components/selects/CodeSystemTypeSelect.vue')['default']
+    CodeSystemVersionSelect: typeof import('./src/components/selects/CodeSystemVersionSelect.vue')['default']
     Column: typeof import('primevue/column')['default']
     ColumnGroup: typeof import('primevue/columngroup')['default']
     ConceptAutoComplete: typeof import('./src/components/autocomplete/ConceptAutoComplete.vue')['default']

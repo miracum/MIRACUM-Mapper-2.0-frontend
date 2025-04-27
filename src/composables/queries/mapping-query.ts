@@ -77,10 +77,11 @@ export const useCreateMappingQuery = (project_id: number, createMapping: CreateM
 type ConceptQueryOptions<T> = ParamsOption<T> & RequestBodyOption<T>
 
 type ConceptsResponse =
-  paths['/codesystems/{codesystem_id}/concepts']['get']['responses']['200']['content']['application/json']
+  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/concepts']['get']['responses']['200']['content']['application/json']
 
 export const useGetConceptsQuery = (
   codesystem_id: number,
+  codesystem_version_id: number,
   code: string | null,
   meaning: string | null,
   pageSize: number
@@ -94,13 +95,13 @@ export const useGetConceptsQuery = (
     query.meaningSearch = meaning
   }
 
-  const fetchOptions: ConceptQueryOptions<paths['/codesystems/{codesystem_id}/concepts']['get']> = {
+  const fetchOptions: ConceptQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/concepts']['get']> = {
     params: {
-      path: { codesystem_id: codesystem_id },
+      path: { codesystem_id: codesystem_id, 'codesystem-version_id': codesystem_version_id },
       query: query
     }
   }
-  const path = '/codesystems/{codesystem_id}/concepts'
+  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/concepts'
   const method = Method.GET
 
   return useQueryWithPathParam(state, fetchOptions, method, path)
