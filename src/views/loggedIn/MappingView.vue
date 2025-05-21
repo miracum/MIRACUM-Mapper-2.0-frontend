@@ -11,6 +11,9 @@
               <!-- <Button text @click="permissionRoleDialog = true">
                 <PermissionTag :value="projectStore.projectRole" v-if="projectStore.projectRole" />
               </Button> -->
+              <Button icon="pi pi-angle-double-up" label="Start Migration" severity="info" @click="startMigration(projectId)"
+                :disabled="!userHasPermission(StartMigrationPermission, projectStore, authStore)"
+                v-tooltip.top="addDisablePermissionTooltip(StartMigrationPermission)" />
               <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)"
                 :disabled="!userHasPermission(ProjectUpdatePermission, projectStore, authStore)"
                 v-tooltip.top="addDisablePermissionTooltip(ProjectUpdatePermission)" />
@@ -50,7 +53,7 @@ import { useGetProjectDetailsQuery } from '@/composables/queries/project-query';
 import { useGetMappingsQuery } from '@/composables/queries/mapping-query';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth';
-import { userHasPermission, ProjectUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
+import { userHasPermission, ProjectUpdatePermission, getPermissionTooltip, StartMigrationPermission } from '@/lib/permissions';
 
 const loadingMappingPlaceholder = ref(new Array(4));
 const route = useRoute();
@@ -111,6 +114,10 @@ onMounted(() => {
 
 const editProjectView = (projectId: string | string[]) => {
   router.push(`/projects/${projectId}/edit`);
+};
+
+const startMigration = (projectId: string | string[]) => {
+  router.push(`/projects/${projectId}/migration/start`);
 };
 
 </script>

@@ -37,3 +37,16 @@ export function getToastOptions(keyword: string, keywordPast: string, error: Ref
         return <ToastMessageOptions>{severity: 'error', summary: 'Error', detail: `Could not ${keyword} ${typeName} ${name}: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: life};
     }
 }
+
+export function getCancelMigrationConfirmationOptions(accept: () => void) {
+    return <ConfirmationOptions>{
+        message: `Are you sure you want to cancel the migration? All changes made during the review will be lost.`,
+        header: `Cancel Migration`,
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Don\'t Cancel',
+        acceptLabel: 'Cancel Migration',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        acceptClass: 'p-button-danger',
+        accept: accept,
+    }
+}

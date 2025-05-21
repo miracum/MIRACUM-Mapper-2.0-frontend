@@ -99,3 +99,22 @@ export const getCodesystemTypeLabel = (value: string): string => {
 export const getCodesystemTypeSeverity = (value: string): string => {
   return getSeverity(codesystemTypeElements, value)
 }
+
+/*
+utils for concept status
+*/
+
+export const conceptStatusElements: SelectElement[] = [
+  { label: 'Active', value: 'active', severity: 'success' },
+  { label: 'Trial', value: 'trial', severity: 'info' },
+  { label: 'Discouraged', value: 'discouraged', severity: 'warn' },
+  { label: 'Deprecated', value: 'deprecated', severity: 'danger' },
+]
+
+export const getConceptStatusLabel = (value: string): string => {
+  return getLabel(conceptStatusElements, value)
+}
+
+export const getConceptStatusSeverity = (value: string): string => {
+  return getSeverity(conceptStatusElements, value)
+}

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import LandingPageView from '../views/LandingPageView.vue'
 import LoginView from '../views/LoginView.vue'
-import MappingView from '../views/loggedIn/MappingView.vue'
 import EditProjectView from '../views/loggedIn/Project/EditProjectView.vue'
 import { watch } from 'vue'
 
@@ -15,6 +14,8 @@ import CodeSystemVersionsView from '@/views/loggedIn/CodeSystemVersion/CodeSyste
 import ImportVersionView from '@/views/loggedIn/CodeSystemVersion/ImportVersionView.vue'
 import ProjectView from '@/views/loggedIn/Project/ProjectView.vue'
 import CodeSystemView from '@/views/loggedIn/Codesystem/CodeSystemView.vue'
+import StartMigrationView from '@/views/loggedIn/Migration/StartMigrationView.vue'
+import ProjectSwitchView from '@/views/loggedIn/ProjectSwitchView.vue'
 
 const routes = [
   {
@@ -75,8 +76,8 @@ const routes = [
   },
   {
     path: '/projects/:projectId',
-    name: 'MappingView',
-    component: MappingView,
+    name: 'ProjectSwitchView',
+    component: ProjectSwitchView,
     meta: { requiresAuth: true },
     props: true
   },
@@ -92,7 +93,14 @@ const routes = [
     name: 'AddProjectView',
     component: AddProjectView,
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/projects/:projectId/migration/start',
+    name: 'StartMigrationView',
+    component: StartMigrationView,
+    meta: { requiresAuth: true },
+    props: true
+  },
 ]
 
 const router = createRouter({

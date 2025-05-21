@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Accordion: typeof import('primevue/accordion')['default']
     AddMappingDialog: typeof import('./src/components/mappingList/AddMappingDialog.vue')['default']
     AddProjectView: typeof import('./src/components/codesystemviews/AddProjectView.vue')['default']
     AutoComplete: typeof import('primevue/autocomplete')['default']
@@ -37,7 +38,8 @@ declare module 'vue' {
     ColumnGroup: typeof import('primevue/columngroup')['default']
     ConceptAutoComplete: typeof import('./src/components/autocomplete/ConceptAutoComplete.vue')['default']
     ConceptAutoComplete2: typeof import('./src/components/autocomplete/ConceptAutoComplete2.vue')['default']
-    copy: typeof import('./src/components/codesystemviews/ImportVersionLockedPanel copy.vue')['default']
+    ConceptStatusTag: typeof import('./src/components/tags/ConceptStatusTag.vue')['default']
+    copy: typeof import('./src/components/tags/StatusTag copy.vue')['default']
     CreateMappingDialog: typeof import('./src/components/mappingList/CreateMappingDialog.vue')['default']
     CustomAutoComplete: typeof import('./src/components/autocomplete/CustomAutoComplete.vue')['default']
     CustomDropdown: typeof import('./src/components/selects/CustomSelect.vue')['default']
@@ -81,6 +83,7 @@ declare module 'vue' {
     InputIcon: typeof import('primevue/inputicon')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    Listbox: typeof import('primevue/listbox')['default']
     LoadingSpinner: typeof import('./src/components/shared/LoadingSpinner.vue')['default']
     MappingAutoComplete: typeof import('./src/components/autocomplete/MappingAutoComplete.vue')['default']
     MappingDialog: typeof import('./src/components/mappingList/MappingDialog.vue')['default']
@@ -121,6 +124,7 @@ declare module 'vue' {
     StatusMultiSelect: typeof import('./src/components/multiselects/StatusMultiSelect.vue')['default']
     StatusSelect: typeof import('./src/components/selects/StatusSelect.vue')['default']
     StatusTag: typeof import('./src/components/tags/StatusTag.vue')['default']
+    Stepper: typeof import('primevue/stepper')['default']
     Tag: typeof import('primevue/tag')['default']
     TagDropdown: typeof import('./src/components/selects/TagDropdown.vue')['default']
     TagEnum: typeof import('./src/components/tags/TagEnum.vue')['default']

@@ -17,6 +17,8 @@ export type UpdateCodeSystemVersion = components['schemas']['UpdateCodeSystemVer
 
 export type ImportStatus = components['schemas']['ImportStatus']
 
+export type Concept = components['schemas']['Concept']
+
 
 export const useCodeSystemStore = defineStore('codesystems', {
     state: (): CodeSystemState => ({

@@ -53,7 +53,7 @@ watchEffect(async () => {
                 route: '/projects/add'
             });
         } else {
-            // /projects/{id} or /projects/{id}/edit
+            // /projects/{id} or /projects/{id}/edit or /projects/{id}/migration/start
             const projectId = parseInt(segment2);
             if (isNaN(projectId)) {
                 return;
@@ -77,6 +77,20 @@ watchEffect(async () => {
                     label: 'Edit',
                     route: `/projects/${projectId}/edit`
                 });
+            } else if (segment3 === 'migration') {
+                // /projects/{id}/migration/start
+                if (pathSegments.length === 3) {
+                    return;
+                }
+                const segment4 = pathSegments[3];
+                if (segment4 === 'start') {
+                    navItems.value.push({
+                        label: 'Start Migration',
+                        route: `/projects/${projectId}/migration/start`
+                    });
+                } else {
+                    return;
+                }
             } else {
                 return;
             }
