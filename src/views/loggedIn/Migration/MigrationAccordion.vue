@@ -105,6 +105,7 @@ import { useProjectStore, type CodeSystemRole } from '@/stores/project';
 import { type Concept } from '@/stores/codesystem';
 import { type MigrateMapping, type MigrationChanges } from '@/composables/queries/project-migration-query';
 import { type Mapping } from '@/stores/mappings';
+import { getConceptOptions, getMappingOptions } from '@/utils/migrationOptions';
 
 const props = defineProps({
     migrationChanges: {
@@ -124,51 +125,8 @@ const props = defineProps({
 const projectStore = useProjectStore();
 const project = projectStore.currentProjectDetails!;
 
-const standardConceptOptions: Array<{ label: string; value: string }> = [
-    { label: 'Review later / Decide indivually for each mapping', value: 'none' },
-    { label: 'Accept changes', value: 'keep' },
-    { label: 'Replace concept', value: 'new' },
-    { label: 'Delete mappings', value: 'delete' },
-];
-
-const deletedConceptOptions: Array<{ label: string; value: string }> = [
-    { label: 'Review later / Decide indivually for each mapping', value: 'none' },
-    { label: 'Replace concept', value: 'new' },
-    { label: 'Delete mappings', value: 'delete' },
-];
-
-const conceptOptions = computed(() => {
-    switch (props.changesType) {
-        case 'deleted':
-            return deletedConceptOptions
-        default:
-            return standardConceptOptions
-    }
-});
-
-const standardMappingOptions: Array<{ label: string; value: string }> = [
-    { label: 'Use general option', value: 'concept_option' },
-    { label: 'Review later', value: 'none' },
-    { label: 'Accept changes', value: 'keep' },
-    { label: 'Replace concept', value: 'new' },
-    { label: 'Delete mapping', value: 'delete' },
-];
-
-const deletedMappingOptions: Array<{ label: string; value: string }> = [
-    { label: 'Use general option', value: 'concept_option' },
-    { label: 'Review later', value: 'none' },
-    { label: 'Replace concept', value: 'new' },
-    { label: 'Delete mapping', value: 'delete' },
-];
-
-const mappingOptions = computed(() => {
-    switch (props.changesType) {
-        case 'deleted':
-            return deletedMappingOptions
-        default:
-            return standardMappingOptions
-    }
-});
+const conceptOptions = getConceptOptions(props.changesType);
+const mappingOptions = getMappingOptions(props.changesType);
 
 const changes = computed((): { old_concept: Concept; mappings: Mapping[]; new_concept?: Concept }[] => {
     switch (props.changesType) {
@@ -202,7 +160,7 @@ function transformChanges(changes: { old_concept: Concept; mappings: Mapping[]; 
                     status: mapping.status,
                     equivalence: mapping.equivalence,
                     id: mapping.id,
-                    selected: 'concept_option',
+                    selected: 'default_option',
                     selected_concept: undefined as Concept | undefined,
                 };
                 roles.forEach(role => {
@@ -241,7 +199,7 @@ const getMigrations = () => {
         for (let mapping of migration.mappings) {
             if (mapping.selected == 'none') {
                 continue;
-            } else if (mapping.selected == 'concept_option') {
+            } else if (mapping.selected == 'default_option') {
                 if (migration.selected == 'none') {
                     continue;
                 } else if (migration.selected == 'new') {

@@ -12,6 +12,9 @@
                     <Button icon="pi pi-times" label="Cancel Migration" severity="danger" @click="cancelMigration(projectId)"
                         :disabled="!userHasPermission(StartMigrationPermission, projectStore, authStore)"
                         v-tooltip.top="addDisablePermissionTooltip(StartMigrationPermission)" />
+                    <Button icon="pi pi-pencil" label="Edit project" @click="editProjectView(projectId)"
+                        :disabled="!userHasPermission(ProjectUpdatePermission, projectStore, authStore)"
+                        v-tooltip.top="addDisablePermissionTooltip(ProjectUpdatePermission)" />
                 </div>
             </template>
 
@@ -116,7 +119,7 @@ import { useRouter } from 'vue-router';
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useCancelMigrationQuery, useFinishMigrationQuery, useGetMigrationChangesQuery, useMigrateMigrationQuery, type MigrateMapping, type MigrationChanges, type MigrationStatus } from '@/composables/queries/project-migration-query';
-import { userHasPermission, getPermissionTooltip, StartMigrationPermission, MigrationPermission } from '@/lib/permissions';
+import { userHasPermission, getPermissionTooltip, StartMigrationPermission, MigrationPermission, ProjectUpdatePermission } from '@/lib/permissions';
 import { useProjectStore, type ProjectRole } from '@/stores/project';
 import { useAuthStore } from '@/stores/auth';
 import { getCancelMigrationConfirmationOptions } from "@/utils/popupOptions";
@@ -262,6 +265,10 @@ const cancelMigration = (projectId: number) => {
         execute();
     }));
 }
+
+const editProjectView = (projectId: number) => {
+    router.push(`/projects/${projectId}/edit`);
+};
 
 const deletedAccordion = ref();
 const deprecatedAccordion = ref();
