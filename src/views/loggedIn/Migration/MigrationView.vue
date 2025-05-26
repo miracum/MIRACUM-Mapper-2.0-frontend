@@ -215,6 +215,14 @@ watch([projectDetailsIsFetching, changesIsFetching], ([newProjectFetching, newCh
         if (projectDetailsState.value && changesState.value) {
             migrationChanges.value = changesState.value;
             projectStore.setCurrentProjectDetails(projectDetailsState.value);
+            if (projectDetailsState.value.project_permissions) {
+                for (const role of projectDetailsState.value.project_permissions) {
+                if (role.user.id === authStore.userInfo?.id) {
+                    projectStore.setProjectRole(role.role);
+                    break;
+                }
+                }
+            }
         }
     }
 });
