@@ -85,7 +85,7 @@
             <Row>
                 <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0"
                     :exportable="false" :rowspan="2"></Column>
-                <Column v-for="role in props.project.code_system_roles" :colspan="2" class="grid-column-right"
+                <Column v-for="role in props.project.code_system_roles" :colspan="3" class="grid-column-right"
                     style="border-right: 1px solid #e3e8f0" :key="role.id">
                     <template #header>
                         <div style=" display: flex; gap: 5px;">
@@ -117,6 +117,7 @@
             </Row>
             <Row>
                 <template v-for="role in props.project.code_system_roles" :key="role.id">
+                    <Column header="Status" :field="`status_${role.id}`" sortable></Column>
                     <Column header="Code" :field="`code_${role.id}`" sortable></Column>
                     <Column header="Meaning" :field="`meaning_${role.id}`" sortable
                         style="border-right: 1px solid #e3e8f0"></Column>
@@ -127,6 +128,18 @@
         <Column selectionMode="multiple" style="width: 3rem; border-right: 1px solid #e3e8f0" :exportable="false">
         </Column>
         <template v-for="role in props.project.code_system_roles" :key="role.id">
+            <Column :field="`status_${role.id}`" :filterField="`status_${role.id}`" sortable :showFilterMenu="false">
+                <template #body="{ data }">
+                    <ConceptStatusTag :value="data[`status_${role.id}`]" />
+                </template>
+                <template #filter="{ filterModel, filterCallback }">
+                    <ConceptStatusMultiSelect v-model="filterModel.value" @change="filterCallback()" class="filter-width-enum"
+                        :disabled="disableFiltersAndSorting" v-tooltip.top="addDisabledRowEditTooltip()" />
+                </template>
+                <template #editor="{ data }">
+                    <ConceptStatusTag :value="data[`status_${role.id}`]" />
+                </template>
+            </Column>
             <Column :field="`code_${role.id}`" :filterField="`code_${role.id}`" sortable>
                 <template #editor="{ data, field }">
                     <ConceptAutoComplete :roleId="role.id" field="code"
@@ -253,12 +266,14 @@ import EditMappingDialog from './EditMappingDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
+import ConceptStatusMultiSelect from '@/components/multiselects/ConceptStatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
 import Popover from 'primevue/popover';
 import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
 import { useAuthStore } from '@/stores/auth';
 import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
 import { useRouter } from 'vue-router';
+import ConceptStatusTag from '../tags/ConceptStatusTag.vue';
 
 const permissionRoleDialog = ref(false);
 
@@ -347,6 +362,7 @@ const initFilters = () => {
     props.project.code_system_roles.forEach(role => {
         baseFilters[`code_${role.id}`] = { value: null, matchMode: FilterMatchMode.CONTAINS };
         baseFilters[`meaning_${role.id}`] = { value: null, matchMode: FilterMatchMode.CONTAINS };
+        baseFilters[`status_${role.id}`] = { value: null, matchMode: FilterMatchMode.IN };
     });
 
     filters.value = baseFilters;
@@ -358,7 +374,7 @@ const globalFilterFields: string[] = [
     'comment',
     'created',
     'modified',
-    ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`])
+    ...props.project.code_system_roles.flatMap(role => [`code_${role.id}`, `meaning_${role.id}`, `status_${role.id}`]),
 ];
 
 // onMounted(() => {
@@ -535,10 +551,12 @@ function flattenMappings(mappings: Mapping[], roles: CodeSystemRole[]): any[] {
             if (element) {
                 flattened[`code_${role.id}`] = element.concept.code;
                 flattened[`meaning_${role.id}`] = element.concept.meaning;
+                flattened[`status_${role.id}`] = element.concept.status;
                 flattened[`id_${role.id}`] = element.concept.id;
             } else {
                 flattened[`code_${role.id}`] = '';
                 flattened[`meaning_${role.id}`] = '';
+                flattened[`status_${role.id}`] = '';
                 flattened[`id_${role.id}`] = null;
             }
         })

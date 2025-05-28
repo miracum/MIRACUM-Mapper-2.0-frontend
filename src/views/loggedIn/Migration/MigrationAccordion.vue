@@ -30,7 +30,7 @@
                     <!-- This defines the header rows of the DataTable. The code systems should be a column which spans over the code and meaning columns so is has to be defined how many columns they span. This makes the use of ColumnGroups necessary -->
                     <ColumnGroup type="header">
                         <Row>
-                            <Column v-for="role in project.code_system_roles" :colspan="2" :key="role.id" style="border-right: 1px solid #e3e8f0">
+                            <Column v-for="role in project.code_system_roles" :colspan="3" :key="role.id" style="border-right: 1px solid #e3e8f0">
                                 <template #header>
                                     <CodeSystemRole :role="role" />
                                 </template>
@@ -43,6 +43,7 @@
                         </Row>
                         <Row>
                             <template v-for="role in project.code_system_roles" :key="role.id">
+                                <Column header="Status" :field="`status_${role.id}`"></Column>
                                 <Column header="Code" :field="`code_${role.id}`"></Column>
                                 <Column header="Meaning" :field="`meaning_${role.id}`" style="border-right: 1px solid #e3e8f0"></Column>
                             </template>
@@ -50,6 +51,11 @@
                     </ColumnGroup>
                     <!-- After defining the header rows, the content of the elements in the DataTable are defined -->
                     <template v-for="role in project.code_system_roles" :key="role.id">
+                        <Column v-if="project.status_required" :field="`status_${role.id}`">
+                            <template #body="{ data }">
+                                <ConceptStatusTag :value="data[`status_${role.id}`]" />
+                            </template>
+                        </Column>
                         <Column :field="`code_${role.id}`"></Column>
                         <Column :field="`meaning_${role.id}`" style="border-right: 1px solid #e3e8f0"></Column>
                     </template>
@@ -169,10 +175,12 @@ function transformChanges(changes: { old_concept: Concept; mappings: Mapping[]; 
                         flattened[`code_${role.id}`] = element.concept.code;
                         flattened[`meaning_${role.id}`] = element.concept.meaning;
                         flattened[`id_${role.id}`] = element.concept.id;
+                        flattened[`status_${role.id}`] = element.concept.status;
                     } else {
                         flattened[`code_${role.id}`] = '';
                         flattened[`meaning_${role.id}`] = '';
                         flattened[`id_${role.id}`] = null;
+                        flattened[`status_${role.id}`] = null;
                     }
                 })
                 return flattened;

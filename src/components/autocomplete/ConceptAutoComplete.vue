@@ -3,10 +3,32 @@
         @complete="(event) => searchConcept(event)" style="width: 100%">
         <template #option="slotProps">
             <div v-if="error()" style="color: red;">{{ error() }}</div>
-            <div v-else>
+            <div v-else style="max-width: 50vw; white-space: pre-wrap;">
+                <div v-if="field === 'code'">
+                    <div>
+                        <span class="me-3" style="font-weight: bold;">{{ slotProps.option.code }}</span>
+                        <ConceptStatusTag :value="slotProps.option.status" />
+                    </div>
+                    <div>{{ slotProps.option.meaning  }}</div>
+                    <div v-if="slotProps.option.description" class="text-sm" style="color: gray;">
+                        {{ slotProps.option.description }}
+                    </div>
+                </div>
+                <div v-else-if="field === 'meaning'">
+                    <div style="font-weight: bold;">{{ slotProps.option.meaning }}</div>
+                    <div>
+                        <span class="me-3">{{ slotProps.option.code }}</span>
+                        <ConceptStatusTag :value="slotProps.option.status" />
+                    </div>
+                    <div v-if="slotProps.option.description" class="text-sm" style="color: gray;">
+                        {{ slotProps.option.description }}
+                    </div>
+                </div>
+            </div>
+            <!-- <div v-else>
                 <div style="font-weight: bold;">{{ firstElement(slotProps) }}</div>
                 <div>{{ secondElement(slotProps) }}</div>
-            </div>
+            </div> -->
         </template>
     </AutoComplete>
 </template>
@@ -70,24 +92,24 @@ const searchConcept = (event: AutoCompleteCompleteEvent) => {
     execute();
 }
 
-const firstElement = (slotProps: SlotProps) => {
-    if (props.field === 'meaning') {
-        return slotProps.option.meaning;
-    } else if (props.field === 'code') {
-        return slotProps.option.code;
-    } else {
-        return null;
-    }
-};
-const secondElement = (slotProps: SlotProps) => {
-    if (props.field === 'meaning') {
-        return slotProps.option.code;
-    } else if (props.field === 'code') {
-        return slotProps.option.meaning;
-    } else {
-        return null;
-    }
-};
+// const firstElement = (slotProps: SlotProps) => {
+//     if (props.field === 'meaning') {
+//         return slotProps.option.meaning;
+//     } else if (props.field === 'code') {
+//         return slotProps.option.code;
+//     } else {
+//         return null;
+//     }
+// };
+// const secondElement = (slotProps: SlotProps) => {
+//     if (props.field === 'meaning') {
+//         return slotProps.option.code;
+//     } else if (props.field === 'code') {
+//         return slotProps.option.meaning;
+//     } else {
+//         return null;
+//     }
+// };
 const error = () => {
     if (props.field !== 'meaning' && props.field !== 'code') {
         return 'Invalid field value';
