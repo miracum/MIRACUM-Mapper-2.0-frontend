@@ -28,7 +28,6 @@
 import { ref, watch } from 'vue';
 import ProgressBar from 'primevue/progressbar';
 import type { GetCodeSystemVersion, GetCodeSystem } from '@/stores/codesystem';
-import ImportButtonsGeneric from './ImportButtonsGeneric.vue';
 
 const props = defineProps({
     codesystem: {

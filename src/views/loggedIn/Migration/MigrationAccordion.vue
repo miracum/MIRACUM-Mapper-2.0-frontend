@@ -9,8 +9,37 @@
             </AccordionHeader>
             <AccordionContent>
                 <div class="mb-3 mt-2">
-                    <p><strong>Meaning:</strong> {{ item.old_concept.meaning }}</p>
-                    <p v-if="item.old_concept.description"><strong>Description:</strong> {{ item.old_concept.description }}</p>
+                    <p v-if="!item.new_concept || item.old_concept.meaning === item.new_concept.meaning"><strong>Meaning:</strong> {{ item.old_concept.meaning }}</p>
+                    <p v-else>
+                        <strong>Old meaning:</strong> {{ item.old_concept.meaning }}
+                        <br />
+                        <strong>New meaning:</strong> {{ item.new_concept.meaning }}
+                    </p>
+                    <div v-if="!item.new_concept" class="mt-3">
+                        <p v-if="item.old_concept.description"><strong>Description:</strong> {{ item.old_concept.description }}</p>
+                    </div>
+                    <div v-else class="mt-3">
+                        <div v-if="item.old_concept.description && item.new_concept.description">
+                            <p v-if="item.old_concept.description === item.new_concept.description">
+                                <strong>Description:</strong> {{ item.old_concept.description }}
+                            </p>
+                            <p v-else>
+                                <strong>Old description:</strong> {{ item.old_concept.description }}
+                                <br />
+                                <strong>New description:</strong> {{ item.new_concept.description }}
+                            </p>
+                        </div>
+                        <p v-else-if="item.old_concept.description">
+                            <strong>Old description:</strong> {{ item.old_concept.description }}
+                            <br />
+                            <strong>New description:</strong> <em>was deleted</em>
+                        </p>
+                        <p v-else-if="item.new_concept.description">
+                            <strong>Old description:</strong> <em>was added</em>
+                            <br />
+                            <strong>New description:</strong> {{ item.new_concept.description }}
+                        </p>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <strong class="me-3">Choose review option for all mappings:</strong>

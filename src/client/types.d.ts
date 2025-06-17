@@ -728,19 +728,21 @@ export interface components {
         };
         MigrationChanges: {
             deleted: components["schemas"]["MigrationChangeOldConcept"][];
-            deprecated: components["schemas"]["MigrationChangeOldConcept"][];
-            discouraged: components["schemas"]["MigrationChangeOldConcept"][];
+            deprecated: components["schemas"]["MigrationChangeOldAndNewConcept"][];
+            discouraged: components["schemas"]["MigrationChangeOldAndNewConcept"][];
             change_display: components["schemas"]["MigrationChangeOldAndNewConcept"][];
             change_description: components["schemas"]["MigrationChangeOldAndNewConcept"][];
         };
         MigrationChangeOldConcept: {
             old_concept: components["schemas"]["Concept"];
             mappings: components["schemas"]["Mapping"][];
+            replace_by: components["schemas"]["ConceptReplaceBy"][];
         };
         MigrationChangeOldAndNewConcept: {
             old_concept: components["schemas"]["Concept"];
             new_concept: components["schemas"]["Concept"];
             mappings: components["schemas"]["Mapping"][];
+            replace_by: components["schemas"]["ConceptReplaceBy"][];
         };
         MigrateMapping: {
             /** @enum {string} */
@@ -798,6 +800,15 @@ export interface components {
             description?: string;
             /** @enum {string} */
             status: "active" | "trial" | "deprecated" | "discouraged";
+        };
+        ConceptReplaceBy: {
+            code: string;
+            map_to: components["schemas"]["Concept"];
+            /** Format: int32 */
+            code_system_id: number;
+            /** @enum {string} */
+            equivalence?: "relatedto" | "equivalent" | "equal" | "wider" | "subsumes" | "narrower" | "specializes" | "inexact" | "unmatched" | "disjoint";
+            comment?: string;
         };
         BaseCodeSystem: {
             uri: string;
