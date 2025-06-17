@@ -521,7 +521,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import": {
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic": {
         parameters: {
             query?: never;
             header?: never;
@@ -531,17 +531,17 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Import concepts for a code system version by ID
-         * @description Import concepts for a code system version by ID. The concepts for GENERIC and LOINC Codesystems are imported from a CSV file. For the import of a FHIR/JSON file please use the endpoint /import-json
+         * Import concepts for a generic code system version by ID
+         * @description Import concepts for a generic code system version by ID. The concepts and optional replace by hints are imported from CSV files. For other code system types use the other endpoints.
          */
-        post: operations["importCodeSystemVersion"];
+        post: operations["importCodeSystemVersionGeneric"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json": {
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc": {
         parameters: {
             query?: never;
             header?: never;
@@ -551,10 +551,30 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Import concepts for a code system version by ID
-         * @description Import concepts for a code system version by ID. The concepts are imported from a FHIR/JSON file.
+         * Import concepts for a Loinc code system version by ID
+         * @description Import concepts for a Loinc code system version by ID. The CSV files can be uploaded directly without a conersion. For other code system types use the other endpoints.
          */
-        post: operations["importCodeSystemVersionJson"];
+        post: operations["importCodeSystemVersionLoinc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a ICD-10-GM code system version by ID
+         * @description Import concepts for a ICD-10-GM code system version by ID. The concepts are imported from FHIR/JSON files CodeSystem-icd10gm-....json and ConceptMap-icd10gm-....json. The files must be according to the FHIR R4 standard. The JSON-Objects must be copied into the request body (see example). For other code system types use the other endpoints.
+         */
+        post: operations["importCodeSystemVersionIcd"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2359,7 +2379,7 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
-    importCodeSystemVersion: {
+    importCodeSystemVersionGeneric: {
         parameters: {
             query?: never;
             header?: never;
@@ -2376,9 +2396,14 @@ export interface operations {
                 "multipart/form-data": {
                     /**
                      * Format: binary
-                     * @description The main file with the concepts to import. For LOINC use the file LoincTable/Loinc.csv. For GENERIC use a CSV file that has the columns "code", "display" and "status" and an optional column "description".
+                     * @description The main CSV file with the concepts to import. Required columns are "code", "display" and "status". The column "description" is optional. "status" has to be one of ["active" | "trial" | "deprecated" | "discouraged"]. If the code system does not support a status, use "active" for all concepts.
                      */
                     main: string;
+                    /**
+                     * Format: binary
+                     * @description An optional CSV file with replace by / map to hints for deprecated / deleted concepts. Required columns are "code" and "map_to". The columns "equivalence" and "comment" are optional. "map_to" is the code of the concept that should replace the deprecated / deleted concept "code". "equivalence" has to be one of ["relatedto" | "equivalent" | "equal" | "wider" | "subsumes" | "narrower" | "specializes" | "inexact" | "unmatched" | "disjoint"] or empty.
+                     */
+                    replace_by?: string;
                 };
             };
         };
@@ -2406,7 +2431,59 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
-    importCodeSystemVersionJson: {
+    importCodeSystemVersionLoinc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The main CSV file with the concepts to import. Use the file LoincTable/Loinc.csv.
+                     */
+                    loinc: string;
+                    /**
+                     * Format: binary
+                     * @description The CSV file with replace by / map to hints for deprecated / deleted concepts. Use the file LoincTable/MapTo.csv.
+                     */
+                    map_to: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersionIcd: {
         parameters: {
             query?: never;
             header?: never;

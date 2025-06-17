@@ -109,40 +109,69 @@ export const useDeleteCodeSystemVersionQuery = (codesystemId: number, codesystem
   return useQueryWithPathParam(state, fetchOptions, method, path)
 }
 
-type ImportCodeSystemVersionResponse =
-  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import']['post']['responses']['202']['content']['application/json']
+type ImportCodeSystemVersionGenericResponse =
+  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic']['post']['responses']['202']['content']['application/json']
 
-export const useImportCodeSystemVersionQuery = (codesystemId: number, codesystemVersionId: number, main_file: File) => {
-  const state = ref<ImportCodeSystemVersionResponse>()
+export const useImportCodeSystemVersionGenericQuery = (codesystemId: number, codesystemVersionId: number, mainFile: File, replaceByFile: File | null) => {
+  const state = ref<ImportCodeSystemVersionGenericResponse>()
   const formData = new FormData()
-  formData.append('main', main_file)
+  formData.append('main', mainFile)
+  if (replaceByFile) {
+    formData.append('replace_by', replaceByFile)
+  }
 
-  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import']['post']> = {
+  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic']['post']> = {
     params: {
       path: { 'codesystem_id': codesystemId, 'codesystem-version_id': codesystemVersionId }
     },
-    body: formData as unknown as { main: string }
+    body: formData as unknown as { main: string, replace_by?: string }
   }
-  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import'
+  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic'
   const method = Method.POST
 
   return useQueryWithPathParam(state, fetchOptions, method, path)
 }
 
-type ImportCodeSystemVersionJsonResponse =
-  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json']['post']['responses']['202']['content']['application/json']
+type ImportCodeSystemVersionLoincResponse =
+  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc']['post']['responses']['202']['content']['application/json']
 
-export const useImportCodeSystemVersionJsonQuery = async (codesystemId: number, codesystemVersionId: number, main_file: File) => {
-  const state = ref<ImportCodeSystemVersionJsonResponse>()
-  const jsonBody = await main_file.text().then(text => JSON.parse(text) as Record<string, never>)
+export const useImportCodeSystemVersionLoincQuery = (codesystemId: number, codesystemVersionId: number, mainFile: File, replaceByFile: File) => {
+  const state = ref<ImportCodeSystemVersionLoincResponse>()
+  const formData = new FormData()
+  formData.append('loinc', mainFile)
+  formData.append('map_to', replaceByFile)
 
-  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json']['post']> = {
+  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc']['post']> = {
+    params: {
+      path: { 'codesystem_id': codesystemId, 'codesystem-version_id': codesystemVersionId }
+    },
+    body: formData as unknown as { loinc: string, map_to: string }
+  }
+  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc'
+  const method = Method.POST
+
+  return useQueryWithPathParam(state, fetchOptions, method, path)
+}
+
+type ImportCodeSystemVersionIcdResponse =
+  paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm']['post']['responses']['202']['content']['application/json']
+
+export const useImportCodeSystemVersionIcdQuery = async (codesystemId: number, codesystemVersionId: number, codeSystemFile: File, conceptMapFile: File) => {
+  const state = ref<ImportCodeSystemVersionIcdResponse>()
+  const codeSystemData = await codeSystemFile.text().then(text => JSON.parse(text) as Record<string, never>)
+  const conceptMapData = await conceptMapFile.text().then(text => JSON.parse(text) as Record<string, never>)
+  const jsonBody = {
+    codeSystem: codeSystemData,
+    conceptMap: conceptMapData
+  } as unknown as Record<string, never>
+
+  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm']['post']> = {
     params: {
       path: { 'codesystem_id': codesystemId, 'codesystem-version_id': codesystemVersionId }
     },
     body: jsonBody
   }
-  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import-json'
+  const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm'
   const method = Method.POST
 
   return useQueryWithPathParam(state, fetchOptions, method, path)

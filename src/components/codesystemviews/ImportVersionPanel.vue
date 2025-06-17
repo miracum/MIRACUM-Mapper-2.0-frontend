@@ -1,40 +1,34 @@
 <template>
     <Panel class="grid-item" header="Import Version">
         <div class="mb-3">
-            Import concepts to the version <strong>{{ version.version_name }}</strong> of code system <strong>{{ codesystem.name }}</strong>.
+            Import concepts to the version <strong>{{ props.version.version_name }}</strong> of code system <strong>{{ props.codesystem.name }}</strong>.
         </div>
         <div>
-            Code system type: <strong>{{ codesystem.type }}</strong>
+            Code system type: <strong>{{ props.codesystem.type }}</strong>
             <br />
-            Version release date: <strong>{{ version.release_date }}</strong>
+            Version release date: <strong>{{ props.version.release_date }}</strong>
             <br />
         </div>
-        <div v-if="!uploading">
-            <div class="flex mt-4">
-                <FileUpload ref="main_file" :choose-label="mainLabel" mode="basic" :accept="mainAccept" />
-            </div>
-            <div class="flex mt-4">
-                <Button label="Import" @click="upload" severity="secondary" />
-            </div>
+        <div v-show="!uploading && !uploaded">
+            <ImportButtonsGeneric v-if="props.codesystem.type === 'GENERIC'" :codesystem="props.codesystem" :version="props.version" @upload=onUpload />
+            <ImportButtonsLoinc v-else-if="codesystem.type === 'LOINC'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
+            <ImportButtonsIcd v-else-if="codesystem.type === 'ICD_10_GM'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
         </div>
-        <div v-else class="mt-4">
-            <div v-if="!uploaded">
-                Please wait while the file is being uploaded. This may take some minutes depending on the size of the file.
-                <ProgressBar mode="indeterminate" class="mt-2" style="height: 6px"/>
-            </div>
-            <div v-else>
-                The file has been uploaded successfully. You can see the import status in the import status panel.
-            </div>
+        <div v-if="uploading" class="mt-4">
+            Please wait while the file is being uploaded. This may take a while depending on the size of the file.
+            <ProgressBar mode="indeterminate" class="mt-2" style="height: 6px"/>
+        </div>
+        <div v-if="uploaded" class="mt-4">
+            The file has been uploaded successfully. You can see the import status in the import status panel.
         </div>
     </Panel>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { GetCodeSystemVersion, GetCodeSystem } from '@/stores/codesystem';
-import { useToast } from 'primevue/usetoast';
+import { ref, watch } from 'vue';
 import ProgressBar from 'primevue/progressbar';
-
+import type { GetCodeSystemVersion, GetCodeSystem } from '@/stores/codesystem';
+import ImportButtonsGeneric from './ImportButtonsGeneric.vue';
 
 const props = defineProps({
     codesystem: {
@@ -45,53 +39,38 @@ const props = defineProps({
         type: Object as () => GetCodeSystemVersion,
         required: true
     },
-    onUpload: {
-        type: Function,
-        required: true
-    },
-    uploading: {
+    uploadError: {
         type: Boolean,
         required: true
-    },
-    uploaded: {
-        type: Boolean,
-        required: true
-    },
+    }
 });
 
-const toast = useToast();
+const emit = defineEmits<{
+    (e: 'upload', uploading: boolean, uploaded: boolean, error: boolean): void
+}>();
 
-const mainAccept = ref();
-const mainLabel = ref();
-switch (props.codesystem.type) {
-    case 'LOINC':
-        mainAccept.value = 'text/csv';
-        mainLabel.value = 'CSV-File';
-        break;
-    case 'ICD_10_GM':
-        mainAccept.value = 'application/json';
-        mainLabel.value = 'FHIR/JSON-File';
-        break;
-    case 'GENERIC':
-        mainAccept.value = 'text/csv';
-        mainLabel.value = 'CSV-File';
-        break;
-    default:
-        mainAccept .value = 'text/csv';
-        mainLabel.value = 'CSV-File';
-}
+const uploading = ref(false);
+const uploaded = ref(false);
 
-
-
-const main_file = ref();
-
-const upload = () => {
-    if (!main_file.value || !main_file.value.files || main_file.value.files.length === 0) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'No files selected', life: 10000 });
-    } else {
-        props.onUpload(main_file.value.files[0])
+const onUpload = (uploadingEvent: boolean, uploadedEvent: boolean, errorEvent: boolean) => {
+    if (errorEvent) {
+        uploading.value = false;
+        uploaded.value = false;
+        emit('upload', false, false, true);
+        return;
     }
+
+    uploading.value = uploadingEvent;
+    uploaded.value = uploadedEvent;
+    emit('upload', uploading.value, uploaded.value, false);
 };
+
+watch(() => props.uploadError, (newVal) => {
+    if (newVal) {
+        uploading.value = false;
+        uploaded.value = false;
+    }
+});
 
 </script>
 
