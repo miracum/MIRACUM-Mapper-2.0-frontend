@@ -1,9 +1,25 @@
 <template>
-    <div class="flex mt-4">
+    <div class="flex mt-4 gap-2 align-items-center">
+        <Button v-if="main_file && main_file.files && main_file.files.length > 0" icon="pi pi-trash" severity="danger" @click="main_file.clear()" />
         <FileUpload ref="main_file" choose-label="CodeSystem-icd10gm-<version>.json *" mode="basic" accept="application/json" />
+        <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleMain" />
+        <Popover ref="main_info" style="max-width: 75%">
+            <p>Please select the main file that contains the concepts.</p>
+            <p>It must be a JSON file according to the FHIR R4 standard.</p>
+            <p>Typically the filename starts with "CodeSystem-icd10gm".</p>
+            <Message severity="error" class="mt-3">Required</Message>
+        </Popover>
     </div>
-    <div class="flex mt-2">
+    <div class="flex mt-2 gap-2 align-items-center">
+        <Button v-if="replace_by_file && replace_by_file.files && replace_by_file.files.length > 0" icon="pi pi-trash" severity="danger" @click="replace_by_file.clear()" />
         <FileUpload ref="replace_by_file" choose-label="ConceptMap-icd10gm-<version>.json *" mode="basic" accept="application/json" />
+        <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleReplaceBy" />
+        <Popover ref="replace_by_info" style="max-width: 75%">
+            <p>Please select the file that contains the replace by / map to hints for deleted concepts.</p>
+            <p>It must be a JSON file according to the FHIR R4 standard.</p>
+            <p>Typically the filename starts with "ConceptMap-icd10gm".</p>
+            <Message severity="error" class="mt-3">Required</Message>
+        </Popover>
     </div>
     <div class="flex mt-4">
         <Button label="Import" @click="upload" severity="secondary" />
@@ -13,6 +29,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import Popover from 'primevue/popover';
 import { useImportCodeSystemVersionIcdQuery } from '@/composables/queries/codesystem-query';
 import type { GetCodeSystem, GetCodeSystemVersion } from '@/stores/codesystem';
 
@@ -57,6 +74,16 @@ const upload = async () => {
         });
         execute();
     }
+};
+
+const main_info = ref();
+const toggleMain = (payload: MouseEvent) => {
+    main_info.value.toggle(payload);
+};
+
+const replace_by_info = ref();
+const toggleReplaceBy = (payload: MouseEvent) => {
+    replace_by_info.value.toggle(payload);
 };
 
 </script>

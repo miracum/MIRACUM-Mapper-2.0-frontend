@@ -1,9 +1,28 @@
 <template>
-    <div class="flex mt-4">
+    <div class="flex mt-4 gap-2 align-items-center">
+        <Button v-if="main_file && main_file.files && main_file.files.length > 0" icon="pi pi-trash" severity="danger" @click="main_file.clear()" />
         <FileUpload ref="main_file" choose-label="main file (.csv) *" mode="basic" accept="text/csv" />
+        <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleMain" />
+        <Popover ref="main_info" style="max-width: 75%">
+            <p>Please select the main csv file that contains the concepts.</p>
+            <p>Required columns: "code", "display", "status"</p>
+            <p>The column "status" must contain one of: "active", "trial", "deprecated", "discouraged"</p>
+            <p>Optional columns: "description"</p>
+            <Message severity="error" class="mt-3">Required</Message>
+        </Popover>
     </div>
-    <div class="flex mt-2">
+    <div class="flex mt-2 gap-2 align-items-center">
+        <Button v-if="replace_by_file && replace_by_file.files && replace_by_file.files.length > 0" icon="pi pi-trash" severity="danger" @click="replace_by_file.clear()" />
         <FileUpload ref="replace_by_file" choose-label="replace by file (.csv)" mode="basic" accept="text/csv" />
+        <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleReplaceBy" />
+        <Popover ref="replace_by_info" style="max-width: 75%">
+            <p>Please select the csv file that contains the replace by / map to hints for deleted / deprecated concepts.</p>
+            <p>Required columns: "code", "map_to"</p>
+            <p>The column "map_to" contains the code of the concept that should replace the deleted / deprecated concept "code".</p>
+            <p>Optional columns: "equivalence", "comment"</p>
+            <p>The column "equivalence" can be empty or contain one of: "relatedto", "equivalent", "equal", "wider", "subsumes", "narrower", "specializes", "inexact", "unmatched", "disjoint"</p>
+            <Message severity="success" class="mt-3">Optional</Message>
+        </Popover>
     </div>
     <div class="flex mt-4">
         <Button label="Import" @click="upload" severity="secondary" />
@@ -13,6 +32,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import Popover from 'primevue/popover';
 import { useImportCodeSystemVersionGenericQuery } from '@/composables/queries/codesystem-query';
 import type { GetCodeSystem, GetCodeSystemVersion } from '@/stores/codesystem';
 
@@ -59,6 +79,16 @@ const upload = () => {
         });
         execute();
     }
+};
+
+const main_info = ref();
+const toggleMain = (payload: MouseEvent) => {
+    main_info.value.toggle(payload);
+};
+
+const replace_by_info = ref();
+const toggleReplaceBy = (payload: MouseEvent) => {
+    replace_by_info.value.toggle(payload);
 };
 
 </script>
