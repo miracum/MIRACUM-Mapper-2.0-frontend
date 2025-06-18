@@ -1,5 +1,5 @@
 <template>
-    <MultiSelect :options="statusElements" placeholder="Any" optionLabel="label" optionValue="value"
+    <MultiSelect :options="statusFullElements" placeholder="Any" optionLabel="label" optionValue="value"
         :maxSelectedLabels="3" display="chip">
         <template #option="slotProps">
             <Tag :value="slotProps.option.label" :severity="slotProps.option.severity" />
@@ -9,6 +9,6 @@
 
 <script setup lang="ts">
 
-import { statusElements } from '../../utils/selectElement';
+import { statusFullElements } from '../../utils/selectElement';
 
 </script>

@@ -48,6 +48,25 @@ export const getStatusSeverity = (value: string): string => {
   return getSeverity(statusElements, value)
 }
 
+
+/*
+utils for status with migrated (not selectable by user)
+*/
+export const statusFullElements: SelectElement[] = [
+  { label: 'Active', value: 'active', severity: 'success' },
+  { label: 'Inactive', value: 'inactive', severity: 'danger' },
+  { label: 'Pending', value: 'pending', severity: 'warn' },
+  { label: 'Migrated', value: 'migrated', severity: 'info' }
+]
+
+export const getStatusFullLabel = (value: string): string => {
+  return getLabel(statusFullElements, value)
+}
+
+export const getStatusFullSeverity = (value: string): string => {
+  return getSeverity(statusFullElements, value)
+}
+
 /*
 utils for role
 */

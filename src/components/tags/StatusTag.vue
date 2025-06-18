@@ -1,10 +1,10 @@
 <template>
-    <Tag :value="getStatusLabel(props.value)" :severity="getStatusSeverity(props.value)" />
+    <Tag :value="getStatusFullLabel(props.value)" :severity="getStatusFullSeverity(props.value)" />
 </template>
 
 <script setup lang="ts">
 
-import { getStatusLabel, getStatusSeverity } from '@/utils/selectElement';
+import { getStatusFullLabel, getStatusFullSeverity } from '@/utils/selectElement';
 
 const props = defineProps({
     value: {
