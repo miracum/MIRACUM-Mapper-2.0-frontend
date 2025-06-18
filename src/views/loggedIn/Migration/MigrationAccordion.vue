@@ -49,6 +49,19 @@
                         }
                     }" />
                 </div>
+                <div v-if="item.replace_by.length !== 0" class="mb-3">
+                    <strong>Suggested new concepts:</strong>
+                    <ul class="circle-list">
+                        <li v-for="replace in item.replace_by" :key="replace.concept.id">
+                            <span class="flex align-items-center gap-3">
+                                <strong>{{ replace.concept.code }}</strong>
+                                <StatusTag :value="replace.concept.status" />
+                                <Tag v-if="replace.equivalence" :value="replace.equivalence" />
+                                <span v-if="replace.comment"> Comment: {{ replace.comment }}</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
                 <div v-if="item.selected == 'new'" class="mb-3">
                     <strong class="me-3">New concept:</strong>
                     <Button v-if="item.selected_concept" icon="pi pi-pencil" :label="item.selected_concept.code" severity="success" @click="newConceptDialogVisible = true; conceptIndex = index; mappingIndex = -1" />
@@ -137,10 +150,39 @@ import NewConceptDialog from './NewConceptDialog.vue';
 
 import { computed, reactive, ref, type PropType, type Reactive, type Ref } from 'vue';
 import { useProjectStore, type CodeSystemRole } from '@/stores/project';
-import { type Concept } from '@/stores/codesystem';
+import { type Concept, type ReplaceBy } from '@/stores/codesystem';
 import { type MigrateMapping, type MigrationChanges } from '@/composables/queries/project-migration-query';
 import { type Mapping } from '@/stores/mappings';
 import { getConceptOptions, getMappingOptions } from '@/utils/migrationOptions';
+import StatusTag from '@/components/tags/StatusTag.vue';
+
+type Changes = {
+    old_concept: Concept;
+    new_concept?: Concept;
+    mappings: Mapping[];
+    replace_by: ReplaceBy[];
+}[];
+
+type TransformedChanges = {
+    old_concept: Concept;
+    new_concept?: Concept;
+    selected: Ref;
+    selected_concept: Concept | undefined;
+    mappings: {
+        comment: string;
+        status: string;
+        equivalence: string;
+        id: number;
+        selected: Ref;
+        selected_concept: Concept | undefined;
+        [key: string]: any; // This allows for dynamic properties based on roles
+    }[];
+    replace_by: {
+        concept: Concept;
+        equivalence?: string;
+        comment?: string;
+    }[];
+}[];
 
 const props = defineProps({
     migrationChanges: {
@@ -163,7 +205,7 @@ const project = projectStore.currentProjectDetails!;
 const conceptOptions = getConceptOptions(props.changesType);
 const mappingOptions = getMappingOptions(props.changesType);
 
-const changes = computed((): { old_concept: Concept; mappings: Mapping[]; new_concept?: Concept }[] => {
+const changes = computed((): Changes => {
     switch (props.changesType) {
         case 'deleted':
             return props.migrationChanges.deleted;
@@ -182,7 +224,7 @@ const changes = computed((): { old_concept: Concept; mappings: Mapping[]; new_co
 
 const tranformedChanges = transformChanges(changes.value, project.code_system_roles);
 
-function transformChanges(changes: { old_concept: Concept; mappings: Mapping[]; new_concept?: Concept }[], roles: CodeSystemRole[]): Reactive<{ old_concept: Concept; new_concept?: Concept; selected: Ref, selected_concept: Concept | undefined; mappings: {comment: string; status: string; equivalence: string; id: number; selected: Ref; selected_concept: Concept | undefined; [key: string]: any}[] }[]> {
+function transformChanges(changes: Changes, roles: CodeSystemRole[]): Reactive<TransformedChanges> {
     return reactive(changes.map(change => {
         return {
             old_concept: change.old_concept,
@@ -213,7 +255,14 @@ function transformChanges(changes: { old_concept: Concept; mappings: Mapping[]; 
                     }
                 })
                 return flattened;
-            })
+            }),
+            replace_by: change.replace_by.map(replace => {
+                return {
+                    concept: replace.map_to,
+                    equivalence: replace.equivalence,
+                    comment: replace.comment,
+                };
+            }),
         };
     }));
 }
@@ -274,3 +323,13 @@ defineExpose({
 });
 
 </script>
+
+<style scoped>
+.circle-list {
+    list-style-type: disc;
+    padding-left: 3rem;
+}
+.circle-list li {
+    margin-top: 0.5rem;
+}
+</style>
