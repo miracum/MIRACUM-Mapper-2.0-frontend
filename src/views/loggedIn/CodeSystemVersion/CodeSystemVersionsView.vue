@@ -138,6 +138,7 @@ const deleteSelectedVersion = () => {
         const name = selectedVersion.value.version_name;
         const typeName = 'Version';
         confirm.require(getDeleteConfirmationOptions(typeName, name, () => {
+            toast.add({ severity: 'info', summary: 'Deleting', detail: `Deleting ${typeName} ${name}. This may take a while...`, life: 10000 });
             const { isFetching, error } = store.deleteVersion(codeSystemId, id);
             watch(isFetching, (newVal) => {
                 if (!newVal) {

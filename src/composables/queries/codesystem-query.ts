@@ -106,7 +106,7 @@ export const useDeleteCodeSystemVersionQuery = (codesystemId: number, codesystem
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}'
   const method = Method.DELETE
 
-  return useQueryWithPathParam(state, fetchOptions, method, path)
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 60 * 1000) // 1 hour timeout
 }
 
 type ImportCodeSystemVersionGenericResponse =
