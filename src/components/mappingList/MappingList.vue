@@ -269,11 +269,13 @@ import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
 import ConceptStatusMultiSelect from '@/components/multiselects/ConceptStatusMultiSelect.vue';
 import DatePicker from 'primevue/datepicker';
 import Popover from 'primevue/popover';
+import { useConfirm } from 'primevue/useconfirm';
 import { userHasPermission, MappingCreatePermission, MappingDeletePermission, MappingUpdatePermission, getPermissionTooltip } from '@/lib/permissions';
 import { useAuthStore } from '@/stores/auth';
 import PermissionRoleDialog from '@/views/loggedIn/Project/PermissionRoleDialog.vue';
 import { useRouter } from 'vue-router';
 import ConceptStatusTag from '../tags/ConceptStatusTag.vue';
+import { getNonActiveConceptOptions } from '@/utils/popupOptions';
 
 const permissionRoleDialog = ref(false);
 
@@ -323,6 +325,7 @@ const props = defineProps({
 
 const toast = useToast();
 const router = useRouter();
+const confirm = useConfirm();
 const hasMappings = computed(() => transformedMappings.value.length > 0);
 
 // pass datatable content to parent component
@@ -440,8 +443,24 @@ const disableDeleteButton = computed(() => isRowEditing.value.length > 0);
 const editingRows = ref([]);
 const onRowEditSave = (event: any) => {
     let { newData, index } = event;
-    updateMapping(newData, index);
-    isRowEditing.value = isRowEditing.value.filter(row => row !== index);
+
+    let active = true;
+    for (const role of props.project.code_system_roles) {
+        const status = newData[`status_${role.id}`];
+        if (status && status !== '' && status !== 'active') {
+            active = false;
+        }
+    }
+
+    if (active) {
+        updateMapping(newData, index);
+        isRowEditing.value = isRowEditing.value.filter(row => row !== index);
+    } else {
+        confirm.require(getNonActiveConceptOptions(() => {
+            updateMapping(newData, index);
+            isRowEditing.value = isRowEditing.value.filter(row => row !== index);
+        }));
+    }
 }
 const onRowEditInit = (event: any) => {
     isRowEditing.value.push(event.index);

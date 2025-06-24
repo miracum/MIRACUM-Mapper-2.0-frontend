@@ -17,6 +17,19 @@ export function getDeleteConfirmationOptions(typeName: string, name: string, acc
     }
 }
 
+export function getNonActiveConceptOptions(accept: () => void) {
+    return <ConfirmationOptions>{
+        message: `You have selected one or more concepts that are not "active". It is recommended to only use active concepts in mappings. Are you sure you want to continue?`,
+        header: `Non-active concepts selected`,
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'No',
+        acceptLabel: 'Yes',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        acceptClass: 'p-button-success',
+        accept: accept,
+    }
+}
+
 export function getDeleteToastOptions(error: Ref<AppError | undefined>, typeName: string, name: string, life: number = 10000) {
     return getToastOptions('delete', 'deleted', error, typeName, name, life);
 }

@@ -70,8 +70,10 @@
 
 <script setup lang="ts">
 import { ref, watch, type PropType } from 'vue';
+import { useConfirm } from 'primevue/useconfirm';
 import { useProjectStore } from '@/stores/project';
 import { on_item_select_autocomplete, validateFields } from '@/utils/autocomplete';
+import { getNonActiveConceptOptions } from '@/utils/popupOptions';
 
 // input of the component
 const props = defineProps({
@@ -94,6 +96,7 @@ const props = defineProps({
 });
 
 const projectStore = useProjectStore();
+const confirm = useConfirm();
 
 
 // handle visibility of the dialog
@@ -122,6 +125,12 @@ function resetForm() {
     };
 }
 
+function localSaveMapping() {
+    localVisible.value = false;
+    props.saveMapping(currentMapping.value);
+    resetForm();
+}
+
 const currentMapping = ref({
     equivalence: null,
     status: null,
@@ -142,9 +151,23 @@ const submitMapping = () => {
     if ((projectStore.currentProjectDetails?.equivalence_required && !currentMapping.value.equivalence) || (projectStore.currentProjectDetails?.status_required && !currentMapping.value.status)) {
         return;
     }
-    localVisible.value = false;
-    props.saveMapping(currentMapping.value);
-    resetForm();
+
+    let active = true;
+    for (const role of projectStore.currentProjectDetails?.code_system_roles || []) {
+        const status = currentMapping.value['status_' + role.id];
+        if (status && status !== '' && status !== 'active') {
+            active = false;
+            break;
+        }
+    }
+
+    if (active) {
+        localSaveMapping();
+    } else {
+        confirm.require(getNonActiveConceptOptions(() => {
+            localSaveMapping();
+        }));
+    }
 };
 
 </script>
