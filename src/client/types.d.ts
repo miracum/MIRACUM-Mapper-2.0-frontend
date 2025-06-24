@@ -861,6 +861,7 @@ export interface components {
             /** Format: int32 */
             id: number;
             imported: boolean;
+            project_uses: string[];
         };
         ImportStatus: {
             progress: number;
@@ -2572,12 +2573,12 @@ export interface operations {
                 "multipart/form-data": {
                     /**
                      * Format: binary
-                     * @description The .txt file with the concepts to import. Use the file sct2_Concept_Snapshot_....txt.
+                     * @description The .txt file with the concepts to import. Use the file Snapshot/Terminology/sct2_Concept_Snapshot_....txt.
                      */
                     concept: string;
                     /**
                      * Format: binary
-                     * @description The .txt file with the descriptions to import. Use the file sct2_Description_Snapshot_....txt.
+                     * @description The .txt file with the descriptions to import. Use the file Snapshot/Terminology/sct2_Description_Snapshot_....txt.
                      */
                     description: string;
                 };

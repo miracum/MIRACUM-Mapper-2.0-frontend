@@ -22,8 +22,8 @@
                                         :disabled="!selectedVersion"
                                         v-tooltip.top="!selectedVersion ? 'Please select a version' : ''" />
                                     <Button label="Delete" icon="pi pi-trash" severity="danger" @click="deleteSelectedVersion"
-                                        :disabled="!selectedVersion"
-                                        v-tooltip.top="!selectedVersion ? 'Please select a version' : ''" />
+                                        :disabled="!selectedVersion || selectedVersion.project_uses.length > 0"
+                                        v-tooltip.top="!selectedVersion || selectedVersion.project_uses.length > 0 ? 'Please select a version that is not used in any project' : ''" />
                                     <Button label="Import concepts" icon="pi pi-upload" severity="info" @click="importSelectedVersion"
                                         :disabled="!selectedVersion || selectedVersion.imported"
                                         v-tooltip.top="!selectedVersion || selectedVersion.imported ? 'Please select a version that is not already imported' : ''" />
@@ -40,7 +40,26 @@
                                 <span v-else>No</span>
                             </template>
                         </Column>
+                        <Column field="project_uses" header="Is used">
+                            <template #body="slotProps">
+                                <span v-if="slotProps.data.project_uses.length > 0">
+                                    Yes
+                                    <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleUses($event, slotProps.data)" />
+                                </span>
+                                <span v-else>No</span>
+                            </template>
+                        </Column>
                     </DataTable>
+                    <Popover ref="uses_info">
+                        <div v-if="uses_version">
+                            <strong>Used in this projects:</strong>
+                            <ul>
+                                <li v-for="use in uses_version.project_uses" :key="use">
+                                    {{ use }}
+                                </li>
+                            </ul>
+                        </div>
+                    </Popover>
                     <!-- This message is shown if there are no mappings to show. -->
                     <Message v-if="!hasVersions" severity="warn" :closable="false">No data to show yet</Message>
                 </Panel>
@@ -53,7 +72,8 @@
 import { useRouter } from 'vue-router';
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
+import Popover from 'primevue/popover';
 import { type GetCodeSystemVersion, useCodeSystemStore } from '@/stores/codesystem';
 import AddVersionDialog from './AddVersionDialog.vue';
 import EditVersionDialog from './EditVersionDialog.vue';
@@ -135,6 +155,17 @@ const importSelectedVersion = () => {
   if (selectedVersion.value) {
     router.push(`/codesystems/${codeSystemId}/import/${selectedVersion.value.id}`);
   }
+};
+
+const uses_info = ref();
+const uses_version = ref();
+
+const toggleUses = (event: MouseEvent, version: GetCodeSystemVersion) => {
+    uses_info.value.hide();
+    uses_version.value = version;
+    nextTick(() => {
+        uses_info.value.show(event);
+    });
 };
 
 </script>
