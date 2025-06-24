@@ -109,6 +109,7 @@ export const codesystemTypeElements: SelectElement[] = [
   { label: 'GENERIC', value: 'GENERIC', severity: 'info' },
   { label: 'LOINC', value: 'LOINC', severity: 'info' },
   { label: 'ICD_10_GM', value: 'ICD_10_GM', severity: 'info' },
+  { label: 'SNOMED_CT', value: 'SNOMED_CT', severity: 'info' },
 ]
 
 export const getCodesystemTypeLabel = (value: string): string => {

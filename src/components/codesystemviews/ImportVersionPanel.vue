@@ -11,8 +11,9 @@
         </div>
         <div v-show="!uploading && !uploaded">
             <ImportButtonsGeneric v-if="props.codesystem.type === 'GENERIC'" :codesystem="props.codesystem" :version="props.version" @upload=onUpload />
-            <ImportButtonsLoinc v-else-if="codesystem.type === 'LOINC'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
-            <ImportButtonsIcd v-else-if="codesystem.type === 'ICD_10_GM'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
+            <ImportButtonsLoinc v-else-if="props.codesystem.type === 'LOINC'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
+            <ImportButtonsIcd v-else-if="props.codesystem.type === 'ICD_10_GM'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
+            <ImportButtonsSnomed v-else-if="props.codesystem.type === 'SNOMED_CT'" :codesystem="props.codesystem" :version="props.version" @upload="onUpload" />
         </div>
         <div v-if="uploading" class="mt-4">
             Please wait while the file is being uploaded. This may take a while depending on the size of the file.

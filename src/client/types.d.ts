@@ -581,6 +581,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a SNOMED CT code system version by ID
+         * @description Import concepts for a SNOMED code system version by ID. The concepts are imported from the files sct2_Concept_Snapshot_<version>.txt and sct2_Description_Snapshot_....txt. The files can be uploaded directly without a conersion. For other code system types use the other endpoints.
+         */
+        post: operations["importCodeSystemVersionSnomed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/import-status": {
         parameters: {
             query?: never;
@@ -763,7 +783,7 @@ export interface components {
             /** @enum {string} */
             equivalence?: "related-to" | "equivalent" | "source-is-narrower-than-target" | "source-is-broader-than-target" | "not-related";
             /** @enum {string} */
-            status?: "active" | "inactive" | "pending";
+            status?: "active" | "inactive" | "pending" | "migrated";
             comment?: string;
             elements?: components["schemas"]["Element"][];
         };
@@ -814,7 +834,7 @@ export interface components {
             uri: string;
             name: string;
             /** @enum {string} */
-            type: "GENERIC" | "LOINC" | "ICD_10_GM";
+            type: "GENERIC" | "LOINC" | "ICD_10_GM" | "SNOMED_CT";
             title?: string;
             description?: string;
             author?: string;
@@ -2509,6 +2529,58 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersionSnomed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the concepts to import. Use the file sct2_Concept_Snapshot_....txt.
+                     */
+                    concept: string;
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the descriptions to import. Use the file sct2_Description_Snapshot_....txt.
+                     */
+                    description: string;
+                };
             };
         };
         responses: {

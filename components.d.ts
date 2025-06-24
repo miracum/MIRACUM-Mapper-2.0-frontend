@@ -80,6 +80,7 @@ declare module 'vue' {
     ImportButtonsGeneric: typeof import('./src/components/codesystemviews/ImportButtonsGeneric.vue')['default']
     ImportButtonsIcd: typeof import('./src/components/codesystemviews/ImportButtonsIcd.vue')['default']
     ImportButtonsLoinc: typeof import('./src/components/codesystemviews/ImportButtonsLoinc.vue')['default']
+    ImportButtonsSnomed: typeof import('./src/components/codesystemviews/ImportButtonsSnomed.vue')['default']
     ImportVersionLockedPanel: typeof import('./src/components/codesystemviews/ImportVersionLockedPanel.vue')['default']
     ImportVersionPanel: typeof import('./src/components/codesystemviews/ImportVersionPanel.vue')['default']
     ImportVersionStatusPanel: typeof import('./src/components/codesystemviews/ImportVersionStatusPanel.vue')['default']
