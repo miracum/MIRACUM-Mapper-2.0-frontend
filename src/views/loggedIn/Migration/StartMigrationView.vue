@@ -39,7 +39,7 @@
                 </Column>
                 <Column class="w-24">
                 <template #body="{ data }">
-                    <Button @click="migrate(role, data)" severity="success" rounded>Migrate</Button>
+                    <Button @click="migrate(role, data)" severity="success" :disabled="!data.imported" v-tooltip.top="!data.imported ? 'The concepts of this version have to be imported first' : ''" rounded>Migrate</Button>
                 </template>
             </Column>
             </DataTable>
