@@ -58,6 +58,7 @@
                                 <StatusTag :value="replace.concept.status" />
                                 <Tag v-if="replace.equivalence" :value="replace.equivalence" />
                                 <span v-if="replace.comment"> Comment: {{ replace.comment }}</span>
+                                <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleConceptInfo($event, replace.concept)" />
                             </span>
                         </li>
                     </ul>
@@ -136,6 +137,12 @@
                 </DataTable>
             </AccordionContent>
         </AccordionPanel>
+        <Popover ref="conceptInfo" :style="{ maxWidth: '50%' }">
+            <div v-if="conceptInfoDetails">
+                <p><strong>Meaning: </strong>{{ conceptInfoDetails.meaning }}</p>
+                <p v-if="conceptInfoDetails.description"><strong>Description: </strong>{{ conceptInfoDetails.description }}</p>
+            </div>
+        </Popover>
     </Accordion>
     <NewConceptDialog :roleId="props.roleId" :conceptIndex="conceptIndex" :mapping-index="mappingIndex" :visible="newConceptDialogVisible" @concept-select="setConcept" @update:visible="newConceptDialogVisible = $event" />
 </template>
@@ -146,9 +153,10 @@ import AccordionPanel from 'primevue/accordionpanel';
 import AccordionHeader from 'primevue/accordionheader';
 import AccordionContent from 'primevue/accordioncontent';
 import Select from 'primevue/select';
+import Popover from 'primevue/popover';
 import NewConceptDialog from './NewConceptDialog.vue';
 
-import { computed, reactive, ref, type PropType, type Reactive, type Ref } from 'vue';
+import { computed, nextTick, reactive, ref, type PropType, type Reactive, type Ref } from 'vue';
 import { useProjectStore, type CodeSystemRole } from '@/stores/project';
 import { type Concept, type ReplaceBy } from '@/stores/codesystem';
 import { type MigrateMapping, type MigrationChanges } from '@/composables/queries/project-migration-query';
@@ -277,6 +285,18 @@ const setConcept = (conceptIndex: number, mappingIndex: number, concept: Concept
     } else {
         tranformedChanges[conceptIndex].mappings[mappingIndex].selected_concept = concept;
     }
+};
+
+const conceptInfo = ref();
+const conceptInfoDetails = ref();
+
+const toggleConceptInfo = (event: MouseEvent, concept: Concept) => {
+    conceptInfo.value.hide();
+    conceptInfoDetails.value = concept;
+    console.log('toggleConceptInfo', concept);
+    nextTick(() => {
+        conceptInfo.value.show(event);
+    });
 };
 
 const getMigrations = () => {

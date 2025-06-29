@@ -50,11 +50,11 @@
                             </template>
                         </Column>
                     </DataTable>
-                    <Popover ref="uses_info">
-                        <div v-if="uses_version">
+                    <Popover ref="usesInfo">
+                        <div v-if="usesVersion">
                             <strong>Used in this projects:</strong>
                             <ul>
-                                <li v-for="use in uses_version.project_uses" :key="use">
+                                <li v-for="use in usesVersion.project_uses" :key="use">
                                     {{ use }}
                                 </li>
                             </ul>
@@ -158,14 +158,14 @@ const importSelectedVersion = () => {
   }
 };
 
-const uses_info = ref();
-const uses_version = ref();
+const usesInfo = ref();
+const usesVersion = ref();
 
 const toggleUses = (event: MouseEvent, version: GetCodeSystemVersion) => {
-    uses_info.value.hide();
-    uses_version.value = version;
+    usesInfo.value.hide();
+    usesVersion.value = version;
     nextTick(() => {
-        uses_info.value.show(event);
+        usesInfo.value.show(event);
     });
 };
 
