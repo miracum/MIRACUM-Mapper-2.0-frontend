@@ -6,6 +6,7 @@
             </template>
             <template #icons>
                 <div class="flex space-x-2">
+                    <Button icon="pi pi-book" label="Concept Browser" severity="help" @click="openConceptBrowser()"/>
                     <Button icon="pi pi-check" label="Finish Migration" severity="success" @click="finishMigration(projectId)"
                         :disabled="!userHasPermission(StartMigrationPermission, projectStore, authStore) || !canBeFinished"
                         v-tooltip.top="addDisableTooltip(StartMigrationPermission)" />
@@ -115,7 +116,7 @@ import Popover from 'primevue/popover';
 import MigrationAccordion from '@/views/loggedIn/Migration/MigrationAccordion.vue';
 
 import { computed, ref, watch, type PropType } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { useCancelMigrationQuery, useFinishMigrationQuery, useGetMigrationChangesQuery, useMigrateMigrationQuery, type MigrateMapping, type MigrationChanges, type MigrationStatus } from '@/composables/queries/project-migration-query';
@@ -141,6 +142,7 @@ const authStore = useAuthStore();
 const confirm = useConfirm();
 const router = useRouter();
 const toast = useToast();
+const route = useRoute();
 
 const addDisablePermissionTooltip = (permission: ProjectRole[]) => {
   return getPermissionTooltip(permission, projectStore, authStore);
@@ -268,6 +270,10 @@ const cancelMigration = (projectId: number) => {
 
 const editProjectView = (projectId: number) => {
     router.push(`/projects/${projectId}/edit`);
+};
+
+const openConceptBrowser = () => {
+    window.open(`${window.location.origin}${route.fullPath}/browser?role_id=${codeSystemRole.id}&version_id=${codeSystemRole.system.next_version?.id}`, '_blank', `popup=yes,width=${window.innerWidth},height=${window.innerHeight},resizable=yes,scrollbars=yes`);
 };
 
 const deletedAccordion = ref();

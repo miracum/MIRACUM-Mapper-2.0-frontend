@@ -661,6 +661,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/codesystems/{codesystem_id}/new-concepts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all new concepts for a code system by ID
+         * @description Get all new concepts for a code system by ID. The concepts are ordered by the version, they are first appering in. Sorting can be specified by query parameters.
+         */
+        get: operations["getAllNewConcepts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -862,6 +882,9 @@ export interface components {
             id: number;
             imported: boolean;
             project_uses: string[];
+        };
+        CodeSystemVersionWithConcepts: components["schemas"]["CodeSystemVersion"] & {
+            concepts: components["schemas"]["Concept"][];
         };
         ImportStatus: {
             progress: number;
@@ -2712,6 +2735,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Concept"][];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getAllNewConcepts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersionWithConcepts"][];
                 };
             };
             400: components["responses"]["BadRequestError"];

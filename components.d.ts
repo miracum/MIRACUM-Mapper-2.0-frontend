@@ -41,7 +41,7 @@ declare module 'vue' {
     ConceptStatusMultiSelect: typeof import('./src/components/multiselects/ConceptStatusMultiSelect.vue')['default']
     ConceptStatusSelect: typeof import('./src/components/selects/ConceptStatusSelect.vue')['default']
     ConceptStatusTag: typeof import('./src/components/tags/ConceptStatusTag.vue')['default']
-    copy: typeof import('./src/components/codesystemviews/ImportButtonsLoinc copy.vue')['default']
+    copy: typeof import('./src/components/selects/CustomSelect copy.vue')['default']
     CreateMappingDialog: typeof import('./src/components/mappingList/CreateMappingDialog.vue')['default']
     CustomAutoComplete: typeof import('./src/components/autocomplete/CustomAutoComplete.vue')['default']
     CustomDropdown: typeof import('./src/components/selects/CustomSelect.vue')['default']

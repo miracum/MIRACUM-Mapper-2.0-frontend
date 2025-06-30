@@ -207,3 +207,19 @@ export const useGetImportStatusQuery = () => {
 
   return useQueryWithPathParam(state, null, method, path)
 }
+
+type GetAllNewConceptsResponse =
+  paths['/codesystems/{codesystem_id}/new-concepts']['get']['responses']['200']['content']['application/json']
+
+export const useGetAllNewConceptsQuery = (codesystemId: number) => {
+  const state = ref<GetAllNewConceptsResponse>()
+  const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/new-concepts']['get']> = {
+    params: {
+      path: { codesystem_id: codesystemId }
+    }
+  }
+  const path = '/codesystems/{codesystem_id}/new-concepts'
+  const method = Method.GET
+
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 1000) // 1 minute timeout
+}

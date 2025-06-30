@@ -20,6 +20,8 @@ export type ImportStatus = components['schemas']['ImportStatus']
 export type Concept = components['schemas']['Concept']
 export type ReplaceBy = components['schemas']['ConceptReplaceBy']
 
+export type CodeSystemVersionWithConcepts = components['schemas']['CodeSystemVersionWithConcepts']
+
 
 export const useCodeSystemStore = defineStore('codesystems', {
     state: (): CodeSystemState => ({

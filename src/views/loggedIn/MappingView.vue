@@ -11,6 +11,7 @@
               <!-- <Button text @click="permissionRoleDialog = true">
                 <PermissionTag :value="projectStore.projectRole" v-if="projectStore.projectRole" />
               </Button> -->
+              <Button icon="pi pi-book" label="Concept Browser" severity="help" @click="openConceptBrowser()"/>
               <Button icon="pi pi-angle-double-up" label="Start Migration" severity="info" @click="startMigration(projectId)"
                 :disabled="!userHasPermission(StartMigrationPermission, projectStore, authStore)"
                 v-tooltip.top="addDisablePermissionTooltip(StartMigrationPermission)" />
@@ -118,6 +119,10 @@ const editProjectView = (projectId: string | string[]) => {
 
 const startMigration = (projectId: string | string[]) => {
   router.push(`/projects/${projectId}/migration/start`);
+};
+
+const openConceptBrowser = () => {
+    window.open(`${window.location.origin}${route.fullPath}/browser`, '_blank', `popup=yes,width=${window.innerWidth},height=${window.innerHeight},resizable=yes,scrollbars=yes`);
 };
 
 </script>

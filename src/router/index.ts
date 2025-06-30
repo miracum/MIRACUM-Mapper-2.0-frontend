@@ -16,6 +16,7 @@ import ProjectView from '@/views/loggedIn/Project/ProjectView.vue'
 import CodeSystemView from '@/views/loggedIn/Codesystem/CodeSystemView.vue'
 import StartMigrationView from '@/views/loggedIn/Migration/StartMigrationView.vue'
 import ProjectSwitchView from '@/views/loggedIn/ProjectSwitchView.vue'
+import ConceptBrowserView from '@/views/loggedIn/ConceptBrowserView.vue'
 
 const routes = [
   {
@@ -85,6 +86,13 @@ const routes = [
     path: '/projects/:projectId/edit',
     name: 'EditProjectView',
     component: EditProjectView,
+    meta: { requiresAuth: true },
+    props: true
+  },
+  {
+    path: '/projects/:projectId/browser',
+    name: 'ConceptBrowserView',
+    component: ConceptBrowserView,
     meta: { requiresAuth: true },
     props: true
   },

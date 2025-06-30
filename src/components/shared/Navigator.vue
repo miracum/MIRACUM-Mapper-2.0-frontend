@@ -53,7 +53,7 @@ watchEffect(async () => {
                 route: '/projects/add'
             });
         } else {
-            // /projects/{id} or /projects/{id}/edit or /projects/{id}/migration/start
+            // /projects/{id} or /projects/{id}/edit or /projects/{id}/browser or /projects/{id}/migration/start
             const projectId = parseInt(segment2);
             if (isNaN(projectId)) {
                 return;
@@ -76,6 +76,12 @@ watchEffect(async () => {
                 navItems.value.push({
                     label: 'Edit',
                     route: `/projects/${projectId}/edit`
+                });
+            } else if (segment3 === 'browser') {
+                // /projects/{id}/browser
+                navItems.value.push({
+                    label: 'Concept Browser',
+                    route: `/projects/${projectId}/browser`
                 });
             } else if (segment3 === 'migration') {
                 // /projects/{id}/migration/start
