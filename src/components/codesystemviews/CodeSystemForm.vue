@@ -55,7 +55,7 @@ const containerClass = computed(() => {
 }
 
 /* stack on smaller screens */
-@media (max-width: 1000px) {
+@media (max-width: 1400px) {
     .grid-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;

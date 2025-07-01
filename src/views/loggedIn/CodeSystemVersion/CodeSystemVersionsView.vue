@@ -40,7 +40,7 @@
                                 <span v-else>No</span>
                             </template>
                         </Column>
-                        <Column field="project_uses" header="Is used">
+                        <Column field="project_uses" header="In use">
                             <template #body="slotProps">
                                 <span v-if="slotProps.data.project_uses.length > 0">
                                     Yes
