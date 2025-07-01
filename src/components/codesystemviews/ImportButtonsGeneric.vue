@@ -25,7 +25,7 @@
         </Popover>
     </div>
     <div class="flex mt-4">
-        <Button label="Import" @click="upload" severity="secondary" />
+        <Button label="Import" @click="upload" severity="success" />
     </div>
 </template>
 

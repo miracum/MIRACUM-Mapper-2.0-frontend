@@ -2604,6 +2604,11 @@ export interface operations {
                      * @description The .txt file with the descriptions to import. Use the file Snapshot/Terminology/sct2_Description_Snapshot_....txt.
                      */
                     description: string;
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the replace by hints for deprecated / deleted concepts. Use the file Snapshot/Refset/Content/der2_cRefset_AssociationSnapshot_....txt.
+                     */
+                    association?: string;
                 };
             };
         };

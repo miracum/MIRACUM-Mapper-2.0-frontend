@@ -179,17 +179,18 @@ export const useImportCodeSystemVersionIcdQuery = async (codesystemId: number, c
 
 type ImportCodeSystemVersionSnomedResponse =
   paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct']['post']['responses']['202']['content']['application/json']
-export const useImportCodeSystemVersionSnomedQuery = (codesystemId: number, codesystemVersionId: number, conceptFile: File, descriptionFile: File) => {
+export const useImportCodeSystemVersionSnomedQuery = (codesystemId: number, codesystemVersionId: number, conceptFile: File, descriptionFile: File, associationFile: File) => {
   const state = ref<ImportCodeSystemVersionSnomedResponse>()
   const formData = new FormData()
   formData.append('concept', conceptFile)
   formData.append('description', descriptionFile)
+  formData.append('association', associationFile)
 
   const fetchOptions: CodeSystemQueryOptions<paths['/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct']['post']> = {
     params: {
       path: { 'codesystem_id': codesystemId, 'codesystem-version_id': codesystemVersionId }
     },
-    body: formData as unknown as { concept: string, description: string }
+    body: formData as unknown as { concept: string, description: string, association: string}
   }
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct'
   const method = Method.POST
