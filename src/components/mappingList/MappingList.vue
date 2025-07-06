@@ -214,6 +214,9 @@
         </Column>
         <Column :exportable="false" style="width: auto;  margin: 0; padding: 0%">
             <template #body="slotProps">
+                <Button icon="pi pi-sparkles" text rounded @click="openAiPredictMapping(slotProps.data)"
+                    :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)"
+                    v-tooltip.top="addDisablePermissionTooltip(MappingUpdatePermission)" />
                 <Button icon="pi pi-pen-to-square" text rounded @click="openEditMapping(slotProps.data)"
                     :disabled="!userHasPermission(MappingUpdatePermission, projectStore, authStore)"
                     v-tooltip.top="addDisablePermissionTooltip(MappingUpdatePermission)" />
@@ -228,6 +231,8 @@
         :onDelete="onDeleteMapping" />
     <CreateMappingDialog v-model:visible="showCreateMappingDialog" :onSubmit="onCreateSubmit" />
     <EditMappingDialog v-model:visible="showEditMappingDialog" :mapping="editedMapping" :onSubmit="onEditSubmit" />
+
+    <AiPredictDialog v-model:visible="showAiPredictDialog" :mapping="aiPredictMapping" :onSubmit="onAiSubmit" />
 
     <!-- This message is shown if there are no mappings to show. -->
     <Message v-if="!hasMappings" severity="warn" :closable="false">No data to show yet</Message>
@@ -250,6 +255,7 @@ import ConceptAutoComplete from '@/components/autocomplete/ConceptAutoComplete.v
 import { on_item_select_autocomplete, validateFields } from '@/utils/autocomplete';
 import CreateMappingDialog from './CreateMappingDialog.vue';
 import EditMappingDialog from './EditMappingDialog.vue';
+import AiPredictDialog from './AiPredictDialog.vue';
 import { useUpdateMappingQuery } from '@/composables/queries/mapping-query';
 import EquivalenceMultiSelect from '@/components/multiselects/EquivalenceMultiSelect.vue';
 import StatusMultiSelect from '@/components/multiselects/StatusMultiSelect.vue';
@@ -373,6 +379,7 @@ const clearFilter = () => {
 // show/hide create/edit dialog
 const showCreateMappingDialog = ref(false);
 const showEditMappingDialog = ref(false);
+const showAiPredictDialog = ref(false);
 
 // creation dialog
 const onCreateSubmit = (mapping: any) => {
@@ -390,6 +397,20 @@ const openEditMapping = (mapping: any) => {
     showEditMappingDialog.value = true;
 };
 const onEditSubmit = (mapping: any) => {
+    const index = transformedMappings.value.findIndex((m) => m.id === mapping.id);
+    updateMapping(mapping, index);
+};
+
+// ai prediction dialog
+const aiPredictMapping = ref({
+    equivalence: null,
+    status: null,
+});
+const openAiPredictMapping = (mapping: any) => {
+    aiPredictMapping.value = { ...mapping };
+    showAiPredictDialog.value = true;
+};
+const onAiSubmit = (mapping: any) => {
     const index = transformedMappings.value.findIndex((m) => m.id === mapping.id);
     updateMapping(mapping, index);
 };
