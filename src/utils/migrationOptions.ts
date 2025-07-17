@@ -8,7 +8,6 @@ const REPLACE_OPTION = { label: 'Replace concept', value: 'new' };
 const DELETE_OPTION_CONCEPT = { label: 'Delete mappings', value: 'delete' };
 const DELETE_OPTION_MAPPING = { label: 'Delete mapping', value: 'delete' };
 
-
 const standardConceptOptions: Array<{ label: string; value: string }> = [
     NONE_OPTION_CONCEPT,
     KEEP_OPTION,

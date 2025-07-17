@@ -59,6 +59,7 @@
                                 <Tag v-if="replace.equivalence" :value="replace.equivalence" />
                                 <span v-if="replace.comment"> Comment: {{ replace.comment }}</span>
                                 <Button type="button" icon="pi pi-info" severity="secondary" rounded style="border: solid 1px; width: 1.5rem; height: 1.5rem;" @click="toggleConceptInfo($event, replace.concept)" />
+                                <Button severity="success" label="Choose" @click="item.selected = 'new'; item.selected_concept = replace.concept" />
                             </span>
                         </li>
                     </ul>
