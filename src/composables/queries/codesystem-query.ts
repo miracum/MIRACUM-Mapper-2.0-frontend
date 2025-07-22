@@ -129,7 +129,7 @@ export const useImportCodeSystemVersionGenericQuery = (codesystemId: number, cod
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic'
   const method = Method.POST
 
-  return useQueryWithPathParam(state, fetchOptions, method, path)
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 60 * 1000) // 1 hour timeout
 }
 
 type ImportCodeSystemVersionLoincResponse =
@@ -150,7 +150,7 @@ export const useImportCodeSystemVersionLoincQuery = (codesystemId: number, codes
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc'
   const method = Method.POST
 
-  return useQueryWithPathParam(state, fetchOptions, method, path)
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 60 * 1000) // 1 hour timeout
 }
 
 type ImportCodeSystemVersionIcdResponse =
@@ -174,7 +174,7 @@ export const useImportCodeSystemVersionIcdQuery = async (codesystemId: number, c
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm'
   const method = Method.POST
 
-  return useQueryWithPathParam(state, fetchOptions, method, path)
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 60 * 1000) // 1 hour timeout
 }
 
 type ImportCodeSystemVersionSnomedResponse =
@@ -195,7 +195,7 @@ export const useImportCodeSystemVersionSnomedQuery = (codesystemId: number, code
   const path = '/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct'
   const method = Method.POST
 
-  return useQueryWithPathParam(state, fetchOptions, method, path)
+  return useQueryWithPathParam(state, fetchOptions, method, path, 60 * 60 * 1000) // 1 hour timeout
 }
 
 type ImportCodeSystemVersionStatusResponse =
