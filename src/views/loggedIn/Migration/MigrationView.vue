@@ -20,7 +20,7 @@
             </template>
 
             <div>There is currently a migration in progress for this project:</div>
-            <div class="mt-3" style="display: flex; gap: 10px;">
+            <div class="mt-3" style="display: flex; gap: 10px; align-items: center;">
                 <RoleTag :value="codeSystemRole.type" />
                 <span>{{ codeSystemRole.system.name }}</span>
                 <span v-if="codeSystemRole.name">({{ codeSystemRole.name }})</span>
