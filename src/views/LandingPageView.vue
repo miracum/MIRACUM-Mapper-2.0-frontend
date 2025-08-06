@@ -98,6 +98,10 @@ import createProjectImage from '@/assets/create_project.png';
 import projectOverviewImage from '@/assets/project_overview.png';
 import mappingTableImage from '@/assets/mapping_table.png';
 import createMappingImage from '@/assets/create_mapping.png';
+import manageCodeSystemsImage from '@/assets/manage_codesystem.png';
+import importVersionImage from '@/assets/import_version.png';
+import startMigrationImage from '@/assets/start_migration.png';
+import migrationOverviewImage from '@/assets/migration_overview.png';
 
 const router = useRouter();
 
@@ -136,10 +140,14 @@ const scrollToSection = (target: string) => {
 
 
 const featureTimelineElements = ref([
-  { title: 'Add Project', subtitle: 'easily create projects and set different settings to adjust the project to your needs', icon: 'pi pi-plus', image: createProjectImage },
+  { title: 'Manage CodeSystems', subtitle: 'Manage CodeSystems and their versions, add new CodeSystems or edit existing ones', icon: 'pi pi-cog', image: manageCodeSystemsImage },
+  { title: 'Import Concepts', subtitle: 'Import Concepts of a CodeSystem version, which can then be used in Mappings', icon: 'pi pi-upload', image: importVersionImage },
+  { title: 'Add a Project', subtitle: 'Easily create projects and set different settings to adjust the project to your needs', icon: 'pi pi-plus', image: createProjectImage },
   { title: 'View Projects', subtitle: 'Get an overview of all available project in the Dashboard View', icon: 'pi pi-eye', image: projectOverviewImage },
   { title: 'Mappings', subtitle: 'View all Mappings of a project, easily filter or sort them to find what you are looking for, add new mappings or edit multiple mappings at once with inline editing, export the current mapping project in a csv file,...', icon: 'pi pi-table', image: mappingTableImage },
-  { title: 'Create Mappings', subtitle: 'When creating new Mappings, Miracum Mapper suggests relevant mappings for a CodeSystem while the user is typing to make it easy to find them', icon: 'pi pi-plus', image: createMappingImage }
+  { title: 'Create Mappings', subtitle: 'When creating new Mappings, Miracum Mapper suggests relevant mappings for a CodeSystem while the user is typing to make it easy to find them', icon: 'pi pi-plus', image: createMappingImage },
+  { title: 'Migrate Projects to newer Versions', subtitle: 'Start a migration of a project to a newer CodeSystem version', icon: 'pi pi-arrow-right', image: startMigrationImage },
+  { title: 'Review changed Concepts', subtitle: 'Get an overview of all changed Concepts that are used in the mappings and decide what to do with them', icon: 'pi pi-check', image: migrationOverviewImage },
 ]);
 
 const featureCardElements = ref([
