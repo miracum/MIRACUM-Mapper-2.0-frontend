@@ -9,6 +9,8 @@ export const MappingUpdatePermission: ProjectRole[] = ['project_owner', 'editor'
 export const MappingDeletePermission: ProjectRole[] = ['project_owner', 'editor']
 export const MappingCreatePermission: ProjectRole[] = ['project_owner', 'editor']
 export const MappingUpdateCommentPermission: ProjectRole[] = ['project_owner', 'editor']
+export const StartMigrationPermission: ProjectRole[] = ['project_owner']
+export const MigrationPermission: ProjectRole[] = ['project_owner', 'editor']
 
 export const adminRoles: ProjectRole[] = ['editor', 'project_owner', 'reviewer']
 

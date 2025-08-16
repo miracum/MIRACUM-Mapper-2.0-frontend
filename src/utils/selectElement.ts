@@ -48,6 +48,25 @@ export const getStatusSeverity = (value: string): string => {
   return getSeverity(statusElements, value)
 }
 
+
+/*
+utils for status with migrated (not selectable by user)
+*/
+export const statusFullElements: SelectElement[] = [
+  { label: 'Active', value: 'active', severity: 'success' },
+  { label: 'Inactive', value: 'inactive', severity: 'danger' },
+  { label: 'Pending', value: 'pending', severity: 'warn' },
+  { label: 'Migrated', value: 'migrated', severity: 'info' }
+]
+
+export const getStatusFullLabel = (value: string): string => {
+  return getLabel(statusFullElements, value)
+}
+
+export const getStatusFullSeverity = (value: string): string => {
+  return getSeverity(statusFullElements, value)
+}
+
 /*
 utils for role
 */
@@ -80,4 +99,42 @@ export const getUserPermissionsLabel = (value: string): string => {
 
 export const getUserPermissionsSeverity = (value: string): string => {
   return getSeverity(userPermissionsElements, value)
+}
+
+/*
+utils for codesystem type
+*/
+
+export const codesystemTypeElements: SelectElement[] = [
+  { label: 'GENERIC', value: 'GENERIC', severity: 'info' },
+  { label: 'LOINC', value: 'LOINC', severity: 'info' },
+  { label: 'ICD_10_GM', value: 'ICD_10_GM', severity: 'info' },
+  { label: 'SNOMED_CT', value: 'SNOMED_CT', severity: 'info' },
+]
+
+export const getCodesystemTypeLabel = (value: string): string => {
+  return getLabel(codesystemTypeElements, value)
+}
+
+export const getCodesystemTypeSeverity = (value: string): string => {
+  return getSeverity(codesystemTypeElements, value)
+}
+
+/*
+utils for concept status
+*/
+
+export const conceptStatusElements: SelectElement[] = [
+  { label: 'Active', value: 'active', severity: 'success' },
+  { label: 'Trial', value: 'trial', severity: 'info' },
+  { label: 'Discouraged', value: 'discouraged', severity: 'warn' },
+  { label: 'Deprecated', value: 'deprecated', severity: 'danger' },
+]
+
+export const getConceptStatusLabel = (value: string): string => {
+  return getLabel(conceptStatusElements, value)
+}
+
+export const getConceptStatusSeverity = (value: string): string => {
+  return getSeverity(conceptStatusElements, value)
 }

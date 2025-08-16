@@ -9,13 +9,28 @@
                 <template #body="slotProps">
                     <div v-if="editCodeSystemRolesPossible">
                         <CodeSystemSelect v-model="slotProps.data.codeSystem" :codeSystems="codeSystems"
-                            :invalid="submitted && !slotProps.data.codeSystem" />
+                            :invalid="submitted && !slotProps.data.codeSystem" 
+                            @update:selectedCodeSystem="(cs) => handleSelectedCodeSystem(cs, slotProps.data)" />
                         <small class="p-error" v-if="submitted && !slotProps.data.codeSystem">CodeSystem is
                             required.</small>
                     </div>
                     <div v-else>
-                        <div style="font-weight: bold;">{{ slotProps.data.codeSystem.codeSystemName }}</div>
-                        <div>{{ slotProps.data.codeSystem.name }}</div>
+                        <!-- <div style="font-weight: bold;">{{ slotProps.data.codeSystem.codeSystemName }}</div> -->
+                        <div>{{ slotProps.data.codeSystem.codeSystemName }}</div>
+                    </div>
+                </template>
+            </Column>
+            <Column header="Version">
+                <template #body="slotProps">
+                    <div v-if="editCodeSystemRolesPossible">
+                        <CodeSystemVersionSelect v-model="slotProps.data.version" :codeSystem="slotProps.data.codeSystem"
+                            :invalid="submitted && !slotProps.data.version" />
+                        <small class="p-error" v-if="submitted && !slotProps.data.version">Version is
+                            required.</small>
+                    </div>
+                    <div v-else>
+                        <!-- <div style="font-weight: bold;">{{ slotProps.data.codeSystem.codeSystemName }}</div> -->
+                        <div>{{ slotProps.data.codeSystem.versionName }}</div>
                     </div>
                 </template>
             </Column>
@@ -48,15 +63,19 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType, ref, watch } from 'vue';
+import { computed, type PropType, ref, watch } from 'vue';
 import { useToast } from "primevue/usetoast";
 import CodeSystemSelect from '@/components/selects/CodeSystemSelect.vue';
+import CodeSystemVersionSelect from '@/components/selects/CodeSystemVersionSelect.vue';
 import { useGetCodeSystemsQuery } from '@/composables/queries/project-query';
 import { type CodeSystem } from '@/stores/project';
+import { type GetCodeSystem, type GetCodeSystemVersion, useCodeSystemStore } from '@/stores/codesystem';
 
 
 // for possible error messages
 const toast = useToast();
+
+const codeSystemStore = useCodeSystemStore();
 
 
 const props = defineProps({
@@ -65,7 +84,7 @@ const props = defineProps({
         required: true
     },
     codeSystemRoles: {
-        type: Array as PropType<Array<{ codeSystem: number; role: string, name: string }>>,
+        type: Array as PropType<Array<{ codeSystem: number; version: number; role: string, name: string }>>,
         required: true
     },
     submitted: {
@@ -81,34 +100,28 @@ const props = defineProps({
 const editCodeSystemRolesPossible = props.editCodeSystemRolesPossible ?? true
 
 
-const codeSystems = ref<Array<{ name: string; versions: { id: number; name: string; codeSystemName: string; }[] }>>([]);
-const getCodeSystems = () => {
-    const { state, isReady, isFetching, error, execute } = useGetCodeSystemsQuery();
-    watch(isFetching, (newVal) => {
-        if (!newVal) {
-            if (isReady.value) {
-                codeSystems.value = mergeCodeSystems(state.value);
-            } else {
-                toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch codesystems due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
-            }
+const codeSystems = ref<Array<GetCodeSystem>>([]);
+const { isFetching, error } = codeSystemStore.refreshState();
+watch(isFetching, (newVal) => {
+    if (!newVal) {
+        if (!error.value) {
+            codeSystems.value = codeSystemStore.codeSystems;
+        } else {
+            toast.add({ severity: 'error', summary: 'Error', detail: `Could not fetch codesystems due to a server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
         }
-    });
-    execute();
+    }
+});
+
+let versions = ref<Array<GetCodeSystemVersion>>([]);
+
+const handleSelectedCodeSystem = (codeSystem: GetCodeSystem, rowData: any) => {
+    rowData.version = null;
+    if (!codeSystem) {
+        versions.value = [];
+        return;
+    }
+    versions.value = codeSystemStore.getVersions(codeSystem.id).value;
 };
-const mergeCodeSystems = (systems: Array<CodeSystem>) => {
-    const merged = systems.reduce((acc: { [key: string]: { name: string, versions: Array<{ id: number, name: string, codeSystemName: string }> } }, system) => {
-        const { name, id, version } = system;
-        if (!acc[name]) {
-            acc[name] = { name, versions: [] };
-        }
-        acc[name].versions.push({ id, name: version, codeSystemName: name });
-        return acc;
-    }, {});
-
-    return Object.values(merged);
-}
-getCodeSystems();
-
 
 
 const emit = defineEmits(['update:codeSystemRoles']);

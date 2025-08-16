@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  miracum-mapper-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-Test
+    container_name: miracum-mapper-frontend
+    command: npm run dev-test
+    ports:
+      - '5173:5173'

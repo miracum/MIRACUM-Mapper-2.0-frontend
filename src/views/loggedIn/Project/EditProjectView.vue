@@ -1,6 +1,6 @@
 <template>
     <div class="grid-container">
-        <BasicProjectPanel :project="project" :submitted="submitted" />
+        <BasicProjectPanel :project="project" :submitted="submitted" header="Edit Project" description="Edit an existing Mapping Project" />
         <StatusEquivalencePanel :project="project" :submitted="submitted" :isDisabled="disabled" />
         <ProjectPermissionsPanel :project="project" :userPermissions="userPermissions" :submitted="submitted" />
         <!--@update:userPermissions="updateUserPermissions"-->
@@ -49,7 +49,7 @@ const project = ref({
 
 const userPermissions = ref([] as { user: { fullname: string, email: string, id: string, username: string }, role: string }[]);
 
-const codeSystemRoles = ref([] as { codeSystem: { codeSystemName: string, id: number, name: string }, role: string, name: string, id: number }[]);
+const codeSystemRoles = ref([] as { codeSystem: { codeSystemName: string, id: number, versionName: string }, role: string, name: string, id: number }[]);
 
 const getProjectDetails = async () => {
     const { state, isReady, isFetching, error, execute } = useGetProjectDetailsQuery(projectId);
@@ -93,7 +93,7 @@ const getProjectDetails = async () => {
         codeSystemRoles.value.push({
             codeSystem: {
                 id: codeSystemRole.system.id,
-                name: codeSystemRole.system.version,
+                versionName: codeSystemRole.system.version.version_name,
                 codeSystemName: codeSystemRole.system.name
             },
             role: codeSystemRole.type,
@@ -286,7 +286,7 @@ const onProjectDone = () => {
         });
     }
 
-    router.push(`/dashboard/projects/${projectId}/mappings`);
+    router.push(`/projects/${projectId}`);
 }
 
 

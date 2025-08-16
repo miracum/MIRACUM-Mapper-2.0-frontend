@@ -1,5 +1,5 @@
 <template>
-    <ScrollPanel style="width: 100%; height: calc(100vh - 320px)" :dt="{
+    <ScrollPanel style="width: 100%; height: calc(100vh - 360px)" :dt="{
         bar: {
             // background: '{primary.color}'
         }

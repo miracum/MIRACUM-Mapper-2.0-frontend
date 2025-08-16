@@ -1,7 +1,7 @@
-import type { FetchOptions } from 'openapi-fetch'
-import type { Type } from 'typescript'
 import { ref } from 'vue'
-import client from '../../lib'
+import client from '@/lib'
+import type { paths } from '@/client/types'
+import type { PathsWithMethod } from 'openapi-typescript-helpers'
 
 // enum to choose from (get, post, put, delete)
 export enum Method {
@@ -16,20 +16,12 @@ export interface AppError {
   message: string
 }
 
-type PathsWithMethod<Paths, Method extends keyof Paths> = Paths[Method]
-
-interface Paths {
-  get: string
-  post: string
-  put: string
-  delete: string
-}
-
-export const useQueryWithPathParam = <P extends Paths>(
+export const useQueryWithPathParam = (
   state: any,
   options: any,
   method: Method,
-  path: PathsWithMethod<P, Lowercase<Method>>
+  path: string,
+  timeout: number = 5000
 ) => {
   const isReady = ref(false)
   const isFetching = ref(false)
@@ -40,34 +32,28 @@ export const useQueryWithPathParam = <P extends Paths>(
     isReady.value = false
     isFetching.value = true
 
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Request timed out')), 5000)
-    )
+    const fetchWithTimeout = async <T>(promise: Promise<T>): Promise<T> => {
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), timeout)
+      );
+      return Promise.race([promise, timeoutPromise]);
+    };
 
     const fetchPromise = (async () => {
-      let response
-      switch (method.toUpperCase()) {
-        case 'GET':
-          response = await client.GET(path, options)
-          break
-        case 'POST':
-          response = await client.POST(path, options)
-          break
-        case 'PUT':
-          response = await client.PUT(path, options)
-          break
-        case 'DELETE':
-          response = await client.DELETE(path, options)
-          break
-        default:
-          throw new Error(`Unsupported method: ${method}`)
+      switch (method) {
+        case Method.GET:
+          return await client.GET(path as PathsWithMethod<paths, "get">, options);
+        case Method.POST:
+          return await client.POST(path as PathsWithMethod<paths, "post">, options);
+        case Method.PUT:
+          return await client.PUT(path as PathsWithMethod<paths, "put">, options);
+        case Method.DELETE:
+          return await client.DELETE(path as PathsWithMethod<paths, "delete">, options);
       }
-      return response
-    })()
+    })();
 
     try {
-      const response = await Promise.race([timeoutPromise, fetchPromise])
-      const { data, error: fetchError } = response
+      const { data, error: fetchError } = await fetchWithTimeout(fetchPromise)
 
       if (fetchError) {
         error.value = { message: fetchError }
@@ -82,11 +68,5 @@ export const useQueryWithPathParam = <P extends Paths>(
     }
   }
 
-  return {
-    state,
-    isReady,
-    isFetching,
-    error,
-    execute
-  }
+  return { isReady, isFetching, state, error, execute }
 }

@@ -76,6 +76,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{project_id}/migration/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get migration options for a project
+         * @description Get migration options for a project
+         */
+        get: operations["getMigrationOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get migration status for a project
+         * @description Get migration status for a project
+         */
+        get: operations["getMigrationStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start migration to a newer version of a code system role
+         * @description Start migration to a newer version of a code system role. Editing mappings is not possible during the migration.
+         */
+        post: operations["startMigration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel migration to a newer version of a code system role
+         * @description Cancel migration to a newer version of a code system role. Editing mappings is possible again after the cancellation.
+         */
+        post: operations["cancelMigration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all changes that need to be reviewed
+         * @description Get all changes between the old and new version of a code system role, that are not yet reviewed.
+         */
+        get: operations["getMigrationChanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/finish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Finish migration to a newer version of a code system role
+         * @description Finish migration to a newer version of a code system role.
+         */
+        post: operations["finishMigration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/migration/migrate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Migrate mappings to the newer version of a code system role
+         * @description Migrate mappings to the newer version of a code system role.
+         */
+        post: operations["migrateMapping"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/projects/{project_id}/permissions": {
         parameters: {
             query?: never;
@@ -337,7 +477,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/codesystems/{codesystem_id}/import": {
+    "/codesystems/{codesystem_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update a code system version by ID
+         * @description Update a code system version by ID. Only admins can update code system versions.
+         */
+        put: operations["updateCodeSystemVersion"];
+        /**
+         * Create a new version for a code system by ID
+         * @description Create a new version for a code system by ID. Only admins can create code system versions.
+         */
+        post: operations["createCodeSystemVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a code system version by ID
+         * @description Delete a code system version by ID. Only admins can delete code system versions.
+         */
+        delete: operations["deleteCodeSystemVersion"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/generic": {
         parameters: {
             query?: never;
             header?: never;
@@ -347,10 +531,90 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Import concepts for a code system by ID
-         * @description Import concepts for a code system by ID. The concepts are imported from a CSV file. The format of the CSV must be "code,meaning"
+         * Import concepts for a generic code system version by ID
+         * @description Import concepts for a generic code system version by ID. The concepts and optional replace by hints are imported from CSV files. For other code system types use the other endpoints.
          */
-        post: operations["importCodeSystem"];
+        post: operations["importCodeSystemVersionGeneric"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/loinc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a Loinc code system version by ID
+         * @description Import concepts for a Loinc code system version by ID. The CSV files can be uploaded directly without a conersion. For other code system types use the other endpoints.
+         */
+        post: operations["importCodeSystemVersionLoinc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/icd10gm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a ICD-10-GM code system version by ID
+         * @description Import concepts for a ICD-10-GM code system version by ID. The concepts are imported from FHIR/JSON files CodeSystem-icd10gm-....json and ConceptMap-icd10gm-....json. The files must be according to the FHIR R4 standard. The JSON-Objects must be copied into the request body (see example). For other code system types use the other endpoints.
+         */
+        post: operations["importCodeSystemVersionIcd"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/import/snomedct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Import concepts for a SNOMED CT code system version by ID
+         * @description Import concepts for a SNOMED code system version by ID. The concepts are imported from the files sct2_Concept_Snapshot_<version>.txt and sct2_Description_Snapshot_....txt. The files can be uploaded directly without a conersion. For other code system types use the other endpoints.
+         */
+        post: operations["importCodeSystemVersionSnomed"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/import-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the status of the running or last import
+         * @description Get the status of the currently running or the last import.
+         */
+        get: operations["getImportStatus"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -369,6 +633,46 @@ export interface paths {
          * @description Get all concepts for a code system by ID. Paging and sorting can be specified by query parameters.
          */
         get: operations["getAllConcepts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/versions/{codesystem-version_id}/concepts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all concepts for a code system version by ID
+         * @description Get all concepts for a code system version by ID. Paging and sorting can be specified by query parameters.
+         */
+        get: operations["getAllConceptsByVersion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/codesystems/{codesystem_id}/new-concepts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get all new concepts for a code system by ID
+         * @description Get all new concepts for a code system by ID. The concepts are ordered by the version, they are first appering in. Sorting can be specified by query parameters.
+         */
+        get: operations["getAllNewConcepts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -418,6 +722,8 @@ export interface components {
             name: string;
             /** Format: int32 */
             system: number;
+            /** Format: int32 */
+            version: number;
             /** @enum {string} */
             type: "source" | "target";
         };
@@ -433,19 +739,76 @@ export interface components {
                 /** Format: int32 */
                 id: number;
                 name: string;
-                version: string;
+                version: components["schemas"]["CodeSystemVersion"];
+                next_version?: components["schemas"]["CodeSystemVersion"];
             };
+        };
+        CodeSystemRoleMigration: components["schemas"]["UpdateCodeSystemRole"] & {
+            system: {
+                /** Format: int32 */
+                id: number;
+                name: string;
+                version: components["schemas"]["CodeSystemVersion"];
+                next_version?: components["schemas"]["CodeSystemVersion"];
+                newer_versions?: components["schemas"]["CodeSystemVersion"][];
+            };
+        };
+        MigrationOptions: components["schemas"]["Project"] & {
+            code_system_roles: components["schemas"]["CodeSystemRoleMigration"][];
+        };
+        MigrationStatus: {
+            running: boolean;
+            code_system_role?: components["schemas"]["CodeSystemRole"];
+        };
+        StartMigration: {
+            /** Format: int32 */
+            code_system_role_id: number;
+            /** Format: int32 */
+            version_id: number;
+        };
+        MigrationChanges: {
+            deleted: components["schemas"]["MigrationChangeOldConcept"][];
+            deprecated: components["schemas"]["MigrationChangeOldAndNewConcept"][];
+            discouraged: components["schemas"]["MigrationChangeOldAndNewConcept"][];
+            change_display: components["schemas"]["MigrationChangeOldAndNewConcept"][];
+            change_description: components["schemas"]["MigrationChangeOldAndNewConcept"][];
+        };
+        MigrationChangeOldConcept: {
+            old_concept: components["schemas"]["Concept"];
+            mappings: components["schemas"]["Mapping"][];
+            replace_by: components["schemas"]["ConceptReplaceBy"][];
+        };
+        MigrationChangeOldAndNewConcept: {
+            old_concept: components["schemas"]["Concept"];
+            new_concept: components["schemas"]["Concept"];
+            mappings: components["schemas"]["Mapping"][];
+            replace_by: components["schemas"]["ConceptReplaceBy"][];
+        };
+        MigrateMapping: {
+            /** @enum {string} */
+            migration_type: "none" | "delete" | "keep" | "new";
+            /** Format: int32 */
+            mapping_id: number;
+            /** Format: int32 */
+            new_concept_id?: number;
+        };
+        MigrateMappingError: {
+            migration?: components["schemas"]["MigrateMapping"];
+            /** @example 404 */
+            code: string;
+            /** @example Mapping not found */
+            error: string;
         };
         CreateMapping: {
             /** @enum {string} */
             equivalence?: "related-to" | "equivalent" | "source-is-narrower-than-target" | "source-is-broader-than-target" | "not-related";
             /** @enum {string} */
-            status?: "active" | "inactive" | "pending";
+            status?: "active" | "inactive" | "pending" | "migrated";
             comment?: string;
             elements?: components["schemas"]["Element"][];
         };
         UpdateMapping: components["schemas"]["CreateMapping"] & {
-            /** Format: int64 */
+            /** Format: int32 */
             id: number;
         };
         Mapping: components["schemas"]["UpdateMapping"] & {
@@ -456,11 +819,12 @@ export interface components {
         Element: {
             /** Format: int32 */
             codeSystemRole?: number;
-            /** Format: int64 */
+            /** Format: int32 */
             concept?: number;
         };
         FullElement: components["schemas"]["Element"] & {
             concept?: components["schemas"]["Concept"];
+            nextConcept?: components["schemas"]["Concept"];
         };
         User: {
             id: string;
@@ -469,22 +833,63 @@ export interface components {
             email?: string;
         };
         Concept: {
-            /** Format: int64 */
+            /** Format: int32 */
             id: number;
             code: string;
             meaning: string;
+            description?: string;
+            /** @enum {string} */
+            status: "active" | "trial" | "deprecated" | "discouraged";
         };
-        CreateCodeSystem: {
+        ConceptReplaceBy: {
+            code: string;
+            map_to: components["schemas"]["Concept"];
+            /** Format: int32 */
+            code_system_id: number;
+            /** @enum {string} */
+            equivalence?: "relatedto" | "equivalent" | "equal" | "wider" | "subsumes" | "narrower" | "specializes" | "inexact" | "unmatched" | "disjoint";
+            comment?: string;
+        };
+        BaseCodeSystem: {
             uri: string;
-            version: string;
             name: string;
+            /** @enum {string} */
+            type: "GENERIC" | "LOINC" | "ICD_10_GM" | "SNOMED_CT";
             title?: string;
             description?: string;
             author?: string;
         };
+        CreateCodeSystem: components["schemas"]["BaseCodeSystem"];
         CodeSystem: components["schemas"]["CreateCodeSystem"] & {
             /** Format: int32 */
             id: number;
+        };
+        GetCodeSystem: components["schemas"]["CodeSystem"] & {
+            versions: components["schemas"]["CodeSystemVersion"][];
+        };
+        BaseCodeSystemVersion: {
+            version_name: string;
+            /** Format: date */
+            release_date: string;
+        };
+        UpdateCodeSystemVersion: {
+            version_name: string;
+            /** Format: int32 */
+            id: number;
+        };
+        CodeSystemVersion: components["schemas"]["BaseCodeSystemVersion"] & {
+            /** Format: int32 */
+            id: number;
+            imported: boolean;
+            project_uses: string[];
+        };
+        CodeSystemVersionWithConcepts: components["schemas"]["CodeSystemVersion"] & {
+            concepts: components["schemas"]["Concept"][];
+        };
+        ImportStatus: {
+            progress: number;
+            running: boolean;
+            error: string | null;
         };
         ErrorResponse: string;
     };
@@ -537,9 +942,11 @@ export interface components {
         mapping_id: number;
         /** @description The ID of the Codesystem */
         codesystem_id: number;
+        /** @description The ID of the Codesystem Version */
+        "codesystem-version_id": number;
         /** @description Page number (must be a positive integer) */
         page: number;
-        /** @description Number of items per page (minimum 1, maximum 100) */
+        /** @description Number of items per page (must be a positive integer) */
         pageSize: number;
         /** @description Order of sorting (asc or desc) */
         sortOrder: "asc" | "desc";
@@ -578,7 +985,7 @@ export interface operations {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort sortBy */
                 sortBy?: "name" | "dateCreated" | "id";
@@ -756,6 +1163,268 @@ export interface operations {
             400: components["responses"]["BadRequestError"];
             401: components["responses"]["UnauthorizedError"];
             /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getMigrationOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MigrationOptions"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getMigrationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MigrationStatus"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    startMigration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartMigration"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project or codesystem-role not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    cancelMigration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getMigrationChanges: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MigrationChanges"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    finishMigration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    migrateMapping: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the project */
+                project_id: components["parameters"]["project_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MigrateMapping"][];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        errors: components["schemas"]["MigrateMappingError"][];
+                    };
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            403: components["responses"]["ForbiddenError"];
+            /** @description Project or Mapping not found */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -1105,7 +1774,7 @@ export interface operations {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort by */
                 sortBy?: "id" | "equivalence" | "status" | "comment" | "created" | "modified";
@@ -1464,7 +2133,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CodeSystem"][];
+                    "application/json": components["schemas"]["GetCodeSystem"][];
                 };
             };
             400: components["responses"]["BadRequestError"];
@@ -1580,7 +2249,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CodeSystem"];
+                    "application/json": components["schemas"]["GetCodeSystem"];
                 };
             };
             400: components["responses"]["BadRequestError"];
@@ -1632,7 +2301,7 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
-    importCodeSystem: {
+    updateCodeSystemVersion: {
         parameters: {
             query?: never;
             header?: never;
@@ -1644,7 +2313,153 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "text/csv": string;
+                "application/json": components["schemas"]["UpdateCodeSystemVersion"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    createCodeSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseCodeSystemVersion"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Exception */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    deleteCodeSystemVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersion"];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem or CodeSystemVersion not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersionGeneric: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The main CSV file with the concepts to import. Required columns are "code", "display" and "status". The column "description" is optional. "status" has to be one of ["active" | "trial" | "deprecated" | "discouraged"]. If the code system does not support a status, use "active" for all concepts.
+                     */
+                    main: string;
+                    /**
+                     * Format: binary
+                     * @description An optional CSV file with replace by / map to hints for deprecated / deleted concepts. Required columns are "code" and "map_to". The columns "equivalence" and "comment" are optional. "map_to" is the code of the concept that should replace the deprecated / deleted concept "code". "equivalence" has to be one of ["relatedto" | "equivalent" | "equal" | "wider" | "subsumes" | "narrower" | "specializes" | "inexact" | "unmatched" | "disjoint"] or empty.
+                     */
+                    replace_by?: string;
+                };
             };
         };
         responses: {
@@ -1671,12 +2486,184 @@ export interface operations {
             500: components["responses"]["InternalServerError"];
         };
     };
+    importCodeSystemVersionLoinc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The main CSV file with the concepts to import. Use the file LoincTable/Loinc.csv.
+                     */
+                    loinc: string;
+                    /**
+                     * Format: binary
+                     * @description The CSV file with replace by / map to hints for deprecated / deleted concepts. Use the file LoincTable/MapTo.csv.
+                     */
+                    map_to: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersionIcd: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    importCodeSystemVersionSnomed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the concepts to import. Use the file Snapshot/Terminology/sct2_Concept_Snapshot_....txt.
+                     */
+                    concept: string;
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the descriptions to import. Use the file Snapshot/Terminology/sct2_Description_Snapshot_....txt.
+                     */
+                    description: string;
+                    /**
+                     * Format: binary
+                     * @description The .txt file with the replace by hints for deprecated / deleted concepts. Use the file Snapshot/Refset/Content/der2_cRefset_AssociationSnapshot_....txt.
+                     */
+                    association?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getImportStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportStatus"];
+                };
+            };
+            401: components["responses"]["UnauthorizedError"];
+            500: components["responses"]["InternalServerError"];
+        };
+    };
     getAllConcepts: {
         parameters: {
             query?: {
                 /** @description Page number (must be a positive integer) */
                 page?: components["parameters"]["page"];
-                /** @description Number of items per page (minimum 1, maximum 100) */
+                /** @description Number of items per page (must be a positive integer) */
                 pageSize?: components["parameters"]["pageSize"];
                 /** @description Field to sort sortBy */
                 sortBy?: "code" | "meaning";
@@ -1703,6 +2690,91 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Concept"][];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getAllConceptsByVersion: {
+        parameters: {
+            query?: {
+                /** @description Page number (must be a positive integer) */
+                page?: components["parameters"]["page"];
+                /** @description Number of items per page (must be a positive integer) */
+                pageSize?: components["parameters"]["pageSize"];
+                /** @description Field to sort sortBy */
+                sortBy?: "code" | "meaning";
+                /** @description Order of sorting (asc or desc) */
+                sortOrder?: components["parameters"]["sortOrder"];
+                /** @description search for the code */
+                codeSearch?: string;
+                /** @description search for meaning */
+                meaningSearch?: string;
+            };
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+                /** @description The ID of the Codesystem Version */
+                "codesystem-version_id": components["parameters"]["codesystem-version_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Concept"][];
+                };
+            };
+            400: components["responses"]["BadRequestError"];
+            401: components["responses"]["UnauthorizedError"];
+            /** @description CodeSystem not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            500: components["responses"]["InternalServerError"];
+        };
+    };
+    getAllNewConcepts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The ID of the Codesystem */
+                codesystem_id: components["parameters"]["codesystem_id"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodeSystemVersionWithConcepts"][];
                 };
             };
             400: components["responses"]["BadRequestError"];

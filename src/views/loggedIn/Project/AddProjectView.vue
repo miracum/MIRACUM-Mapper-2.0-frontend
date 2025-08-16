@@ -64,6 +64,7 @@ const userPermissions = ref([
 const codeSystemRoles = ref([
     {
         codeSystem: 0,
+        version: 0,
         role: '',
         name: ''
     }
@@ -127,6 +128,7 @@ const onCreateProject = () => {
         code_system_roles: codeSystemRoles.value.map((role) => {
             return {
                 system: role.codeSystem.id,
+                version: role.version.id,
                 type: role.role,
                 name: role.name
             }
@@ -138,7 +140,7 @@ const onCreateProject = () => {
         if (!newVal) {
             if (isReady.value) {
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Project created successfully', life: 10000 });
-                router.push('/dashboard/');
+                router.push('/projects');
             } else {
                 toast.add({ severity: 'error', summary: 'Error', detail: `Could not create Project due to an server error: ${error.value?.message ? JSON.stringify(error.value.message) : 'Unknown error'}`, life: 10000 });
             }
@@ -148,7 +150,7 @@ const onCreateProject = () => {
 }
 
 const onCancelProject = () => {
-    router.push('/dashboard/');
+    router.push('/projects');
 }
 
 
