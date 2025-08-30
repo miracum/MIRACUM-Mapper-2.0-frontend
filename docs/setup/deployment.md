@@ -18,7 +18,7 @@ All services are containerized and can be deployed using Docker. A `Dockerfile` 
 
 ## Running the application
 
-The backend has to be set up before running the frontend. See [here](https://github.com/miracum/MIRACUM-Mapper-2.0-backend/docs/setup/deployment.md) for the Backend Deployment Guide.
+The backend has to be set up before running the frontend. See [here](https://github.com/miracum/MIRACUM-Mapper-2.0-backend/blob/master/docs/setup/deployment.md) for the Backend Deployment Guide.
 
 The Docker Container uses Nginx to serve the bundled frontend and provide certificates for `https`. The certificates have to be created before starting the Container. For the deployment on a test system, Self Signed Certificates can be created with the following command:
 ```
